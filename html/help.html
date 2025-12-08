@@ -169,7 +169,7 @@ Your balance is calculated by subtracting your total expenses from your total in
 
         </div>
           </div>
-          <div id="support-dialog" class="dialog">
+          <div id="support-dialog" class="dialoghelp">
             <div class="dialog-content">
     <span id="close-dialog" class="close">&times;</span>
     <br>
@@ -300,23 +300,23 @@ Your balance is calculated by subtracting your total expenses from your total in
 
 
   const contactBtn = document.querySelector('.contactbtn'); // Contact Support button
-const dialog = document.getElementById('support-dialog');
+const dialoghelp = document.getElementById('support-dialog');
 const closeBtn = document.getElementById('close-dialog');
 
 // Open dialog on button click
 contactBtn.addEventListener('click', () => {
-  dialog.style.display = 'block';
+  dialoghelp.style.display = 'block';
 });
 
 // Close dialog
 closeBtn.addEventListener('click', () => {
-  dialog.style.display = 'none';
+  dialoghelp.style.display = 'none';
 });
 
 // Close when clicking outside
 window.addEventListener('click', (e) => {
-  if (e.target === dialog) {
-    dialog.style.display = 'none';
+  if (e.target === dialoghelp) {
+    dialoghelp.style.display = 'none';
   }
 });
       </script>

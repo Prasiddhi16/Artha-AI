@@ -19,7 +19,7 @@
         <section class="work">Track and achieve your savings targets</section>
              </div>
             <button class="addgoalbtn"><i class="fas fa-plus-circle"></i>   Add Goal</button>
-             <div id="addgoal-dialog" class="dialog">
+             <div id="addgoal-dialog" class="dialoggoal">
             <div class="dialog-content">
     <span id="close-dialog" class="close">&times;</span>
     <br>
@@ -474,7 +474,7 @@
   </div>
   <button class="contributebtn">Add Contribution</button>
 </div>
-<div id="addcontribution-dialog" class="dialog">
+<div id="addcontribution-dialog" class="dialoggoal">
   <div class="dialog-content">
     <span id="close-contribution-dialog" class="close">&times;</span>
     <br>
@@ -541,30 +541,30 @@
     .then(data => {document.getElementById('nav-container').innerHTML = data;})
     
     const addgoalBtn = document.querySelector('.addgoalbtn');
-const dialog = document.getElementById('addgoal-dialog'); // fixed ID
+const dialoggoal = document.getElementById('addgoal-dialog'); // fixed ID
 const closeBtn = document.getElementById('close-dialog');
 
 // Open dialog on button click
 addgoalBtn.addEventListener('click', () => {
-  dialog.style.display = 'block';
+  dialoggoal.style.display = 'block';
 });
 
 // Close dialog
 closeBtn.addEventListener('click', () => {
-  dialog.style.display = 'none';
+  dialoggoal.style.display = 'none';
 });
 
 // Close when clicking outside
 window.addEventListener('click', (e) => {
-  if (e.target === dialog) {
-    dialog.style.display = 'none';
+  if (e.target === dialoggoal) {
+    dialoggoal.style.display = 'none';
   }
   
 });
 function handleCancel() {
   const form = document.querySelector('.goal-form'); 
   form.reset(); 
-  dialog.style.display = 'none';
+  dialoggoal.style.display = 'none';
 }
 // Contribution dialog elements
 const contributionBtns = document.querySelectorAll('.contributebtn');
