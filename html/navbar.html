@@ -1,47 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>navbar</title>
     <link rel="stylesheet" href="/css/navbar.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-</head>
-<body>
     
-<div class="tit">
-    <h2>ArthaAI</h2>
-
-    <div class="tit-el-ho sidebar-item active">
-    <a href="/html/Home.html"><i class="fa-solid fa-house"></i>Home</a>
-    </div>
-
-    <div class="tit-el-an sidebar-item">
-    <a href="/html/analytics.html"><i class="fa-solid fa-chart-line"></i>Analytics</a>
-    </div>
-
-    <div class="tit-el-re sidebar-item">
-    <a href="/html/review.html"><i class="fa-solid fa-star"></i>Review</a>
-    </div>
-
-    <div class="tit-el-go sidebar-item">
-    <a href="/html/goals.html"><i class="fa-solid fa-bullseye"></i>Goals</a>
-    </div>
-
-    <div class="tit-el-he sidebar-item">
-    <a href="/html/help.html"><i class="fa-solid fa-circle-question"></i>Help</a>
-    </div>
-       </div>
+<nav class="tit">
+  <h2>ArthaAI</h2>
+  <a href="Home.html" class="sidebar-item active"><i class="fa-solid fa-house"></i> Home</a>
+  <a href="analytics.html" class="sidebar-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+  <a href="review.html" class="sidebar-item"><i class="fa-solid fa-star"></i> Review</a>
+  <a href="goals.html" class="sidebar-item"><i class="fa-solid fa-bullseye"></i> Goals</a>
+  <a href="help.html" class="sidebar-item"><i class="fa-solid fa-circle-question"></i> Help</a>
+</nav>
 
        <script>
-    const items = document.querySelectorAll('.sidebar-item');
-    items.forEach(item => {
-        item.addEventListener('click', () => {
-            items.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-        });
-    });
+   const items = document.querySelectorAll('.sidebar-item');
+items.forEach(item => {
+  item.addEventListener('click', () => {
+    items.forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    // navigation works automatically because it's an <a>
+  });
+});
 </script>
-</body>
 </html>

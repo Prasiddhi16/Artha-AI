@@ -20,8 +20,6 @@ body
    border-top: #f5f3f4;
    border-left: #f5f3f4;
     border-right: #f5f3f4;
-    width:100vw;
-   
     padding:20px 30px;/*internal spacing*/
     width:80vw;
 }

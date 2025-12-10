@@ -9,16 +9,9 @@
 </head>
 
 <body>
-    <iframe src="/html/navbar.html"></iframe>
-    <iframe src="chatbot.html" 
-        style="position:fixed; 
-                bottom: 20px;
-  right: 20px;
-  width: 600px;
-  height: 600px;
-               z-index:1000000;
-             ">
-</iframe>
+   <div id="nav-container"></div>
+   <div class="main-content">
+    <div id="top-container"></div>
         <div class="das">
 
         <div class="dashb">
@@ -175,8 +168,16 @@
         </form>
     </div>
 </div>
+</div>
 
 <script>
+    fetch('header.html')
+    .then(response => response.text())
+    .then(data => {document.getElementById('top-container').innerHTML = data;})
+     fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {document.getElementById('nav-container').innerHTML = data;})
+    
     let today= new Date().toISOString().split('T')[0];
     document.getElementById("transactionkoDate").value=today;
 </script>
