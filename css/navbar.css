@@ -53,6 +53,7 @@
        
    .sidebar-item i {
             font-size: 22px;
+            color: inherit;
         }
         a{
             text-decoration:none;

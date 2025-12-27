@@ -8,21 +8,29 @@
     
 <nav class="tit">
   <h2>ArthaAI</h2>
-  <a href="Home.html" class="sidebar-item active"><i class="fa-solid fa-house"></i> Home</a>
-  <a href="analytics.html" class="sidebar-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-  <a href="review.html" class="sidebar-item"><i class="fa-solid fa-star"></i> Review</a>
-  <a href="goals.html" class="sidebar-item"><i class="fa-solid fa-bullseye"></i> Goals</a>
-  <a href="help.html" class="sidebar-item"><i class="fa-solid fa-circle-question"></i> Help</a>
-</nav>
 
-       <script>
-   const items = document.querySelectorAll('.sidebar-item');
-items.forEach(item => {
-  item.addEventListener('click', () => {
-    items.forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-    // navigation works automatically because it's an <a>
-  });
-});
-</script>
-</html>
+  <a href="home.html" class="sidebar-item">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
+
+  <a href="analytics.html" class="sidebar-item">
+    <i class="fa-solid fa-chart-line"></i>
+    <span>Analytics</span>
+  </a>
+
+  <a href="review.html" class="sidebar-item">
+    <i class="fa-solid fa-star"></i>
+    <span>Review</span>
+  </a>
+
+  <a href="goals.html" class="sidebar-item">
+    <i class="fa-solid fa-bullseye"></i>
+    <span>Goals</span>
+  </a>
+
+  <a href="help.html" class="sidebar-item">
+    <i class="fa-solid fa-circle-question"></i>
+    <span>Help</span>
+  </a>
+</nav>
