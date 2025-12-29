@@ -1,27 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Tracker - Review</title>
-    
-    <link rel="stylesheet" href="navigation.css">
-    <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="/css/review.css">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Review page {% endblock %}
+{% block content %}
     <div class="main-layout">
-        <div id="nav-placeholder"></div>
-
         <div class="content-area">
-            <div id="header-placeholder" class="header-wrapper"></div>
-
             <main class="dashboard-container">
-                
-                <div class="page-header">
+                      <div class="page-header">
                     <h2>Review Transactions</h2>
                     <p>Search, filter, and analyze your transaction history</p>
                 </div>
@@ -306,18 +290,16 @@
             </main>
         </div>
     </div>
+    {% endblock %}
 
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/review.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
     <script>
-        fetch("header.html")
-    .then(response=>response.text())
-    .then(data=>
-    {document.getElementById("header-placeholder").innerHTML=data});
-    fetch("navbar.html")
-    .then(response=>response.text())
-    .then(data=>
-    {document.getElementById("nav-placeholder").innerHTML=data});
-
-
         // Function to Switch Transactions and AI Insights
         function openTab(tabName) {
             const transactionsView = document.getElementById('transactions-view');
@@ -352,12 +334,9 @@
        
 
         document.addEventListener("DOMContentLoaded", () => {
-           // loadComponent('nav-placeholder', 'navigation.html');
-            //loadComponent('header-placeholder', 'header.html');
+
             // Set initial tab to transactions if needed, or rely on style="display: none;"
             openTab('transactions');
         });
     </script>
-    <script src="/js/loadheader.js"></script>
-</body>
-</html>
+    {% endblock %}

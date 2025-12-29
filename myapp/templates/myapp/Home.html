@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>AI based Finance System</title>
-<link rel="stylesheet" href="/css/Home.css">
-</head>
-
-<body>
-   <div id="nav-container"></div>
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Home page {% endblock %}
+{% block content %}
    <div class="main-content">
-    <div id="top-container"></div>
         <div class="das">
 
         <div class="dashb">
@@ -169,20 +160,20 @@
     </div>
 </div>
 </div>
+{% endblock %}
 
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/Home.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
 <script>
-    fetch('header.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('top-container').innerHTML = data;})
-     fetch('navbar.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('nav-container').innerHTML = data;})
-    
     let today= new Date().toISOString().split('T')[0];
     document.getElementById("transactionkoDate").value=today;
-</script>
 
-<script>
+
     const openBtn = document.querySelector(".btn-pri");
     const modal = document.getElementById("trans-mo");
     const closeBtn = document.querySelector(".closebtn");
@@ -199,9 +190,4 @@
         }
     });
 </script>
-<script src="/js/loadheader.js"></script>
-<script src="../js/navbar.js"></script>
-
-</body>
-
-</html>
+{% endblock %}
