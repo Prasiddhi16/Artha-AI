@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker – Sign Up</title>
+    <link rel="stylesheet" href="/css/signup.css">
+</head>
+<body>
+
+<div class="container" id="signupPage">
+
+    <!-- LEFT SIDE FEATURES -->
+    <div class="left">
+        <div class="logo-box">
+            <div class="logo">💲</div>
+            <h1>Artha AI</h1>
+            <p class="subtitle">Start your journey to financial freedom</p>
+        </div>
+
+        <ul class="features">
+            <li>
+                <span class="icon">➜</span>
+                <div>
+                    <h3>Smart Budgeting</h3>
+                    <p>Plan your expenses effortlessly and stay on track with AI suggestions.</p>
+                </div>
+            </li>
+
+            <li>
+                <span class="icon">➜</span>
+                <div>
+                    <h3>Secure & Private</h3>
+                    <p>Your data is encrypted and never shared</p>
+                </div>
+            </li>
+
+            <li>
+                <span class="icon">➜</span>
+                <div>
+                    <h3>AI-Powered Insights</h3>
+                    <p>Get personalized financial advice</p>
+                </div>
+            </li>
+
+            <li>
+                <span class="icon">➜</span>
+                <div>
+                    <h3>Instant Analytics</h3>
+                    <p>Visualize your spending and income in clear, easy-to-read charts</p>
+                </div>
+            </li>
+
+            <li>
+                <span class="icon">➜</span>
+                <div>
+                    <h3>Intelligent Alerts</h3>
+                    <p>Receive reminders for bills, unusual spending, and budget limits.</p>
+                </div>
+            </li>
+        </ul>
+
+        <div class="testimonial">
+            “Smarter Spending Starts with Intelligent Guidance.”
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE SIGNUP FORM -->
+    <div class="right-only card signup-box">
+
+        <div class="signup-header">
+            <h3>Create an account</h3>
+        </div>
+
+        <label>Full Name</label>
+        <input type="text" id="fullName" placeholder="Your full name">
+
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="email@example.com">
+
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="Enter password">
+
+        <label>Confirm Password</label>
+        <input type="password" id="signupConfirmPass" placeholder="Confirm password">
+
+        <div class="terms">
+           <input type="checkbox" id="termsCheck">
+           <label for="termsCheck">I agree to the Terms & Conditions and Privacy Policy</label>
+        </div>
+
+        <button class="btn" onclick="createAccount()">Create Account</button>
+
+        <p class="bottom-text">
+            Already have an account?
+            <a href="signin.html">Sign In</a>
+        </p>
+    </div>
+</div>
+
+<!-- ================= Account creation process ================= -->
+<div class="container hidden" id="successPage">
+    <div class="right-only card success-box">
+        <h2>Account Created Successfully!</h2>
+        <p>Your account has been created. You can now log in.</p>
+
+        <button class="btn" onclick="window.location.href='signin.html'">Go to Login</button>
+    </div>
+</div>
+
+<script>
+function createAccount() {
+    let name = document.getElementById("fullName").value;
+    let email = document.getElementById("signupEmail").value;
+    let pass = document.getElementById("signupPass").value;
+    let confirm = document.getElementById("signupConfirmPass").value;
+    let terms = document.getElementById("termsCheck").checked;
+
+    if (!name || !email || !pass || !confirm) {
+        alert("Please fill all fields.");
+        return;
+    }
+    if (pass !== confirm) {
+        alert("Passwords do not match!");
+        return;
+    }
+    if (!terms) {
+        alert("You must agree to the terms and conditions.");
+        return;
+    }
+
+    document.getElementById("signupPage").classList.add("hidden");
+    document.getElementById("successPage").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
