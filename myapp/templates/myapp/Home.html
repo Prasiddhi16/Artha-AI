@@ -1,0 +1,193 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Home page {% endblock %}
+{% block content %}
+   <div class="main-content">
+        <div class="das">
+
+        <div class="dashb">
+            <h3>Dashboard</h3>
+            <p>Welcome to Your Account!!</p>
+            <button class="btn-pri">  <i class="fa-solid fa-circle-plus"></i>   Add Transaction</button>
+        </div>
+
+    <div class="cards">
+
+    <div class="card">
+    <p>Total Balance</p>
+    <div class="value">Rs.2349.78</div>
+    <p>Positive balance</p>
+    </div>
+
+  <div class="card">
+    <p>Monthly Income</p>
+    <div class="value positive">
+      Rs.3750.00 
+      <span class="trend up">↗</span>
+    </div>
+    <p>2 transactions this month</p>
+  </div>
+
+    <div class="card">
+    <p>Monthly Expenses<p>
+    <div class="value negative">
+      Rs.1574.28 
+      <span class="trend down">↘</span>
+    </div>
+    <p>7 transactions this month</p>
+  </div>
+
+ </div>
+
+ <div class="mid-grid">
+            <div class="chart-card">
+                <h3>Expenses by Category</h3>
+                <p>Breakdown of your spending</p>
+
+                <div class="pie-chart"></div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                </div>
+            </div>
+
+            <div class="quick-card">
+                <h3>Quick Stats</h3>
+                <p>This month's overview</p>
+
+                <div class="qs-row">
+                    <span>Net Change</span>
+                    <span class="green">+2175.72</span>
+                </div>
+
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+
+                <div class="qs-row">
+                    <span>Total Transactions</span>
+                    <span>9</span>
+                </div>
+
+                <div class="qs-row">
+                    <span>Average Transaction</span>
+                    <span class="green">591.59</span>
+                </div>
+
+                <div class="qs-row">
+                    <span>Largest Expense</span>
+                    <span class="red">1200.00</span>
+                </div>
+            </div>
+
+        </div>
+
+      
+        <div class="receipt-card">
+            <h3>Scan Receipt</h3>
+            <p>Upload a receipt to automatically extract transaction details</p>
+            <button class="scan-btn">Start Receipt Scanner</button>
+        </div>
+
+    
+        <div class="table-card">
+            <h3>Recent Transactions</h3>
+            <p>Your latest financial activity</p>
+
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+
+                <tr>
+                    <td>Nov 22</td>
+                    <td>Rent Payment</td>
+                    <td>Housing</td>
+                    <td class="negative">-1200</td>
+                </tr>
+
+                <tr>
+                    <td>Nov 20</td>
+                    <td>Grocery Store</td>
+                    <td>Groceries</td>
+                    <td>-80</td>
+                </tr>
+
+                <tr>
+                    <td>Nov 18</td>
+                    <td>Taxi Ride</td>
+                    <td>Transportation</td>
+                    <td>-25</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+<div id="trans-mo" class="addtran">
+    <div class="addtran-content">
+        <span class="closebtn">&times</span>
+        <h2>Add Transaction</h2>
+        <form>
+            <label>Amount</label>
+            <input type="text" placeholder="Enter amount">
+            <label>Description</label>
+            <select >
+                <option>Expense</option>
+                <option>Income</option>
+            </select>
+         <label>Categories</label>
+<select>
+     <option>Food & Dining</option>
+      <option>Transport</option> 
+      <option>Groceries</option> 
+      <option>Housing</option> 
+      <option>Utilities</option> 
+        <option>Entertainment</option> 
+              <option>Others</option> 
+
+
+     </select>
+  <label>Date</label>
+  <input type="date" id="transactionkoDate">
+     <button type="submit" class="submit-btn"> Add Transaction</button>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/Home.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script>
+    let today= new Date().toISOString().split('T')[0];
+    document.getElementById("transactionkoDate").value=today;
+
+
+    const openBtn = document.querySelector(".btn-pri");
+    const modal = document.getElementById("trans-mo");
+    const closeBtn = document.querySelector(".closebtn");
+        openBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}

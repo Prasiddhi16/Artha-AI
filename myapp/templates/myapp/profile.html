@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile page</title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-content">
+    <div class="introduction">
+        <div class="nameDisplay">Demo User</div>
+        <div class="emailDisplay">demo.user@gmail.com</div>
+    </div>
+    <br>
+    <hr />
+    <div class="options"> 
+        <div class="option-list">
+            <button class="profile-button">
+                <i class="fa-solid fa-user"></i>
+                Profile
+            </button>
+        </div>
+        <div class="option-list">
+            <button class="settings-button">
+                 <i class="fa-solid fa-gear"></i>
+                 Settings
+            </button>
+        </div>
+        <hr />
+        <div class="option-list">
+          <a href="signin.html"><button class="logout-button">
+                 <i class="fa-solid fa-right-from-bracket"> </i>
+                 Logout
+            </button>
+            </a>
+        </div>
+    </div>
+    </div>
+
+    <div class="overlay">
+    <div class="dialog"  id="profile-dialog">
+    <form class="profile-form">
+        <div>
+           <p class="head-text">Profile Settings</p> <br>
+           <p class="sub-text">Manage your account settings and preferences</p>
+        </div>
+        <br>
+
+        <div class="tabs">
+            <button type="button" class="tab active" id="profile-tab">Profile</button>
+            <button type="button" class="tab" id="notification-tab">Notification</button>
+            <button type="button" class="tab" id="security-tab">Security</button>
+        </div>
+        <br>
+
+        <div class="psection active" id="profile-section">
+        <div>
+        <p class="first-text">Personal Information</p><br>
+        <p class="second-text">Update your profile details</p><br>
+        </div>
+        <br>
+        <hr>
+        <br>
+
+        <div id="picture">
+            <div id="circle"></div> 
+            <span id="center">
+            <button id="change-picture"><i class="fa-solid fa-camera"></i>  Change Photo</button>
+            <p class="sub-info"> JPG or PNG(MAX 800*400px) </p>
+            </span>
+        </div>
+        <br>
+        <div id="usernames">
+            <span>
+            <label for="first-name">First Name</label><br>
+            <input type="text" class="name" id="first-name" placeholder="eg demo">
+            </span>
+            <span>
+            <label for="last-name">Last Name</label><br>
+            <input type="text" class="name" id="last-name" placeholder="eg user">
+            </span>
+        </div>
+        <br>
+        <div id="emails">
+            <label for="email">Email</label><br>
+            <input type="text" id="email" placeholder="eg user@gmail.com">
+        </div>
+        <br>
+        <div id="numbers">
+            <label for="number">Number</label><br>
+            <input type="number" id="number" placeholder="+977 9866756556">
+        </div>
+        <br>
+        <div>
+            <button class="save"><i class="fa-solid fa-print"></i> Save Changes</button>
+        </div>
+        </div>
+
+        <div class="psection" id="notification-section">
+        <p class="first-text">Notification Preferences</p><br>
+        <p class="second-text">Manage how you receive notifications</p> <br> 
+        <br>
+        <hr>
+        <br>
+        <div class="notification-list">
+            <div class="line">
+            <label for="email-notif">Email Notifications</label>
+            <label class="switch">
+            <input type="checkbox" id="email-notif">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Receive notifications via email</p>
+        </div>
+        <br>
+        <div class="notification-list">
+            <div class="line">
+            <label for="push-notif">Push Notifications</label>
+            <label class="switch">
+            <input type="checkbox" id="push-notif">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Receive push notifications in browser</p>
+        </div>
+        <br>
+        <div class="notification-list">
+            <div class="line">
+            <label for="monthly-report">Monthly Reports</label>
+            <label class="switch">
+            <input type="checkbox" id="monthly-report">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Get monthly financial summary reports</p>
+        </div>
+        <br>
+        <div class="notification-list">
+            <div class="line">
+            <label for="budget-alert">Budget Alerts</label>
+            <label class="switch">
+            <input type="checkbox" id="budget-alert">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Alert me when approaching budget limits</p>
+        </div>
+        <br>
+        <div class="notification-list">
+            <div class="line">
+            <label for="goal-reminder">Goal Reminders</label>
+            <label class="switch">
+            <input type="checkbox" id="goal-reminder">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Remind me about goals progress</p>
+        </div>
+        <br>
+        <div>
+            <button class="save"><i class="fa-solid fa-print"></i> Save Preferences</button>
+        </div>
+        </div>
+
+        <div class="psection" id="security-section">
+            <p class="first-text">Password and Security</p><br>
+            <p class="second-text">Manage your password and security settings</p><br>
+            <br>
+            <hr>
+            <br>
+            <div class="password-list">
+            <label for="current-password"> Current Password</label><br>
+            <input type="password" id="current-password">
+            </div>
+            <br>
+            <div class="password-list">
+            <label for="new-password">New Password</label><br>
+            <input type="password" id="new-password">
+            </div>
+            <br>
+            <div class="password-list">
+            <label for="confirm-password">Confirm New Password</label><br>
+            <input type="password" id="confirm-password">
+            </div>
+            <br>
+            <div>
+             <button class="save"><i class="fa-solid fa-print"></i>Update Password</button>   
+            </div>
+            <br>
+            <hr>
+            <div class="authentication-list">
+                <p class="first-text">Two-Factor Authentication</p><br>
+                <br>
+                <label for="authentication">Enable two-factor authentication</label>
+                <input type="checkbox" id="authentication">
+                <p class="sub-info">Add an extra layer of security to your account</p>
+                <br>
+                <button class="delete">Delete Account</button> 
+                <p class="sub-info" id="alignment">This action cannot be undone</p> 
+            </div>
+        </div>    
+    </form>
+    </div>
+
+    <div class="dialog" id="settings-dialog">
+    <form class="settings-form">
+        <section>
+           <p class="head-text">Settings</p><br>
+           <p class="sub-text">Customize your finance tracker experience</p><br>
+        </section>
+        <br>
+        <div class="privacy-section">
+            <p class="first-text">Privacy Settings</p><br>
+            <p class="second-text">Control your data and privacy preferences</p> <br>
+            <br>
+            <hr>
+            <br>
+            <div class="privacy-list">
+            <div class="line">
+            <label for="analytics-track">Analytics Tracking</label>
+            <label class="switch">
+            <input type="checkbox" id="analytics-track">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Help us improve by sharing usage analytics</p>
+            </div>
+            <br>
+            <div class="privacy-list">
+            <div class="line">
+            <label for="crash-reporting">Crash Reporting</label>
+            <label class="switch">
+            <input type="checkbox" id="crash-reporting">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Automatically send crash reports to help fix bugs</p>
+            </div>
+            <br>
+            <div class="privacy-list">
+            <div class="line">
+            <label for="usage-data">Share Usage Data</label>
+            <label class="switch">
+            <input type="checkbox" id="usage-data">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Share anonymized usage data for research</p>
+            </div>
+            <br>
+            <div class="privacy-list">
+            <div class="line">
+            <label for="spending-insights">Spending insights</label>
+            <label class="switch">
+            <input type="checkbox" id="spending-insights">
+            <span class="toggle"></span>
+            </label>
+            </div>
+            <p class="sub-info">Show personalized spending tips and insights</p>
+            <br>
+            <button class="save"><i class="fa-solid fa-print"></i> Save Privacy Settings</button>
+            </div>
+        </div>
+        <br>
+        <div class="privacy-section" id="authentication-list">
+            <p class="first-text">Data Management</p><br>
+            <p class="second-text">Export or delete your data</p><br>
+            <br>
+            <button class="export"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
+            <button class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
+            <p class="sub-info" id="align">Clearing data will reset all settings to default</p> 
+        </div>
+
+    </form>
+    </div>
+    </div>
+
+
+    
+</body>
+</html>

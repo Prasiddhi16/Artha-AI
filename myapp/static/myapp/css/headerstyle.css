@@ -1,0 +1,72 @@
+
+body
+{
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+.top
+{
+ position:relative;
+  top: 0;/*allows us to ensure where the fixed nav bar stays*/
+ z-index: 1000;/*ensures the nav bar stays above the other elements of the page*/
+    display:flex;
+    flex-wrap: wrap; /*to be checked ekchoti*/
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f3f4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+   border-style: ridge;
+   border-top: #f5f3f4;
+   border-left: #f5f3f4;
+    border-right: #f5f3f4;
+    padding:20px 30px;/*internal spacing*/
+    width:80vw;
+}
+.logo
+{
+    font-size: larger;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight:500;
+}
+.icons
+{
+    list-style: none;
+  display: flex;
+  gap: 40px;
+  
+}
+.icons li a {
+  text-decoration: none;
+  color:navy;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+.icons li a:hover {
+  color:#009B77;
+}
+
+
+.user-overlay{
+  position:fixed;
+  height:100%;
+  width:100%;
+  top:0;
+  left:0;
+  background-color:rgba(0,0,0,0.1);
+  display:none;
+  z-index:2000;
+  backdrop-filter: blur(2px); 
+}
+#user-content{
+  background-color:white;
+  border:1px solid gray;
+  border-radius:15px;
+  position: absolute;
+  right:0;
+  top:20;
+  width:fit-content;
+  height:fit-content;
+  z-index:3000;
+  
+}
