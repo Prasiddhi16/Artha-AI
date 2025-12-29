@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-  <title>ArthaAi</title>
-  <link rel="stylesheet" href="/css/helpstyle.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  </head>
-  <body>
-     
-      
-        <div id="nav-container"></div>
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Help page {% endblock %}
+{% block content %}
         <div class="main-content">
-          <div id="top-container"></div>
           <div class="topsection">
             <div class="helplogo"> <i class="fas fa-circle-question"></i></div>
             <div class="helpidea">Help & Support</div>
@@ -280,15 +270,17 @@ Your balance is calculated by subtracting your total expenses from your total in
 
 </div>
           </div>
-          <script>
-        fetch('header.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('top-container').innerHTML = data;})
-     fetch('navbar.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('nav-container').innerHTML = data;})
 
-    
+          {% endblock %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/helpstyle.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
+          <script>
   const questions = document.querySelectorAll('.faq-question');
 
   questions.forEach(q => {
@@ -320,10 +312,5 @@ window.addEventListener('click', (e) => {
   }
 });
       </script>
-<<<<<<< HEAD
-      <script src="/js/loadheader.js"></script>
-=======
-      <script src="../js/loadheader.js"></script>
->>>>>>> 4dd50ee2876829e0f8a7bacb6413f942e07be38f
-          </body>
-          </html>
+      {% endblock %}
+

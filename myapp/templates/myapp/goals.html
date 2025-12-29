@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-  <title>ArthaAi</title>
-  <link rel="stylesheet" href="/css/goalsstyle.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-  </head>
-  <body>
-     
-      
-        <div id="nav-container"></div>
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Goals page {% endblock %}
+{% block content %}
+       
         <div class="main-content">
-          <div id="top-container"></div>
         <div class="overview">
             <div class="textblock">
         <section  class="idea">Financial Goals</section>
@@ -530,15 +521,16 @@
             </div>
             </div>
         
-    
-    
-        <script>
-        fetch('header.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('top-container').innerHTML = data;})
-     fetch('navbar.html')
-    .then(response => response.text())
-    .then(data => {document.getElementById('nav-container').innerHTML = data;})
+  {% endblock %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/goalsstyle.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
+<script>
     
     const addgoalBtn = document.querySelector('.addgoalbtn');
 const dialoggoal = document.getElementById('addgoal-dialog'); // fixed ID
@@ -605,6 +597,4 @@ function showPanel(button, panelId) {
   document.getElementById(panelId).classList.add('active');
 }
      </script>
-      <script src="/js/loadheader.js"></script>
-    </body>
-  </html>
+  {% endblock %}
