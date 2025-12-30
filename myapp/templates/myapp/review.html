@@ -1,120 +1,163 @@
 {% extends 'myapp/base.html' %}
 {% load static %}
-{% block title %} Review page {% endblock %}
+
+{% block title %} Review Page {% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/review.css' %}">
+{% endblock %}
+
 {% block content %}
-    <div class="main-layout">
-        <div class="content-area">
-            <main class="dashboard-container">
-                      <div class="page-header">
-                    <h2>Review Transactions</h2>
-                    <p>Search, filter, and analyze your transaction history</p>
+<div class="review-page">
+
+   
+    <div class="page-header">
+    <h2 style="font-size: 24px;">Review Transactions</h2>
+        <p style="font-size: 16px;">Search, filter, and analyze your transaction history</p>
+    </div>
+
+ 
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('transactions')">Transactions</button>
+        <button class="tab-btn" onclick="openTab('ai-insights')">AI Insights</button>
+    </div>
+
+  
+    <div id="transactions-view">
+
+        <div class="summary-grid">
+            <div class="card">
+                <h4 class="summary-title">Filtered Total</h4>
+                <div class="summary-amount">$6150.22</div>
+                <div class="summary-count">15 transactions</div>
+            </div>
+            <div class="card">
+                <h4 class="summary-title">Filtered Income</h4>
+                <div class="summary-amount blue">$4250.00</div>
+                <div class="summary-count">3 transactions</div>
+            </div>
+            <div class="card">
+                <h4 class="summary-title">Filtered Expenses</h4>
+                <div class="summary-amount red">$1900.22</div>
+                <div class="summary-count">12 transactions</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card filter-section">
+            <div class="filter-header">
+                <h3><i class="fas fa-filter"></i> Filters & Search</h3>
+                <p>Narrow down your transaction history</p>
+            </div>
+            <div class="search-row">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search transactions...">
+            </div>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label>Type</label>
+                    <select>
+                        <option>All Types</option>
+                        <option>Income</option>
+                        <option>Expense</option>
+                    </select>
                 </div>
-
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="openTab('transactions')">Transactions</button>
-                    <button class="tab-btn" onclick="openTab('ai-insights')">AI Insights</button>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select>
+                        <option>All Categories</option>
+                        <option>Groceries</option>
+                        <option>Transportation</option>
+                        <option>Entertainment</option>
+                        <option>Freelance</option>
+                        <option>Housing</option>
+                    </select>
                 </div>
-
-                <div id="transactions-view">
-                    
-                    <div class="summary-grid">
-                        <div class="card">
-                            <h4 class="summary-title">Filtered Total</h4>
-                            <div class="summary-amount">$6150.22</div>
-                            <div class="summary-count">15 transactions</div>
-                        </div>
-                        <div class="card">
-                            <h4 class="summary-title">Filtered Income</h4>
-                            <div class="summary-amount blue">$4250.00</div>
-                            <div class="summary-count">3 transactions</div>
-                        </div>
-                        <div class="card">
-                            <h4 class="summary-title">Filtered Expenses</h4>
-                            <div class="summary-amount red">$1900.22</div>
-                            <div class="summary-count">12 transactions</div>
-                        </div>
-                    </div>
-
-                    <div class="card filter-section">
-                        <div class="filter-header">
-                            <div>
-                                <h3 style="margin:0; font-size:1.1rem;"><i class="fas fa-filter"></i> Filters & Search</h3>
-                                <p style="margin:5px 0 0; color:#94a3b8; font-size:0.9rem;">Narrow down your transaction history</p>
-                            </div>
-                        </div>
-                        
-                        <div class="search-row">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" placeholder="Search transactions..." class="search-input">
-                        </div>
-
-                        <div class="filter-controls">
-                            <div class="filter-group">
-                                <label>Type</label>
-                                <select><option>All Types</option></select>
-                            </div>
-                            <div class="filter-group">
-                                <label>Category</label>
-                                <select><option>All Categories</option></select>
-                            </div>
-                            <div class="filter-group">
-                                <label>Sort By</label>
-                                <select><option>Date</option></select>
-                            </div>
-                            <div class="filter-group action-group">
-                                <label>Actions</label>
-                                <button class="clear-btn">Clear Filters</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="transaction-list-container">
-                        <h4 style="color:#475569; margin-bottom:15px;">Transaction History <span style="font-weight:normal; font-size:0.9rem;">Showing 4 of 4 transactions</span></h4>
-                        
-                        <div class="trans-item">
-                            <div class="trans-icon red-bg"><i class="fas fa-shopping-cart"></i></div>
-                            <div class="trans-details">
-                                <div class="trans-name">Weekly shopping <span class="badge gray">Groceries</span></div>
-                                <div class="trans-date">Nov 8, 2025</div>
-                            </div>
-                            <div class="trans-amount red">-$125.50</div>
-                            <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-                        </div>
-
-                        <div class="trans-item">
-                            <div class="trans-icon red-bg"><i class="fas fa-gas-pump"></i></div>
-                            <div class="trans-details">
-                                <div class="trans-name">Gas station <span class="badge teal">Transportation</span></div>
-                                <div class="trans-date">Nov 7, 2025</div>
-                            </div>
-                            <div class="trans-amount red">-$45.00</div>
-                            <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-                        </div>
-
-                        <div class="trans-item">
-                            <div class="trans-icon red-bg"><i class="fas fa-ticket-alt"></i></div>
-                            <div class="trans-details">
-                                <div class="trans-name">Concert tickets <span class="badge purple">Entertainment</span></div>
-                                <div class="trans-date">Nov 6, 2025</div>
-                            </div>
-                            <div class="trans-amount red">-$89.99</div>
-                            <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-                        </div>
-
-                        <div class="trans-item">
-                            <div class="trans-icon blue-bg"><i class="fas fa-laptop-code"></i></div>
-                            <div class="trans-details">
-                                <div class="trans-name">Web design project <span class="badge green">Freelance</span></div>
-                                <div class="trans-date">Nov 5, 2025</div>
-                            </div>
-                            <div class="trans-amount green">+$250.00</div>
-                            <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-                        </div>
-
-                    </div>
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select>
+                        <option>Date</option>
+                        <option>Amount</option>
+                        <option>Category</option>
+                    </select>
                 </div>
-                    
-                <div id="ai-insights-view" style="display: none;">
+                <div class="filter-group action-group">
+                    <label>Actions</label>
+                    <button class="clear-btn">Clear Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction List -->
+        <div class="transaction-list-container">
+            <h4>Transaction History: <span class="text-muted">Showing 6 out of 6 transactions</span></h4>
+
+            <!-- Example Transactions -->
+            <div class="trans-item">
+                <div class="trans-icon red-bg"><i class="fas fa-shopping-cart"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Weekly shopping <span class="badge gray">Groceries</span></div>
+                    <div class="trans-date">Nov 8, 2025</div>
+                </div>
+                <div class="trans-amount red">-$125.50</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+
+            <div class="trans-item">
+                <div class="trans-icon red-bg"><i class="fas fa-gas-pump"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Gas station <span class="badge teal">Transportation</span></div>
+                    <div class="trans-date">Nov 7, 2025</div>
+                </div>
+                <div class="trans-amount red">-$45.00</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+
+            <div class="trans-item">
+                <div class="trans-icon red-bg"><i class="fas fa-ticket-alt"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Concert tickets <span class="badge purple">Entertainment</span></div>
+                    <div class="trans-date">Nov 6, 2025</div>
+                </div>
+                <div class="trans-amount red">-$89.99</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+
+            <div class="trans-item">
+                <div class="trans-icon blue-bg"><i class="fas fa-laptop-code"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Web design project <span class="badge green">Freelance</span></div>
+                    <div class="trans-date">Nov 5, 2025</div>
+                </div>
+                <div class="trans-amount green">+$250.00</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+
+            <div class="trans-item">
+                <div class="trans-icon red-bg"><i class="fas fa-utensils"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Dinner at restaurant <span class="badge gray">Food</span></div>
+                    <div class="trans-date">Nov 4, 2025</div>
+                </div>
+                <div class="trans-amount red">-$60.00</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+
+            <div class="trans-item">
+                <div class="trans-icon blue-bg"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">Freelance logo design <span class="badge green">Freelance</span></div>
+                    <div class="trans-date">Nov 3, 2025</div>
+                </div>
+                <div class="trans-amount green">+$350.00</div>
+                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+            </div>
+        </div>
+
+    </div>
+
+    
+           <div id="ai-insights-view" style="display: none;">
                     
                     <div class="ai-banner">
                         <div class="ai-icon"><i class="fas fa-robot"></i></div>
@@ -290,53 +333,31 @@
             </main>
         </div>
     </div>
-    {% endblock %}
-
-{% block extra_css %} 
-<link rel="stylesheet" href="{% static 'myapp/css/review.css' %}">
+     
 {% endblock %}
 
-
-
 {% block extra_js %}
-    <script>
-        // Function to Switch Transactions and AI Insights
-        function openTab(tabName) {
-            const transactionsView = document.getElementById('transactions-view');
-            const aiView = document.getElementById('ai-insights-view');
-            const buttons = document.querySelectorAll('.tab-btn');
+<script>
+function openTab(tabName) {
+    const transactionsView = document.getElementById('transactions-view');
+    const aiView = document.getElementById('ai-insights-view');
+    const buttons = document.querySelectorAll('.tab-btn');
 
-            if (tabName === 'transactions') {
-                transactionsView.style.display = 'block';
-                aiView.style.display = 'none';
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                transactionsView.style.display = 'none';
-                aiView.style.display = 'block';
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
-            }
-        }
+    if(tabName === 'transactions') {
+        transactionsView.style.display = 'block';
+        aiView.style.display = 'none';
+        buttons[0].classList.add('active');
+        buttons[1].classList.remove('active');
+    } else {
+        transactionsView.style.display = 'none';
+        aiView.style.display = 'block';
+        buttons[0].classList.remove('active');
+        buttons[1].classList.add('active');
+    }
+}
 
-        // Function to Load External HTML (Header/Nav)
-        async function loadComponent(elementId, filePath) {
-            try {
-                const response = await fetch(filePath);
-                if (!response.ok) throw new Error(`Could not load ${filePath}`);
-                const html = await response.text();
-                document.getElementById(elementId).innerHTML = html;
-            } catch (error) {
-                console.error("Error loading component:", error);
-                document.getElementById(elementId).innerHTML = `<p style='color:red; padding:20px;'>Error: Could not load ${filePath}. <strong>Please use Live Server.</strong></p>`;
-            }
-        }
-       
-
-        document.addEventListener("DOMContentLoaded", () => {
-
-            // Set initial tab to transactions if needed, or rely on style="display: none;"
-            openTab('transactions');
-        });
-    </script>
-    {% endblock %}
+document.addEventListener('DOMContentLoaded', () => {
+    openTab('transactions');
+});
+</script>
+{% endblock %}
