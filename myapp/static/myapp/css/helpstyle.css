@@ -3,6 +3,13 @@ html, body {
   padding: 0;
   overflow-x: hidden;
 }
+
+.main-content {
+  flex: 1;
+  min-height: 0;        /* 👈 prevents flex child overflow */
+  overflow-y: auto;      /* only this scrolls */
+  overflow-x: hidden;
+}
 .topsection
 {
     margin-top:40px;
@@ -210,6 +217,7 @@ flex: 1;
 .contactbtn i{
   margin-left:10px;
   margin-right:10px;
+  color: #ebeff0;
 }
 .contactbtn:hover{
   background-color: rgb(11, 11, 175);
@@ -308,9 +316,8 @@ flex: 1;
 }
 
 .ftop,.fmid,.fthird,.fend{
-  display: flex;
-  justify-content: space-between;
-  gap:150px;
+  gap: 40px;
+  flex-wrap: wrap;
 
 }
 .form-group {

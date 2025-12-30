@@ -1,8 +1,18 @@
 html, body {
   margin: 0;
+  width:100%;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: auto;
 }
+
+.main-content {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  display: block;
+}
+
 
 .overview {
   display: flex;
@@ -61,7 +71,7 @@ html, body {
 {
   display:none;
 }
- .dialoggoal {
+.dialoggoal {
   display: none;
   position: fixed;
   top: 0; left: 0;
