@@ -1,14 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile page</title>
-    <link rel="stylesheet" href="/css/profile.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
+
     <div class="main-content">
     <div class="introduction">
         <div class="nameDisplay">Demo User</div>
@@ -31,7 +22,7 @@
         </div>
         <hr />
         <div class="option-list">
-          <a href="signin.html"><button class="logout-button">
+          <a href="{% url 'signin' %}"><button class="logout-button">
                  <i class="fa-solid fa-right-from-bracket"> </i>
                  Logout
             </button>
@@ -273,12 +264,13 @@
             <button class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
             <p class="sub-info" id="align">Clearing data will reset all settings to default</p> 
         </div>
-
     </form>
     </div>
     </div>
 
+    <script src="{% static 'myapp/js/loadheader.js' %}"></script>
 
-    
-</body>
-</html>
+    <script src="{% static 'myapp/js/profile.js' %}"></script>
+
+   
+

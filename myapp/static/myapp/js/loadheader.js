@@ -1,23 +1,38 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const openuser = document.getElementById("openuser");
-    const usercontainer = document.getElementById("user-container");
+document.addEventListener("DOMContentLoaded", () => {
+  const openuser = document.getElementById("openuser");
+  const userContainer = document.getElementById("user-container");
+  const userContent = document.getElementById("user-content");
 
-    // Safety check, if elements don't exist on current page, do nothing
-    if (!openuser || !usercontainer) return;
+   // Safety check, if elements don't exist on current page, do nothing
+    if (!openuser || !userContainer) return;
 
     // Open dropdown when clicking the user button/icon
-    openuser.addEventListener("click", function (e) {
-        e.stopPropagation(); // Prevent click from immediately closing
-        usercontainer.style.display = "block";
-    });
+    openuser.addEventListener("click", (e) => {
+    e.preventDefault();   //prevent href="#"
+    e.stopPropagation();  //ICON → DIALOG → OVERLAY → BODY → WINDOW.Prevents the click from going above overlay
 
-    // Close when clicking outside the dropdown
-    window.addEventListener("click", function () {
-        usercontainer.style.display = "none";
-    });
+    fetch("/profile/")
+      .then(res => res.text())
+      .then(html => {
+        userContent.innerHTML = html;
+        userContainer.style.display = "block";
 
-    // Prevent closing when clicking inside the dropdown
-    usercontainer.addEventListener("click", function (e) {
-        e.stopPropagation();
-    });
+    // profile.js logic's safe check and execution
+                if (typeof ProfileDialogs === "function") {
+                    ProfileDialogs();
+                }
+            });
+  });
+
+  // Close when clicking outside the dropdown
+  userContainer.addEventListener("click", (e) => {
+    if(e.target === userContainer){
+    userContainer.style.display = "none";}
+  });
+  
+    // Prevents closing when clicking inside the dropdown
+  userContent.addEventListener("click", (e)=>{
+    e.stopPropagation();
+ });
+    
 });
