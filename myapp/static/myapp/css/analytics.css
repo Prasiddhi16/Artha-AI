@@ -6,6 +6,7 @@
 }
 body{
     width:100vw;
+    overflow-x: hidden;
 }
 .analyzepage{
     margin:20px 0px 20px 20px;

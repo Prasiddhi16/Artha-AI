@@ -2,3 +2,8 @@
 color:black;
 font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
+.header {
+  width: 100vw;       /* full viewport width */
+  position: relative; /* or fixed if you want it floating */
+  left: 0;
+}
