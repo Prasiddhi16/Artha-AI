@@ -2,7 +2,20 @@
 {% load static %}
 {% block title %} Home page {% endblock %}
 {% block content %}
+  {% block content %}
    <div class="main-content">
+
+        <!-- Messages block: Add this here -->
+        {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+              <div class="message {{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="das">
 
         <div class="dashb">
@@ -133,30 +146,34 @@
     <div class="addtran-content">
         <span class="closebtn">&times</span>
         <h2>Add Transaction</h2>
-        <form>
-            <label>Amount</label>
-            <input type="text" placeholder="Enter amount">
-            <label>Description</label>
-            <select >
-                <option>Expense</option>
-                <option>Income</option>
-            </select>
-         <label>Categories</label>
-<select>
-     <option>Food & Dining</option>
-      <option>Transport</option> 
-      <option>Groceries</option> 
-      <option>Housing</option> 
-      <option>Utilities</option> 
-        <option>Entertainment</option> 
-              <option>Others</option> 
+        <form method="POST">
+    {% csrf_token %}
+
+    <label>Amount</label>
+   <input type="text" name="amount" placeholder="Enter amount">
+
+<select name="transaction_type">
+    <option value="expense">Expense</option>
+    <option value="income">Income</option>
+</select>
+
+<select name="category">
+    <option value="Food & Dining">Food & Dining</option>
+    <option value="Transport">Transport</option>
+    <option value="Groceries">Groceries</option>
+    <option value="Housing">Housing</option>
+    <option value="Utilities">Utilities</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Others">Others</option>
+</select>
+
+<input type="date" name="date" id="transactionkoDate">
 
 
-     </select>
-  <label>Date</label>
-  <input type="date" id="transactionkoDate">
-     <button type="submit" class="submit-btn"> Add Transaction</button>
-        </form>
+
+    <button type="submit" class="submit-btn">Add Transaction</button>
+</form>
+
     </div>
 </div>
 </div>

@@ -3,16 +3,17 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('analytics/',views.analytics,name='analytics'),
-    path('review/', views.review, name='review'),
-    path('goals/', views.goals, name='goals'),
-    path('help/', views.help, name='help'),
-    path('profile/', views.profile, name='profile'),
-    path('signin/', views.signin, name='signin'),
     path('signup/', views.signup, name='signup'),
-    path('settings/', views.settings, name='settings'),
+    path('signin/', views.signin, name='signin'),
+    path('logout/', views.logout_view, name='logout'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('reset-password/', views.reset_password, name='reset_password'),
+    path('goals/', views.goals, name='goals'),
+    path('analytics/', views.analytics, name='analytics'),
+    path('review/', views.review, name='review'),
+   path('help/', views.help_view, name='help'),
+    path('profile/', views.profile, name='profile'),
+    path('settings/', views.settings_view, name='settings'),
     path('chatbot/', views.chatbot, name='chatbot'),
-
-   
-
 ]

@@ -1,4 +1,3 @@
-
 # Virtual environment
 myenv/
 env/
@@ -19,7 +18,7 @@ db.sqlite3-journal
 
 # Static/media in development
 /media/
-/staticfiles/
+staticfiles/
 
 # Editor folders
 .vscode/
@@ -30,3 +29,9 @@ db.sqlite3-journal
 # OS files
 .DS_Store
 Thumbs.db
+
+# MySQL dumps or SQL files
+*.sql
+
+# Environment variables file
+.env
