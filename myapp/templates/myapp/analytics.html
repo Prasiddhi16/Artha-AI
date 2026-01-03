@@ -66,7 +66,7 @@
     <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
-        <div class="pie-chart"></div>
+        <canvas class="pie-chart"></canvas>
 
                 <div class="legend">
                     <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
@@ -86,6 +86,24 @@
         <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
+        <canvas class="bar-graph"></canvas>
+        </div>
+
+        <div class="box">
+        <p class="headtext">Category Spending Trends</p>
+        <p class="foottext">Track how a category changes over time</p>
+        <div class="categorySelector">
+        <select name="category">
+          <option>Food & Dining</option>
+          <option>Transport</option> 
+          <option>Groceries</option> 
+          <option>Housing</option> 
+          <option>Utilities</option> 
+          <option>Entertainment</option> 
+          <option>Others</option> 
+        </select>
+        </div>
+        <canvas id="line-graph"></canvas>
         </div>
         <div class="box">
         <p class="headtext">Monthly Breakdown</p>
@@ -131,7 +149,7 @@
         <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
-        <div class="pie-chart"></div>
+        <canvas class="pie-chart"></canvas>
 
                 <div class="legend">
                     <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
