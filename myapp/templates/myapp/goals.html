@@ -365,106 +365,68 @@
   <div id="goals" class="tab-panel active">
             <span class="active">Active Goals</span>
             <div class="goalgrid">
-            <div class="goalcard">
+            {% for goal in user_goals %}
+<div class="goalcard" data-goal-id="{{ goal.id }}">
+
   <div class="goalheader">
-    <span class="goalname"><i class="fas fa-bullseye"></i> Emergency Fund</span>
-    <i class="fas fa-trash-alt"></i>
+    <span class="goalname">
+      <i class="fas fa-bullseye"></i> {{ goal.title }}
+    </span>
+   <i class="fas fa-trash-alt delete-goal" data-goal-id="{{ goal.id }}"></i>
   </div>
-  <div class="type">Savings</div>
+
+  <div class="type">{{ goal.category|title }}</div>
+
   <div class="progresscard">
     <div class="info">Progress</div>
+
     <div class="values">
-      <span class="goalsaved">$800.00</span>
+      <span class="goalsaved">₹{{ goal.total_contributed }}</span>
       <span class="divider">/</span>
-      <span class="goalvalue">$2000.00</span>
+      <span class="goalvalue">₹{{ goal.target_amount }}</span>
     </div>
+
     <div class="progressbar">
-      <div class="progressfill" style="width: 40%;"></div>
-    </div>
-    <div class="percentage">40.0% complete</div>
-  </div>
-  <div class="goalend">
-    <div class="inf">Remaining <div class="goalremaining">$1,200.00</div></div>
-    <div class="inf">Deadline <div class="goaldeadline">189 days</div></div>
-  </div>
-  <button class="contributebtn">Add Contribution</button>
+  <div class="progressfill" style="width:{{ goal.progress_percent|floatformat:1 }}%;"></div>
 </div>
 
-<div class="goalcard">
-  <div class="goalheader">
-    <span class="goalname"><i class="fas fa-bullseye"></i> Emergency Fund</span>
-    <i class="fas fa-trash-alt"></i>
-  </div>
-  <div class="type">Savings</div>
-  <div class="progresscard">
-    <div class="info">Progress</div>
-    <div class="values">
-      <span class="goalsaved">$800.00</span>
-      <span class="divider">/</span>
-      <span class="goalvalue">$2000.00</span>
-    </div>
-    <div class="progressbar">
-      <div class="progressfill" style="width: 40%;"></div>
-    </div>
-    <div class="percentage">40.0% complete</div>
-  </div>
-  <div class="goalend">
-    <div class="inf">Remaining <div class="goalremaining">$1,200.00</div></div>
-    <div class="inf">Deadline <div class="goaldeadline">189 days</div></div>
-  </div>
-  <button class="contributebtn">Add Contribution</button>
+<div class="percentage">
+  {{ goal.progress_percent|floatformat:1 }}% complete
 </div>
-
-
-<div class="goalcard">
-  <div class="goalheader">
-    <span class="goalname"><i class="fas fa-bullseye"></i> Emergency Fund</span>
-    <i class="fas fa-trash-alt"></i>
   </div>
-  <div class="type">Savings</div>
-  <div class="progresscard">
-    <div class="info">Progress</div>
-    <div class="values">
-      <span class="goalsaved">$800.00</span>
-      <span class="divider">/</span>
-      <span class="goalvalue">$2000.00</span>
-    </div>
-    <div class="progressbar">
-      <div class="progressfill" style="width: 40%;"></div>
-    </div>
-    <div class="percentage">40.0% complete</div>
-  </div>
+
   <div class="goalend">
-    <div class="inf">Remaining <div class="goalremaining">$1,200.00</div></div>
-    <div class="inf">Deadline <div class="goaldeadline">189 days</div></div>
-  </div>
-  <button class="contributebtn">Add Contribution</button>
-</div>
+    <div class="inf">
+      Remaining
+      <div class="goalremaining">
+         ₹{{ goal.remaining_amount|floatformat:2 }}
+      </div>
+    </div>
 
-<div class="goalcard">
-  <div class="goalheader">
-    <span class="goalname"><i class="fas fa-bullseye"></i> Emergency Fund</span>
-    <i class="fas fa-trash-alt"></i>
-  </div>
-  <div class="type">Savings</div>
-  <div class="progresscard">
-    <div class="info">Progress</div>
-    <div class="values">
-      <span class="goalsaved">$800.00</span>
-      <span class="divider">/</span>
-      <span class="goalvalue">$2000.00</span>
+    <div class="inf">
+      Deadline
+      <div class="goaldeadline">
+        {% if goal.days_remaining is not None %}
+    {{ goal.days_remaining }} days
+  {% else %}
+    N/A
+  {% endif %}
+      </div>
     </div>
-    <div class="progressbar">
-      <div class="progressfill" style="width: 40%;"></div>
-    </div>
-    <div class="percentage">40.0% complete</div>
   </div>
-  <div class="goalend">
-    <div class="inf">Remaining <div class="goalremaining">$1,200.00</div></div>
-    <div class="inf">Deadline <div class="goaldeadline">189 days</div></div>
-  </div>
-  <button class="contributebtn">Add Contribution</button>
+<button class="contributebtn" data-goal-id="{{ goal.id }}"
+          data-goal-title="{{ goal.title }}"
+          data-total="{{ goal.total_contributed }}"
+          data-target="{{ goal.target_amount }}"
+          data-progress="{{ goal.progress_percent|floatformat:0 }}">
+    Add Contribution
+  </button>
+
 </div>
+{% empty %}
+<p>No goals added yet.</p>
+{% endfor %}
+
 <div id="addcontribution-dialog" class="dialoggoal">
   <div class="dialog-content">
     <span id="close-contribution-dialog" class="close">&times;</span>
@@ -478,48 +440,45 @@
           Current Progress
         </div>
         <div class="cprogresscard">
-    <div class="values">
-      <span class="goalsaved">$800.00</span>
-      <span class="divider">/</span>
-      <span class="goalvalue">$2000.00</span>
-    </div>
-    <div class="progressbar">
-      <div class="progressfill" style="width: 40%;"></div>
-    </div>
-    <div class="percentage">40.0% complete</div>
-  </div>
+          <div class="values">
+            <span class="goalsaved">₹0</span>
+            <span class="divider">/</span>
+            <span class="goalvalue">₹0</span>
+          </div>
+          <div class="progressbar">
+            <div class="progressfill" style="width:0%;"></div>
+          </div>
+        </div>
       </div>
     </div>
-    <form method="POST" class="contribution-form">
-    {% csrf_token %}
-    <input type="hidden" name="goal_id" value="{{ goal.id }}">
-    <div class="form-group">
+
+    <form method="POST" class="contribution-form" id="contribution-form">
+      {% csrf_token %}
+      <input type="hidden" name="goal_id" id="contribution-goal-id">
+
+      <div class="form-group">
         <label for="contribution-amount">Contribution Amount</label>
         <input type="number" id="contribution-amount" name="amount" placeholder="$0.00" min="0" step="0.01" required>
-    </div>
+      </div>
 
-    <div class="form-group">
+      <div class="form-group">
         <label for="contribution-date">Contribution Date</label>
         <input type="date" id="contribution-date" name="date" required>
-    </div>
+      </div>
 
-    <div class="form-group">
+      <div class="form-group">
         <label for="contribution-note">Note (optional)</label>
         <input type="text" id="contribution-note" name="note" placeholder="e.g., Salary deposit">
-    </div>
+      </div>
 
-    <div class="form-actions">
+      <div class="form-actions">
         <button type="submit" class="submit-btn">Add Contribution</button>
         <button type="button" class="cancel-btn" onclick="handleContributionCancel()">Cancel</button>
-    </div>
-</form>
-
+      </div>
+    </form>
   </div>
 </div>
-</div>
-</div>
-</div>
-</div>
+
             
             </div>
             </div>
@@ -536,43 +495,64 @@
 <script>
     
       
-    const addgoalBtn = document.querySelector('.addgoalbtn');
-const dialoggoal = document.getElementById('addgoal-dialog'); // fixed ID
-const closeBtn = document.getElementById('close-dialog');
+    // Add Goal dialog elements
+const addGoalBtn = document.querySelector('.addgoalbtn');
+const addGoalDialog = document.getElementById('addgoal-dialog');
+const closeGoalBtn = document.getElementById('close-dialog');
 
 // Open dialog on button click
-addgoalBtn.addEventListener('click', () => {
-  dialoggoal.style.display = 'block';
+addGoalBtn.addEventListener('click', () => {
+  addGoalDialog.style.display = 'block';
 });
 
-// Close dialog
-closeBtn.addEventListener('click', () => {
-  dialoggoal.style.display = 'none';
+// Close dialog when clicking the close icon
+closeGoalBtn.addEventListener('click', () => {
+  addGoalDialog.style.display = 'none';
 });
 
-// Close when clicking outside
+// Close when clicking outside the dialog
 window.addEventListener('click', (e) => {
-  if (e.target === dialoggoal) {
-    dialoggoal.style.display = 'none';
+  if (e.target === addGoalDialog) {
+    addGoalDialog.style.display = 'none';
   }
-  
 });
+
+// Cancel button function
 function handleCancel() {
-  const form = document.querySelector('.goal-form'); 
-  form.reset(); 
-  dialoggoal.style.display = 'none';
+  document.querySelector('.goal-form').reset();
+  addGoalDialog.style.display = 'none';
 }
-// Contribution dialog elements
-const contributionBtns = document.querySelectorAll('.contributebtn');
+
+  // Contribution dialog elements
 const contributionDialog = document.getElementById('addcontribution-dialog');
 const closeContributionBtn = document.getElementById('close-contribution-dialog');
+const contributionForm = document.getElementById('contribution-form');
+const contributionGoalIdInput = document.getElementById('contribution-goal-id');
 
-// Open dialog when any "Add Contribution" button is clicked
-contributionBtns.forEach(btn => {
+// Add click event to all contribution buttons
+document.querySelectorAll('.contributebtn').forEach(btn => {
   btn.addEventListener('click', () => {
+    const goalId = btn.dataset.goalId;
+    const goalTitle = btn.dataset.goalTitle;
+    const total = btn.dataset.total;
+    const target = btn.dataset.target;
+    const progress = btn.dataset.progress;
+
+    // Fill hidden input with goal ID
+    contributionGoalIdInput.value = goalId;
+
+    // Update top box info dynamically
+    contributionDialog.querySelector('.goalsaved').textContent = `₹${total}`;
+    contributionDialog.querySelector('.goalvalue').textContent = `₹${target}`;
+    contributionDialog.querySelector('.progressfill').style.width = `${progress}%`;
+    
+
+    // Show dialog
     contributionDialog.style.display = 'block';
   });
 });
+
+
 
 // Close dialog
 closeContributionBtn.addEventListener('click', () => {
@@ -586,12 +566,53 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Cancel handler
+// Cancel button function
 function handleContributionCancel() {
-  const form = document.querySelector('.contribution-form');
-  form.reset();
+  contributionForm.reset();
   contributionDialog.style.display = 'none';
 }
+contributionForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  contributionDialog.style.display = 'none';
+
+  const formData = new FormData(contributionForm);
+
+  fetch("{% url 'add_contribution_ajax' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    // Find the goal card in the DOM
+    const goalCard = document.querySelector(`.goalcard[data-goal-id='${data.id}']`);
+    if (!goalCard) return;
+
+    // Update progress values
+    goalCard.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+    goalCard.querySelector('.goalremaining').textContent = `₹${parseFloat(data.remaining_amount).toFixed(2)}`;
+    goalCard.querySelector('.progressfill').style.width = `${data.progress_percent}%`;
+    goalCard.querySelector('.percentage').textContent = `${data.progress_percent}% complete`;
+
+    // Update dialog too
+    contributionDialog.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+    contributionDialog.querySelector('.goalremaining').textContent = `₹${parseFloat(data.remaining_amount).toFixed(2)}`;
+    contributionDialog.querySelector('.progressfill').style.width = `${data.progress_percent}%`;
+
+    contributionForm.reset();
+    contributionDialog.style.display = 'none';
+  })
+  .catch(err => console.error(err));
+});
+// Contribution dialog elements
 
 function showPanel(button, panelId) {
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -600,5 +621,34 @@ function showPanel(button, panelId) {
   button.classList.add('active');
   document.getElementById(panelId).classList.add('active');
 }
+// Delete goal functionality
+document.querySelectorAll('.goalcard .fa-trash-alt').forEach(icon => {
+  icon.addEventListener('click', () => {
+    if (!confirm("Are you sure you want to delete this goal?")) return;
+
+    const goalCard = icon.closest('.goalcard');
+    const goalId = goalCard.dataset.goalId;
+
+    const formData = new FormData();
+    formData.append('goal_id', goalId);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'delete_goal' %}", {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+      } else if (data.success) {
+        goalCard.remove(); // Remove from DOM
+        alert("Goal deleted successfully!");
+      }
+    })
+    .catch(err => console.error(err));
+  });
+});
+
      </script>
   {% endblock %}
