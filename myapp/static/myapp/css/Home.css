@@ -8,7 +8,27 @@
         body {
             background-color: #f5f7fa;
             display: flex;
+            overflow-x: hidden;
         }
+    .messages {
+    margin: 10px 0;
+}
+.message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+
 
         iframe {
             width: 240px;
