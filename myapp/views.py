@@ -13,22 +13,7 @@ from .models import GoalContribution
 from django.shortcuts import render, redirect, get_object_or_404
 
 
-<<<<<<< HEAD
-def budget(request):
-    return render(request, 'myapp/budget.html')
 
-def review(request):
-    return render(request, 'myapp/review.html')
-
-def goals(request):
-    return render(request, 'myapp/goals.html')
-
-def help(request):
-    return render(request, 'myapp/help.html')
-
-def profile(request):
-    return render(request, 'myapp/profile.html')
-=======
 # ---------------- Signup ----------------
 def signup(request):
     if request.method == "POST":
@@ -44,7 +29,6 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'myapp/signup.html', {'form': form})
->>>>>>> 9c8d4100f4f95d2b0f7195d4857afe1ef3a16c90
 
 # ---------------- Signin ----------------
 def signin(request):
@@ -66,10 +50,8 @@ def logout_view(request):
     logout(request)
     return redirect('signin')
 
-<<<<<<< HEAD
 def chatbot(request):
     return render(request, 'myapp/chatbot.html')
-=======
 
 # ---------------- Forgot Password ----------------
 def forgot_password(request):
@@ -77,7 +59,6 @@ def forgot_password(request):
         messages.success(request, "OTP sent successfully!")
         return redirect('verify_otp')
     return render(request, 'myapp/forgotpassword.html')
->>>>>>> 9c8d4100f4f95d2b0f7195d4857afe1ef3a16c90
 
 # ---------------- Verify OTP ----------------
 def verify_otp(request):
@@ -226,6 +207,7 @@ def add_contribution(request, goal_id):
 
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
+def budget(request):return render(request, 'myapp/budget.html')
 def review(request): return render(request, 'myapp/review.html')
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
