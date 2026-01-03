@@ -70,6 +70,7 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=100)
     target_date = models.DateField()
+    current_contribution = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
 
     def __str__(self):
         return f"{self.user.email} - Goal: {self.title}"

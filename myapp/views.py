@@ -6,10 +6,14 @@ from django.utils import timezone
 from decimal import Decimal
 import random, time
 from django.db.models import Sum
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from datetime import date
 
-from .models import User, Expense, Income, Goal
+from .models import User, Expense, Income, Goal,GoalContribution
 from .forms import SignUpForm
-from .models import GoalContribution
+from .forms import GoalForm
+from .forms import GoalContributionForm
 from django.shortcuts import render, redirect, get_object_or_404
 
 
@@ -151,59 +155,137 @@ def home(request):
     return render(request, 'myapp/home.html', context)
 
 # ---------------- Goals ----------------
-@login_required(login_url='signin')
+
 @login_required(login_url='signin')
 def goals(request):
     if request.method == "POST":
-        Goal.objects.create(
-            user=request.user,
-            title=request.POST.get("title"),
-            target_amount=request.POST.get("target_amount"),
-            category=request.POST.get("category"),
-            target_date=request.POST.get("target_date"),
-        )
-        messages.success(request, "Goal added successfully!")
-        return redirect('goals')
+        form = GoalForm(request.POST)
+        if form.is_valid():
+            goal = form.save(commit=False)
+            goal.user = request.user
+            goal.save()
+            messages.success(request, "Goal added successfully!")
+            return redirect('goals')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = GoalForm()
 
     user_goals = Goal.objects.filter(user=request.user)
-    return render(request, 'myapp/goals.html', {'user_goals': user_goals})
+
+    for goal in user_goals:
+        total = goal.contributions.aggregate(
+            Sum('amount')
+        )['amount__sum'] or Decimal('0.00')
+        goal.total_contributed = total
+        goal.remaining_amount = goal.target_amount - total
+        goal.progress_percent = (
+            total / goal.target_amount * 100
+        ) if goal.target_amount > 0 else 0
+        if goal.target_date:
+            today = date.today()
+            remaining = (goal.target_date - today).days
+            goal.days_remaining = remaining if remaining > 0 else 0
+        else:
+            goal.days_remaining = None
+
+
+    return render(
+        request,
+        'myapp/goals.html',
+        {
+            'user_goals': user_goals,
+            'form': form
+        }
+    )
 
 
 @login_required(login_url='signin')
 def add_contribution(request, goal_id):
-    goal = get_object_or_404(Goal, id=goal_id)
+    goal = get_object_or_404(Goal, id=goal_id, user=request.user)
 
     if request.method == "POST":
+        form = GoalContributionForm(request.POST)
+        if form.is_valid():
+            contribution = form.save(commit=False)
+            contribution.user = request.user
+            contribution.goal = goal
+            contribution.save()
+
+            messages.success(
+                request,
+                f"₹{contribution.amount} contributed to {goal.title}"
+            )
+            return redirect('goals')
+        else:
+            messages.error(request, "Invalid contribution data.")
+    else:
+        form = GoalContributionForm(initial={'goal': goal})
+
+    return render(
+        request,
+        'myapp/goal_detail.html',
+        {'goal': goal, 'form': form}
+    )
+
+
+from django.http import JsonResponse
+
+@login_required(login_url='signin')
+@require_POST
+def delete_goal(request):
+    goal_id = request.POST.get('goal_id')
+    try:
+        goal = Goal.objects.get(id=goal_id, user=request.user)
+        goal.delete()
+        return JsonResponse({"success": True})
+    except Goal.DoesNotExist:
+        return JsonResponse({"error": "Goal not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+@login_required(login_url='signin')
+def add_contribution_ajax(request):
+    if request.method == "POST":
+        goal_id = request.POST.get("goal_id")
         amount = request.POST.get("amount")
         date = request.POST.get("date")
-        note = request.POST.get("note")
+        note = request.POST.get("note", "")
 
-        if not amount or not date:
-            return render(request, "goal_detail.html", {"goal": goal, "error": "Amount and date required."})
-
-        # Convert amount to Decimal
         try:
+            goal = Goal.objects.get(id=goal_id, user=request.user)
             amount = Decimal(amount)
-        except:
-            return render(request, "goal_detail.html", {"goal": goal, "error": "Invalid amount."})
 
-        # Save contribution
-        contribution = GoalContribution.objects.create(
-            user=request.user,
-            goal=goal,
-            amount=amount,
-            date=date,
-            note=note
-        )
+            contribution = GoalContribution.objects.create(
+                user=request.user,
+                goal=goal,
+                amount=amount,
+                date=date,
+                note=note
+            )
 
-        # Update Goal
-        goal.current_contribution += amount
-        goal.last_contribution_date = date
-        goal.save()
+            # Recalculate totals
+            total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+            goal_total = total
+            progress_percent = (total / goal.target_amount * 100) if goal.target_amount > 0 else 0
+            remaining_amount = goal.target_amount - total
 
-        return redirect("goals")  # or wherever you want
+            data = {
+                "id": goal.id,
+                "total_contributed": str(total),
+                "progress_percent": round(progress_percent, 1),
+                "remaining_amount": str(remaining_amount),
+            }
 
-    return render(request, "goal_detail.html", {"goal": goal})
+            return JsonResponse(data)
+
+        except Goal.DoesNotExist:
+            return JsonResponse({"error": "Goal not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
 
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
