@@ -6,6 +6,9 @@ def home(request):
 def analytics(request):
     return render(request, 'myapp/analytics.html')
 
+def budget(request):
+    return render(request, 'myapp/budget.html')
+
 def review(request):
     return render(request, 'myapp/review.html')
 
@@ -23,9 +26,6 @@ def signin(request):
 
 def signup(request):
     return render(request, 'myapp/signup.html')
-
-def settings(request):
-    return render(request, 'myapp/settings.html')
 
 def chatbot(request):
     return render(request, 'myapp/chatbot.html')
