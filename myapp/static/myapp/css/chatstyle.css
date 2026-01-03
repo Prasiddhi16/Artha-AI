@@ -30,7 +30,7 @@ body {
 
 #chatbot-containeer {
   position: fixed;
-  bottom: 80px;
+  top: 120px;      /* push it lower from the top */
   right: 20px;
   width: 350px;
   height: 450px;
@@ -40,6 +40,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  bottom:80px;
+
 }
 
 /* Hide garna lai Initially */
@@ -57,7 +59,10 @@ body {
   align-items: center;
   font-size: 18px;
 }
-
+#text
+{
+    color: white;
+}
 #close-btn {
   background: none;
   border: none;
@@ -95,35 +100,38 @@ body {
   color: white;
   align-self: flex-start;
 }
-
 #chatbot-input-containeer {
   display: flex;
-  padding: 40px;
-  border-top: 1px solid white;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid #ddd;
   background-color: white;
-  gap: 21px;
+  gap: 12px;
 }
 
 #chatbot-input {
   flex: 1;
-  padding: 10px;
+  padding: 10px 14px;
   border: 1px solid #444;
-  border-radius: 20px;
-  background-color: #333;
-  color: white;
+  border-radius: 10px;
+  background-color: #fafafa;
+  color: rgb(19, 18, 18);
+  font-size: 14px;
+  margin-left: 0;
 }
 
 #send-btn {
-  margin-left: 10px;
-  padding: 10px 20px;
+  padding: 10px 16px;
   background-color: navy;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 #send-btn:hover {
   background-color: #50C878;
+  color: black;
 }
