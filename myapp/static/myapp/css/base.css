@@ -2,8 +2,45 @@
 color:black;
 font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
-.header {
-  width: 100vw;       /* full viewport width */
-  position: relative; /* or fixed if you want it floating */
-  left: 0;
+ body {
+      display: flex;
+      min-height: 100vh;
+      background-color: #f5f5f7;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background-color: #1e40af;
+      color: white;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    main {
+      margin-left: 250px; /* space for sidebar */
+      flex: 1;
+      padding: 20px;
+      min-width: 0; /* fix overflow issues */
+    }
+
+      main {
+        margin-left: 0;
+        padding: 10px;
+      }
+      /* Remove extra gap between sidebar and header */
+.header-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
+
+    
