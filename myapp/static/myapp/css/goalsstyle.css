@@ -332,7 +332,8 @@ background-color: white;
 }
 
 .milestone-item.active {
-  border-left-color: rgb(137, 93, 10);
+   background: rgba(113, 109, 87, 0.1);
+  border-left-color: gold;
 }
 
 .milestone-item.upcoming {
