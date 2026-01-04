@@ -215,7 +215,7 @@ def goals(request):
     "First Quarter": "fas fa-seedling",
     "Halfway There": "fas fa-flag",
     "Final Stretch": "fas fa-flag-checkered",
-    "Goal Achieved": "fas fa-trophy"
+    "Goal Achieved": "fas fa-star"
 }
             milestones.append({
                 "name": name,
@@ -244,7 +244,7 @@ def goals(request):
             'completed_goals': completed_goals,
             'total_target': total_target,
             'total_saved': total_saved,
-            'overall_progress': round(overall_progress, 2),
+            'overall_progress': min(round(overall_progress, 2),100),
         }
     )
 
@@ -368,14 +368,15 @@ def add_contribution_ajax(request):
            "id": goal.id,
            "title": goal.title,
             "total_contributed": float(total),
-            "progress_percent": round(progress_percent, 1),
+            "target_amount": float(goal.target_amount), 
+            "progress_percent": min(round(progress_percent, 1),100),
             "remaining_amount": float(remaining_amount),
             "milestones": milestones, 
             "total_goals": total_goals,
             "completed_goals": completed_goals,
             "total_target": float(total_target),
             "total_saved": float(total_saved),
-            "overall_progress": round(overall_progress, 1),
+            "overall_progress": min(round(overall_progress, 1),100),
         }
 
         return JsonResponse(data)
