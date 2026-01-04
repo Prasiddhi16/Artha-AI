@@ -74,7 +74,7 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - Goal: {self.title}"
-     # ---------------- Goal Model ----------------
+     # ---------------- GoalContribution Model ----------------
 
 class GoalContribution(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -85,9 +85,6 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
-
-
-
-
+    
 
 

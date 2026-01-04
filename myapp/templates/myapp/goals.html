@@ -62,8 +62,8 @@
                     <span>Total Goals</span>
                     <i  class="fas fa-bullseye"></i>
                 </section>
-                <section class="goalnumber">3</section>
-                <section class="completegoal">0 goals completed</section>
+                <section class="goalnumber" id="total-goals">{{ total_goals }}</section>
+                <section class="completegoal" id="completed-goals">{{completed_goals}} goals completed</section>
                 </div>
             </div>
 
@@ -73,8 +73,8 @@
                     <span>Total Target</span>
                    <i class="fas fa-arrow-trend-up"></i> 
                 </section>
-                <section class="goalnumber"style="color:rgb(109,109,224);">$17000.00</section>
-                <section class="completegoal">$650.00 saved</section>
+                <section class="goalnumber" id="total-target" style="color:rgb(109,109,224);">₹ {{total_target}}</section>
+                <section class="completegoal" id="total-saved">₹ {{ total_saved }} saved</section>
             </div>
             </div>
 
@@ -84,9 +84,9 @@
                     <span>Overall Progress</span>
                     <i class="fas fa-calendar"></i>
                 </section>
-                <section class="goalnumber">38%</section>
+                <section class="goalnumber" id="overall-progress-text">{{ overall_progress }}%</section>
                <div class="progressbar">
-               <div class="progressfill" style="width: 38%;"></div>
+               <div class="progressfill" id="overall-progress-bar" style="width:{{ overall_progress }}%;"></div>
                 </div>
 
             </div>
@@ -103,263 +103,53 @@
     </button>
   </div>
 
-  <div id="milestones"  class="tab-panel">
-     <span class="active">Milestones</span>
+
+<div id="milestones" class="tab-panel">
+    <span class="active">Milestones</span>
     <div class="milestonegrid">
-      <div class="milestonecard">
-        <div class="goalheader">
-    <span class="goalname"><i class="fas fa-trophy"></i>
-</i> Milestones</span>
-   <button class="complete"> 45% Complete</button></button>
-  </div>
-  <div class="type">Track your progress checkpoints</div>
-   <div class="milestone-tracker">
-  <div class="milestone-item completed">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-seedling" ></i> First Quarter
+        {% for goal in user_goals %}
+        <div class="milestonecard" data-goal-id="{{ goal.id }}">
+            <div class="goalheader">
+                <span class="goalname"><i class="fas fa-trophy"></i> {{ goal.title }}</span>
+                <button class="complete">{{ goal.progress_percent|floatformat:0 }}% Complete</button>
+            </div>
+            <div class="type">Track your progress checkpoints</div>
+            <div class="milestone-tracker">
+                {% for milestone in goal.dynamic_milestones %}
+                <div class="milestone-item {{ milestone.status }}">
+                    <div class="container">
+                        <div class="milestone-label">
+                            {% if milestone.name == "First Quarter" %}
+                                <i class="fas fa-seedling"></i>
+                            {% elif milestone.name == "Halfway There" %}
+                                <i class="fas fa-flag"></i>
+                            {% elif milestone.name == "Final Stretch" %}
+                                <i class="fas fa-flag-checkered"></i>
+                            {% else %}
+                                <i class="fas fa-star"></i>
+                            {% endif %}
+                            {{ milestone.name }}
+                        </div>
+                        <div class="milestone-status">
+                            {% if milestone.status == "completed" %}
+                                <i class="fas fa-check-circle" style="color:green;"></i> Completed
+                            {% elif milestone.status == "active" %}
+                                <i class="fas fa-hourglass" style="color:gold;"></i> Next
+                            {% else %}
+                                <i class="fas fa-running" style="color:navy;"></i> Upcoming
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="milestone-target">₹{{ milestone.amount|floatformat:2 }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No goals to track milestones yet.</p>
+        {% endfor %}
     </div>
-    <div class="milestone-status">
-      <i class="fas fa-check-circle" style="color: green;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$2,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item active">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag" ></i> Halfway There
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-hourglass" style="color: gold;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$5,000.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag-checkered" ></i> Final Stretch
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-running" style="color: navy;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$7,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-     <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-trophy" ></i> Goal Achieved
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-star" style="color: gold;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$10,000.00</div>
-    
-  </div>
-  
-</div>    
-    </div>
-    
-
-    <div class="milestonecard">
-        <div class="goalheader">
-    <span class="goalname"><i class="fas fa-trophy"></i>
-</i> Milestones</span>
-   <button class="complete"> 45% Complete</button></button>
-  </div>
-  <div class="type">Track your progress checkpoints</div>
-   <div class="milestone-tracker">
-  <div class="milestone-item completed">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-seedling" ></i> First Quarter
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-check-circle" style="color: green;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$2,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item active">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag" ></i> Halfway There
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-hourglass" style="color: gold;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$5,000.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag-checkered" ></i> Final Stretch
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-running" style="color: navy;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$7,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-     <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-trophy" ></i> Goal Achieved
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-star" style="color: gold;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$10,000.00</div>
-    
-  </div>
-  
-</div>    
-    </div>
-
-    <div class="milestonecard">
-        <div class="goalheader">
-    <span class="goalname"><i class="fas fa-trophy"></i>
-</i> Milestones</span>
-   <button class="complete"> 45% Complete</button></button>
-  </div>
-  <div class="type">Track your progress checkpoints</div>
-   <div class="milestone-tracker">
-  <div class="milestone-item completed">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-seedling" ></i> First Quarter
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-check-circle" style="color: green;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$2,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item active">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag" ></i> Halfway There
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-hourglass" style="color: gold;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$5,000.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag-checkered" ></i> Final Stretch
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-running" style="color: navy;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$7,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-     <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-trophy" ></i> Goal Achieved
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-star" style="color: gold;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$10,000.00</div>
-    
-  </div>
-  
-</div>    
-    </div>
-
-    <div class="milestonecard">
-        <div class="goalheader">
-    <span class="goalname"><i class="fas fa-trophy"></i>
-</i> Milestones</span>
-   <button class="complete"> 45% Complete</button></button>
-  </div>
-  <div class="type">Track your progress checkpoints</div>
-   <div class="milestone-tracker">
-  <div class="milestone-item completed">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-seedling" ></i> First Quarter
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-check-circle" style="color: green;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$2,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item active">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag" ></i> Halfway There
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-hourglass" style="color: gold;"></i> Completed
-    </div>
-    </div>
-    <div class="milestone-target">$5,000.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-    <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-flag-checkered" ></i> Final Stretch
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-running" style="color: navy;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$7,500.00</div>
-    
-  </div>
-
-  <div class="milestone-item upcoming">
-     <div class="container">
-    <div class="milestone-label">
-      <i class="fas fa-trophy" ></i> Goal Achieved
-    </div>
-    <div class="milestone-status">
-      <i class="fas fa-star" style="color: gold;"></i> Not yet reached
-    </div>
-    </div>
-    <div class="milestone-target">$10,000.00</div>
-    
-  </div>
-  
-</div>    
-    </div>
-
-  </div>
+</div>
   </div>
 
   <div id="goals" class="tab-panel active">
@@ -492,6 +282,26 @@
 
 
 {% block extra_js %}
+ <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+ <script>
+function launchConfetti() {
+    confetti({
+        particleCount: 120,
+        angle: 60,
+        spread: 90,
+        origin: { x: 0, y: 0.6 },
+        colors: ['#6d6de0', '#ffd700', '#00ff99', '#ff6b6b']
+    });
+    confetti({
+        particleCount: 120,
+        angle: 120,
+        spread: 90,
+        origin: { x: 1, y: 0.6 },
+        colors: ['#6d6de0', '#ffd700', '#00ff99', '#ff6b6b']
+    });
+}
+</script>
+
 <script>
     
       
@@ -576,6 +386,8 @@ contributionForm.addEventListener('submit', function(e) {
   contributionDialog.style.display = 'none';
 
   const formData = new FormData(contributionForm);
+  const goalId = contributionGoalIdInput.value;
+
 
   fetch("{% url 'add_contribution_ajax' %}", {
     method: 'POST',
@@ -595,23 +407,125 @@ contributionForm.addEventListener('submit', function(e) {
     // Find the goal card in the DOM
     const goalCard = document.querySelector(`.goalcard[data-goal-id='${data.id}']`);
     if (!goalCard) return;
-
+    let progress = parseFloat(data.progress_percent);
+progress = Math.min(progress, 100); 
     // Update progress values
     goalCard.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
     goalCard.querySelector('.goalremaining').textContent = `₹${parseFloat(data.remaining_amount).toFixed(2)}`;
-    goalCard.querySelector('.progressfill').style.width = `${data.progress_percent}%`;
-    goalCard.querySelector('.percentage').textContent = `${data.progress_percent}% complete`;
+    goalCard.querySelector('.progressfill').style.width = `${progress}%`;
+    goalCard.querySelector('.percentage').textContent = `${progress}% complete`;
+
+    // Update contribution dialog top box
+const topBox = contributionDialog.querySelector('.topbox');
+if (topBox) {
+     const progressFill = topBox.querySelector('.cprogresscard .progressfill');
+    const goalSaved = topBox.querySelector('.cprogresscard .values .goalsaved');
+    const goalValue = topBox.querySelector('.cprogresscard .values .goalvalue');
+    
+    if (progressFill) progressFill.style.width = `${parseFloat(data.progress_percent).toFixed(1)}%`;
+    if (goalSaved) goalSaved.textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+    if (goalValue) goalValue.textContent = `₹${parseFloat(data.target_amount).toFixed(2)}`;
+
+    const btn = document.querySelector(`.contributebtn[data-goal-id='${data.id}']`);
+if (btn) {
+    btn.dataset.total = data.total_contributed;
+    btn.dataset.target = data.target_amount;
+    btn.dataset.progress = data.progress_percent;
+}
+}
 
     // Update dialog too
-    contributionDialog.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
-    contributionDialog.querySelector('.goalremaining').textContent = `₹${parseFloat(data.remaining_amount).toFixed(2)}`;
-    contributionDialog.querySelector('.progressfill').style.width = `${data.progress_percent}%`;
+   contributionGoalIdInput.value = goalId;
+   contributionDialog.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+contributionDialog.querySelector('.goalvalue').textContent = `₹${parseFloat(data.target_amount).toFixed(2)}`;
+contributionDialog.querySelector('.progressfill').style.width = `${parseFloat(data.progress_percent)}%`;
+
 
     contributionForm.reset();
     contributionDialog.style.display = 'none';
+    
+      const milestoneCard = document.querySelector(`.milestonecard[data-goal-id='${data.id}']`);
+      //update milestones
+    if (milestoneCard && data.milestones) {
+        const tracker = milestoneCard.querySelector('.milestone-tracker');
+        tracker.innerHTML = '';
+        data.milestones.forEach(m => {
+            tracker.innerHTML += `
+            <div class="milestone-item ${m.status}">
+                <div class="container">
+                    <div class="milestone-label">
+                        <i class="${m.icon}"></i> ${m.name}
+                    </div>
+                    <div class="milestone-status">
+                        ${m.status === "completed" ? '<i class="fas fa-check-circle" style="color:green;"></i> Completed' :
+                          m.status === "active" ? '<i class="fas fa-hourglass" style="color:gold;"></i> Next' :
+                          '<i class="fas fa-running" style="color:navy;"></i> Upcoming'}
+                    </div>
+                </div>
+                 <div class="milestone-target">₹${parseFloat(m.amount).toFixed(2)}</div>
+            </div>`;
+        });
+        const completeBtn = milestoneCard.querySelector('.complete');
+    if (completeBtn) {
+        completeBtn.textContent = `${parseFloat(progress).toFixed(0)}% Complete`;
+    }
+   
+  }
+    document.getElementById("total-goals").innerText = data.total_goals;
+document.getElementById("completed-goals").innerText =
+  data.completed_goals + " goals completed";
+
+document.getElementById("total-target").innerText =
+  "₹ " + parseFloat(data.total_target).toFixed(2);
+
+document.getElementById("total-saved").innerText =
+  "₹ " + parseFloat(data.total_saved).toFixed(2) + " saved";
+
+document.getElementById("overall-progress-text").innerText =
+  data.overall_progress + "%";
+
+document.getElementById("overall-progress-bar").style.width =
+  data.overall_progress + "%";
+
+  if (parseFloat(progress) >= 100) {
+        launchConfetti(); // celebrate
+
+        // Ask if user wants to delete
+        setTimeout(() => {
+            if (confirm(`Congratulations! You completed "${data.title}". Do you want to delete this goal?`)) {
+                // Trigger delete AJAX
+                const formData = new FormData();
+                formData.append('goal_id', data.id);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                fetch("{% url 'delete_goal' %}", {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(resp => resp.json())
+                .then(delData => {
+                    if (delData.success) {
+                    // Remove goal card
+                    const goalCardToDelete = document.querySelector(`.goalcard[data-goal-id='${data.id}']`);
+                    if (goalCardToDelete) goalCardToDelete.remove();
+
+                    // Remove milestone card
+                    const milestoneCardToDelete = document.querySelector(`.milestonecard[data-goal-id='${data.id}']`);
+                    if (milestoneCardToDelete) milestoneCardToDelete.remove();
+
+                    alert("Goal and its milestones deleted successfully!");
+                } else if (delData.error) {
+                    alert(delData.error);
+                }
+            });
+        }
+    }, 500);
+}
   })
   .catch(err => console.error(err));
 });
+
+
 // Contribution dialog elements
 
 function showPanel(button, panelId) {
@@ -628,6 +542,7 @@ document.querySelectorAll('.goalcard .fa-trash-alt').forEach(icon => {
 
     const goalCard = icon.closest('.goalcard');
     const goalId = goalCard.dataset.goalId;
+    
 
     const formData = new FormData();
     formData.append('goal_id', goalId);
@@ -643,7 +558,10 @@ document.querySelectorAll('.goalcard .fa-trash-alt').forEach(icon => {
         alert(data.error);
       } else if (data.success) {
         goalCard.remove(); // Remove from DOM
-        alert("Goal deleted successfully!");
+         const milestoneCard = document.querySelector(`.milestonecard[data-goal-id='${goalId}']`);
+        if (milestoneCard) milestoneCard.remove();
+
+        alert("Goal and its milestones deleted successfully!");
       }
     })
     .catch(err => console.error(err));
@@ -651,4 +569,5 @@ document.querySelectorAll('.goalcard .fa-trash-alt').forEach(icon => {
 });
 
      </script>
+    
   {% endblock %}

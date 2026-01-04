@@ -158,6 +158,8 @@ def home(request):
 
 @login_required(login_url='signin')
 def goals(request):
+
+    
     if request.method == "POST":
         form = GoalForm(request.POST)
         if form.is_valid():
@@ -172,6 +174,12 @@ def goals(request):
         form = GoalForm()
 
     user_goals = Goal.objects.filter(user=request.user)
+    icon_map = {
+        "First Quarter": "fas fa-seedling",
+        "Halfway There": "fas fa-flag",
+        "Final Stretch": "fas fa-flag-checkered",
+        "Goal Achieved": "fas fa-star"
+    }
 
     for goal in user_goals:
         total = goal.contributions.aggregate(
@@ -188,16 +196,59 @@ def goals(request):
             goal.days_remaining = remaining if remaining > 0 else 0
         else:
             goal.days_remaining = None
+ # -------- Milestones --------
+        milestone_amounts = [0.25, 0.5, 0.75, 1.0]  # 25%, 50%, 75%, 100%
+        milestone_names = ["First Quarter", "Halfway There", "Final Stretch", "Goal Achieved"]
+        milestones = []
+        active_set = False  # Track first active milestone
 
+        for perc, name in zip(milestone_amounts, milestone_names):
+            amount = goal.target_amount * Decimal(perc)
+            if total >= amount:
+                status = "completed"
+            elif not active_set:
+                status = "active"
+                active_set = True
+            else:
+                status = "upcoming"
+                icon_map = {
+    "First Quarter": "fas fa-seedling",
+    "Halfway There": "fas fa-flag",
+    "Final Stretch": "fas fa-flag-checkered",
+    "Goal Achieved": "fas fa-trophy"
+}
+            milestones.append({
+                "name": name,
+                 "amount": float(amount),
+                "status": status,
+                 "icon": icon_map[name]
+            })
+
+        goal.dynamic_milestones = milestones
+
+#  Overview calculations   
+        
+    total_goals = user_goals.count()
+    completed_goals = sum(1 for g in user_goals if g.progress_percent >= 100)
+    total_target = sum(g.target_amount for g in user_goals) if user_goals else Decimal('0.00')
+    total_saved = sum(g.total_contributed for g in user_goals) if user_goals else Decimal('0.00')
+    overall_progress = (total_saved / total_target * 100) if total_target > 0 else 0
 
     return render(
         request,
         'myapp/goals.html',
         {
             'user_goals': user_goals,
-            'form': form
+            'form': form,
+            'total_goals': total_goals,
+            'completed_goals': completed_goals,
+            'total_target': total_target,
+            'total_saved': total_saved,
+            'overall_progress': round(overall_progress, 2),
         }
     )
+
+
 
 
 @login_required(login_url='signin')
@@ -245,48 +296,96 @@ def delete_goal(request):
         return JsonResponse({"error": str(e)}, status=400)
 
 @login_required(login_url='signin')
+@require_POST
 def add_contribution_ajax(request):
-    if request.method == "POST":
-        goal_id = request.POST.get("goal_id")
-        amount = request.POST.get("amount")
-        date = request.POST.get("date")
-        note = request.POST.get("note", "")
+    goal_id = request.POST.get("goal_id")
+    amount = request.POST.get("amount")
+    date = request.POST.get("date")
+    note = request.POST.get("note", "")
 
-        try:
-            goal = Goal.objects.get(id=goal_id, user=request.user)
-            amount = Decimal(amount)
+    try:
+        goal = Goal.objects.get(id=goal_id, user=request.user)
+        amount = Decimal(amount)
 
-            contribution = GoalContribution.objects.create(
-                user=request.user,
-                goal=goal,
-                amount=amount,
-                date=date,
-                note=note
-            )
+        # Save contribution
+        contribution = GoalContribution.objects.create(
+            user=request.user,
+            goal=goal,
+            amount=amount,
+            date=date,
+            note=note
+        )
 
-            # Recalculate totals
-            total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
-            goal_total = total
-            progress_percent = (total / goal.target_amount * 100) if goal.target_amount > 0 else 0
-            remaining_amount = goal.target_amount - total
+        # Recalculate this goal's totals
+        total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        progress_percent = (
+    round((total / goal.target_amount * 100), 1)
+    if goal.target_amount > 0
+    else 0
+)
+        remaining_amount = goal.target_amount - total
+        # Recalculate milestones
+        milestone_amounts = [0.25, 0.5, 0.75, 1.0]
+        milestone_names = ["First Quarter", "Halfway There", "Final Stretch", "Goal Achieved"]
+        milestones = []
+        active_set = False
+        for perc, name in zip(milestone_amounts, milestone_names):
+            amount_m = goal.target_amount * Decimal(perc)
+            if total >= amount_m:
+                status = "completed"
+            elif not active_set:
+                status = "active"
+                active_set = True
+            else:
+                status = "upcoming"
+            milestones.append({
+                "name": name,
+                "amount": float(amount_m),
+                "status": status
+            })
+       # ---------- OVERVIEW CALCULATIONS ----------
+        user_goals = Goal.objects.filter(user=request.user)
 
-            data = {
-                "id": goal.id,
-                "total_contributed": str(total),
-                "progress_percent": round(progress_percent, 1),
-                "remaining_amount": str(remaining_amount),
-            }
+        total_goals = user_goals.count()
 
-            return JsonResponse(data)
+        completed_goals = 0
+        total_target = Decimal('0.00')
+        total_saved = Decimal('0.00')
 
-        except Goal.DoesNotExist:
-            return JsonResponse({"error": "Goal not found"}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
+        for g in user_goals:
+            contributed = g.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+
+            total_target += g.target_amount
+            total_saved += contributed
+
+            if contributed >= g.target_amount:
+                completed_goals += 1
+
+        overall_progress = (total_saved / total_target * 100) if total_target > 0 else 0
+
+
+        data = {
+           "id": goal.id,
+           "title": goal.title,
+            "total_contributed": float(total),
+            "progress_percent": round(progress_percent, 1),
+            "remaining_amount": float(remaining_amount),
+            "milestones": milestones, 
+            "total_goals": total_goals,
+            "completed_goals": completed_goals,
+            "total_target": float(total_target),
+            "total_saved": float(total_saved),
+            "overall_progress": round(overall_progress, 1),
+        }
+
+        return JsonResponse(data)
+
+    except Goal.DoesNotExist:
+        return JsonResponse({"error": "Goal not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
-
-
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
 def budget(request):return render(request, 'myapp/budget.html')
