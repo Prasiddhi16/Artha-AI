@@ -312,6 +312,37 @@ background-color: white;
   border: 1px solid #ccc;
 
 }
+#ladder-dialog {
+  display: none;
+}
+  #ladder-dialog .dialog-content {
+  width: 70vw;        /* was likely ~400px */
+  max-width: 900px;  /* prevents over-stretch */
+  height: 80vh;      /* taller modal */
+  padding: 24px;
+}
+  
+
+.ladder-btn
+{
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  border: 3px solid #7d7676;
+  border-radius: 8px;
+  border: none;
+  background: #d9d9de;
+  color: rgb(10, 10, 10);
+  cursor: pointer;
+  
+
+}
+.completed-btn {
+    background: #4CAF50;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.85;
+}
 .milestone-tracker {
   display: flex;
   flex-direction: column;

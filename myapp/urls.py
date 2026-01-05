@@ -19,5 +19,8 @@ urlpatterns = [
     path('chatbot/', views.chatbot, name='chatbot'),
     path('ajax/add_contribution/', views.add_contribution_ajax, name='add_contribution_ajax'),
     path('delete_goal/', views.delete_goal, name='delete_goal'),
+    path("goals/contributions/",views.goal_contributions_ajax,name="goal_contributions_ajax"),
+
+
 
 ]
