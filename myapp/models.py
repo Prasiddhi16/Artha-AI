@@ -80,11 +80,13 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=100)
     target_date = models.DateField()
-    current_contribution = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
+    created = models.DateField(auto_now_add=True)
+
+    
 
     def __str__(self):
         return f"{self.user.email} - Goal: {self.title}"
-     # ---------------- Goal Model ----------------
+     # ---------------- GoalContribution Model ----------------
 
 class GoalContribution(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -95,9 +97,6 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
-
-
-
-
+    
 
 
