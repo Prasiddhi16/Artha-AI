@@ -509,10 +509,65 @@ def goal_contributions_ajax(request):
     })
 
 
+# ---------------- Review Pages ----------------
+@login_required(login_url='signin')
+def review(request):
+    user = request.user
+
+    # ---------------- FETCH DATA ----------------
+    expenses = Expense.objects.filter(user=user)
+    incomes = Income.objects.filter(user=user)
+
+    # ---------------- TOTALS ----------------
+    total_income = incomes.aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0.00')
+
+    total_expense = expenses.aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0.00')
+
+    filtered_total = total_income - total_expense
+
+    income_count = incomes.count()
+    expense_count = expenses.count()
+    total_count = income_count + expense_count
+
+    # ---------------- COMBINE TRANSACTIONS ----------------
+    expense_list = list(expenses)
+    income_list = list(incomes)
+
+    for e in expense_list:
+        e.transaction_type = "Expense"
+
+    for i in income_list:
+        i.transaction_type = "Income"
+
+    transactions = sorted(
+        expense_list + income_list,
+        key=lambda x: x.date,
+        reverse=True
+    )
+
+    # ---------------- CONTEXT ----------------
+    context = {
+        "transactions": transactions,
+
+        "filtered_total": filtered_total,
+        "total_income": total_income,
+        "total_expense": total_expense,
+
+        "income_count": income_count,
+        "expense_count": expense_count,
+        "total_count": total_count,
+    }
+
+    return render(request, "myapp/review.html", context)
+
+
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
 def budget(request):return render(request, 'myapp/budget.html')
-def review(request): return render(request, 'myapp/review.html')
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
 def settings_view(request): return render(request, 'myapp/settings.html')
@@ -576,3 +631,163 @@ def scan_receipt(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+# transaction deletion
+
+@login_required
+@require_POST
+def delete_transaction(request):
+    data = json.loads(request.body)
+    t_id = data.get("id")
+    t_type = data.get("type")
+
+    try:
+        if t_type == "Expense":
+            Expense.objects.get(id=t_id, user=request.user).delete()
+        else:
+            Income.objects.get(id=t_id, user=request.user).delete()
+
+        # Recalculate totals
+        expenses = Expense.objects.filter(user=request.user)
+        incomes = Income.objects.filter(user=request.user)
+
+        total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+
+        return JsonResponse({
+        "success": True,
+        "total_income": float(total_income),
+        "total_expense": float(total_expense),
+        "filtered_total": float(total_income - total_expense),
+        "total_count": expenses.count() + incomes.count()
+        })
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    
+
+
+
+
+#filter and search
+from django.db.models import Q
+
+@login_required
+def filter_transactions(request):
+    search = request.GET.get("search", "").strip()
+    type_filter = request.GET.get("type", "All Types")
+    category_filter = request.GET.get("category", "All Categories")
+    sort_by = request.GET.get("sort", "date_desc")
+
+    # Combine Income and Expense into a single list
+    expenses = Expense.objects.filter(user=request.user)
+    incomes = Income.objects.filter(user=request.user)
+
+    for e in expenses: e.transaction_type = "Expense"
+    for i in incomes: i.transaction_type = "Income"
+
+    transactions = list(expenses) + list(incomes)
+
+    # Apply search and filters
+    if search:
+        transactions = [t for t in transactions if search.lower() in (t.description or t.category).lower()]
+
+    if type_filter != "All Types":
+        transactions = [t for t in transactions if t.transaction_type == type_filter]
+
+    if category_filter != "All Categories":
+        transactions = [t for t in transactions if t.category == category_filter]
+
+    # Sorting
+    reverse = True
+    key_func = lambda t: t.date
+    if sort_by == "date_asc": reverse = False
+    elif sort_by == "amount_asc": key_func = lambda t: t.amount; reverse = False
+    elif sort_by == "amount_desc": key_func = lambda t: t.amount
+    elif sort_by == "type_asc": key_func = lambda t: t.transaction_type; reverse = False
+    elif sort_by == "type_desc": key_func = lambda t: t.transaction_type
+
+    transactions.sort(key=key_func, reverse=reverse)
+
+    # Prepare summary totals
+    total_income = sum(t.amount for t in transactions if t.transaction_type=="Income")
+    total_expense = sum(t.amount for t in transactions if t.transaction_type=="Expense")
+    filtered_total = total_income - total_expense
+    income_count = sum(1 for t in transactions if t.transaction_type=="Income")
+    expense_count = sum(1 for t in transactions if t.transaction_type=="Expense")
+    total_count = len(transactions)
+
+    transaction_list = []
+    for t in transactions:
+        transaction_list.append({
+            "id": t.id,
+            "description": t.description or t.category,
+            "category": t.category,
+            "transaction_type": t.transaction_type,
+            "amount": float(t.amount),
+            "date": t.date.strftime("%Y-%m-%d")
+        })
+
+    return JsonResponse({
+        "transactions": transaction_list,
+        "filtered_total": filtered_total,
+        "total_income": total_income,
+        "total_expense": total_expense,
+        "income_count": income_count,
+        "expense_count": expense_count,
+        "total_count": total_count
+    })
+
+#delete transactions home page
+@login_required
+@require_POST
+def delete_transactionhome(request):
+    import json
+    from django.db.models import Sum, Max, Avg
+    data = json.loads(request.body)
+    t_id = data.get("id")
+    t_type = data.get("type")
+
+    try:
+        if t_type == "Expense":
+            trans = Expense.objects.get(id=t_id, user=request.user)
+        else:
+            trans = Income.objects.get(id=t_id, user=request.user)
+        trans.delete()
+
+        # Recalculate transactions
+        expenses = Expense.objects.filter(user=request.user)
+        incomes = Income.objects.filter(user=request.user)
+
+        total_income = sum(i.amount for i in incomes)
+        total_expense = sum(e.amount for e in expenses)
+        balance = total_income - total_expense
+        total_count = expenses.count() + incomes.count()
+        avg_transaction = (sum([t.amount for t in list(expenses) + list(incomes)]) / total_count) if total_count > 0 else 0
+        largest_expense = max([e.amount for e in expenses], default=0)
+        avg_expense = (sum(e.amount for e in expenses) / expenses.count()) if expenses.exists() else 0
+
+
+        # Category data for chart
+        categories = {}
+        for e in expenses:
+            categories[e.category] = categories.get(e.category, 0) + float(e.amount)
+
+        category_data = [{"category": k, "total": v} for k, v in categories.items()]
+
+        # Progress bar percentage (expenses / income)
+        progress_percentage = (total_expense / total_income * 100) if total_income > 0 else 0
+
+        return JsonResponse({
+            "success": True,
+            "balance": float(balance),
+            "total_income": float(total_income),
+            "total_expense": float(total_expense),
+            "total_count": total_count,
+            "avg_transaction": float(avg_transaction),
+            "largest_expense": float(largest_expense),
+            "category_data": category_data,
+            "progress_percentage": float(progress_percentage)
+        })
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})

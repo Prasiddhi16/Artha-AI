@@ -28,19 +28,20 @@
         <div class="summary-grid">
             <div class="card">
                 <h4 class="summary-title">Filtered Total</h4>
-                <div class="summary-amount">$6150.22</div>
-                <div class="summary-count">15 transactions</div>
+                <div class="summary-amount" id="filteredTotal">₹ {{ filtered_total }}</div>
+                <div class="summary-count" id="totalCount">{{ total_count }} transactions</div>
             </div>
             <div class="card">
-                <h4 class="summary-title">Filtered Income</h4>
-                <div class="summary-amount blue">$4250.00</div>
-                <div class="summary-count">3 transactions</div>
-            </div>
-            <div class="card">
-                <h4 class="summary-title">Filtered Expenses</h4>
-                <div class="summary-amount red">$1900.22</div>
-                <div class="summary-count">12 transactions</div>
-            </div>
+    <h4 class="summary-title">Filtered Income</h4>
+    <div class="summary-amount blue" id="incomeTotal">₹ {{ total_income }}</div>
+    <div class="summary-count" id="incomeCount">{{ income_count }} transactions</div>
+</div>
+
+<div class="card">
+    <h4 class="summary-title">Filtered Expenses</h4>
+    <div class="summary-amount red" id="expenseTotal">₹ {{ total_expense }}</div>
+    <div class="summary-count" id="expenseCount">{{ expense_count }} transactions</div>
+</div>
         </div>
 
         <!-- Filter Section -->
@@ -56,30 +57,35 @@
             <div class="filter-controls">
                 <div class="filter-group">
                     <label>Type</label>
-                    <select>
-                        <option>All Types</option>
-                        <option>Income</option>
-                        <option>Expense</option>
-                    </select>
+                   <select id="typeSelect">
+    <option value="All Types">All Types</option>
+    <option value="Income">Income</option>
+    <option value="Expense">Expense</option>
+</select>
                 </div>
                 <div class="filter-group">
                     <label>Category</label>
-                    <select>
-                        <option>All Categories</option>
-                        <option>Groceries</option>
-                        <option>Transportation</option>
-                        <option>Entertainment</option>
-                        <option>Freelance</option>
-                        <option>Housing</option>
-                    </select>
+                   
+
+<select id="categorySelect">
+    <option value="All Categories">All Categories</option>
+    <option value="Groceries">Groceries</option>
+    <option value="Transportation">Transportation</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Freelance">Freelance</option>
+    <option value="Housing">Housing</option>
+</select>
                 </div>
                 <div class="filter-group">
                     <label>Sort By</label>
-                    <select>
-                        <option>Date</option>
-                        <option>Amount</option>
-                        <option>Category</option>
-                    </select>
+                    <select id="sortFilter">
+    <option value="date_desc">Date Desc</option>
+    <option value="date_asc">Date Asc</option>
+    <option value="amount_desc">Amount Desc</option>
+    <option value="amount_asc">Amount Asc</option>
+    <option value="type_asc">Type Asc</option>
+    <option value="type_desc">Type Desc</option>
+</select>
                 </div>
                 <div class="filter-group action-group">
                     <label>Actions</label>
@@ -89,70 +95,38 @@
         </div>
 
         <!-- Transaction List -->
-        <div class="transaction-list-container">
-            <h4>Transaction History: <span class="text-muted">Showing 6 out of 6 transactions</span></h4>
+         <div id="transactions-list">
+        {% for t in transactions %}
+<div class="trans-item" data-id="{{ t.id }}" data-type="{{ t.transaction_type }}">
+    
+    <div class="trans-icon {% if t.transaction_type == 'Expense' %}red-bg{% else %}blue-bg{% endif %}">
+        <i class="fas {% if t.transaction_type == 'Expense' %}fa-shopping-cart{% else %}fa-hand-holding-usd{% endif %}"></i>
+    </div>
 
-            <!-- Example Transactions -->
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-shopping-cart"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Weekly shopping <span class="badge gray">Groceries</span></div>
-                    <div class="trans-date">Nov 8, 2025</div>
-                </div>
-                <div class="trans-amount red">-$125.50</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-gas-pump"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Gas station <span class="badge teal">Transportation</span></div>
-                    <div class="trans-date">Nov 7, 2025</div>
-                </div>
-                <div class="trans-amount red">-$45.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-ticket-alt"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Concert tickets <span class="badge purple">Entertainment</span></div>
-                    <div class="trans-date">Nov 6, 2025</div>
-                </div>
-                <div class="trans-amount red">-$89.99</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon blue-bg"><i class="fas fa-laptop-code"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Web design project <span class="badge green">Freelance</span></div>
-                    <div class="trans-date">Nov 5, 2025</div>
-                </div>
-                <div class="trans-amount green">+$250.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-utensils"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Dinner at restaurant <span class="badge gray">Food</span></div>
-                    <div class="trans-date">Nov 4, 2025</div>
-                </div>
-                <div class="trans-amount red">-$60.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon blue-bg"><i class="fas fa-hand-holding-usd"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Freelance logo design <span class="badge green">Freelance</span></div>
-                    <div class="trans-date">Nov 3, 2025</div>
-                </div>
-                <div class="trans-amount green">+$350.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
+    <div class="trans-details">
+        <div class="trans-name">
+            {{ t.description|default:t.category }}
+            <span class="badge gray">{{ t.category }}</span>
         </div>
+        <div class="trans-date">{{ t.date }}</div>
+    </div>
+
+    <div class="trans-amount {% if t.transaction_type == 'Expense' %}red{% else %}green{% endif %}">
+        {% if t.transaction_type == 'Expense' %}-{% else %}+{% endif %}₹{{ t.amount }}
+    </div>
+
+    <!-- 🗑 DELETE ICON -->
+    <div class="trans-delete">
+        <i class="fas fa-trash delete-transaction"></i>
+    </div>
+
+</div>
+{% empty %}
+<p>No transactions found.</p>
+{% endfor %}
+</div>
+
+
 
     </div>
 
@@ -338,6 +312,100 @@
 
 {% block extra_js %}
 <script>
+    
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+    const searchInput = document.querySelector(".search-input");
+   const typeSelect = document.getElementById("typeSelect");
+const categorySelect = document.getElementById("categorySelect");
+const sortSelect = document.getElementById("sortFilter");
+    const transactionsContainer = document.getElementById("transactions-view");
+
+    function fetchFilteredTransactions() {
+        const search = searchInput.value;
+        const type = typeSelect.value;
+        const category = categorySelect.value;
+         const sort = sortSelect.value;  
+
+        const params = new URLSearchParams({ search, type, category, sort });
+
+
+        fetch("{% url 'filter_transactions' %}?" + params.toString())
+            .then(res => res.json())
+            .then(data => {
+                renderTransactions(data.transactions);
+                updateSummary(data);
+            });
+    }
+
+    function renderTransactions(transactions) {
+    const container = document.getElementById("transactions-list");
+    container.innerHTML = ""; 
+
+    if (transactions.length === 0) {
+        container.innerHTML = "<p>No transactions found.</p>";
+        return;
+    }
+
+    transactions.forEach(t => {
+        const html = `
+        <div class="trans-item" data-id="${t.id}" data-type="${t.transaction_type}">
+            <div class="trans-icon ${t.transaction_type === "Expense" ? "red-bg" : "blue-bg"}">
+                <i class="fas ${t.transaction_type === "Expense" ? "fa-shopping-cart" : "fa-hand-holding-usd"}"></i>
+            </div>
+            <div class="trans-details">
+                <div class="trans-name">
+                    ${t.description}
+                    <span class="badge gray">${t.category}</span>
+                </div>
+                <div class="trans-date">${t.date}</div>
+            </div>
+            <div class="trans-amount ${t.transaction_type === "Expense" ? "red" : "green"}">
+                ${t.transaction_type === "Expense" ? "-" : "+"}₹${t.amount.toFixed(2)}
+            </div>
+            <div class="trans-delete">
+                <i class="fas fa-trash delete-transaction"></i>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML("beforeend", html);
+    });
+}
+
+
+    function updateSummary(data) {
+        document.getElementById("filteredTotal").innerText = "₹ " + data.filtered_total.toFixed(2);
+        document.getElementById("incomeTotal").innerText = "₹ " + data.total_income.toFixed(2);
+        document.getElementById("expenseTotal").innerText = "₹ " + data.total_expense.toFixed(2);
+        document.getElementById("incomeCount").innerText = data.income_count + " transactions";
+        document.getElementById("expenseCount").innerText = data.expense_count + " transactions";
+        document.getElementById("totalCount").innerText = data.total_count + " transactions";
+    }
+    
+
+    // Event listeners
+    searchInput.addEventListener("input", fetchFilteredTransactions);
+
+    searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        fetchFilteredTransactions();
+    }
+});
+
+    typeSelect.addEventListener("change", fetchFilteredTransactions);
+    categorySelect.addEventListener("change", fetchFilteredTransactions);
+    sortSelect.addEventListener("change", fetchFilteredTransactions);
+
+
+    document.querySelector(".clear-btn").addEventListener("click", () => {
+        searchInput.value = "";
+        typeSelect.value = "All Types";
+        categorySelect.value = "All Categories";
+        fetchFilteredTransactions();
+    });
+});
+
 function openTab(tabName) {
     const transactionsView = document.getElementById('transactions-view');
     const aiView = document.getElementById('ai-insights-view');
@@ -359,5 +427,58 @@ function openTab(tabName) {
 document.addEventListener('DOMContentLoaded', () => {
     openTab('transactions');
 });
+
+
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("delete-transaction")) {
+
+        const row = e.target.closest(".trans-item");
+        const id = row.dataset.id;
+        const type = row.dataset.type;
+
+        if (!confirm("Delete this transaction?")) return;
+
+        fetch("{% url 'delete_transaction' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                type: type
+            })
+        })
+        .then(res => res.json())
+       .then(data => {
+    if (data.success) {
+        row.remove();
+
+        document.getElementById("filteredTotal").innerText =
+            "₹" + data.filtered_total.toFixed(2);
+
+        document.getElementById("incomeTotal").innerText =
+            "₹" + data.total_income.toFixed(2);
+
+        document.getElementById("expenseTotal").innerText =
+            "₹" + data.total_expense.toFixed(2);
+
+        document.getElementById("incomeCount").innerText =
+            data.income_count + " transactions";
+
+        document.getElementById("expenseCount").innerText =
+            data.expense_count + " transactions";
+
+        document.getElementById("totalCount").innerText =
+            data.total_count;
+    } else {
+        alert(data.error);
+    }
+});
+
+    }
+});
+
+
 </script>
 {% endblock %}

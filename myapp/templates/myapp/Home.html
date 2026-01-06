@@ -58,7 +58,7 @@
             {% if forloop.counter0 == 0 %}#1e3a8a{% elif forloop.counter0 == 1 %}#60a5fa{% elif forloop.counter0 == 2 %}#93c5fd{% elif forloop.counter0 == 3 %}#bfdbfe{% elif forloop.counter0 == 4 %}#2563eb{% else %}#3b82f6{% endif %};">
         </span>
         <span style="font-size: 0.9rem;">
-            <strong>{{ item.category }}:</strong> Rs. {{ item.total|floatformat:2 }}
+            <strong>{{ item.category }}:</strong> Rs. {{ item.total|default:0 }}
         </span>
     </div>
     {% endfor %}
@@ -69,26 +69,25 @@
     <h3>Quick Stats</h3>
     <p>This month's overview</p>
     <div class="qs-row">
-        <span>Net Change</span>
-        <span class="{% if net_change >= 0 %}green{% else %}red{% endif %}">
-            {% if net_change >= 0 %}+{% endif %}{{ net_change|floatformat:2 }}
-        </span>
-    </div>
-    <div class="progress-bar">
-        <div class="progress-fill" style="width: {% if total_income > 0 %}{{ total_expense|divisibleby:total_income }}{% else %}0{% endif %}%"></div>
-    </div>
-    <div class="qs-row">
-        <span>Total Transactions</span>
-        <span>{{ total_count }}</span>
-    </div>
-    <div class="qs-row">
-        <span>Average Expense</span>
-        <span class="green">Rs. {{ avg_transaction|floatformat:2 }}</span>
-    </div>
-    <div class="qs-row">
-        <span>Largest Expense</span>
-        <span class="red">Rs. {{ largest_expense|floatformat:2 }}</span>
-    </div>
+    <span>Net Change</span>
+    <span class="stat-net-change {% if net_change >= 0 %}green{% else %}red{% endif %}">
+        {% if net_change >= 0 %}+{% endif %}{{ net_change|floatformat:2 }}
+    </span>
+</div>
+<div class="progress-bar"> <div class="progress-fill" style="width: {% if total_income > 0 %}{{ total_expense|divisibleby:total_income }}{% else %}0{% endif %}%"></div> </div>
+<div class="qs-row">
+    <span>Total Transactions</span>
+    <span class="stat-total-count">{{ total_count }}</span>
+</div>
+<div class="qs-row">
+    <span>Average Expense</span>
+    <span class="stat-avg-expense green">Rs. {{ avg_transaction|floatformat:2 }}</span>
+</div>
+<div class="qs-row">
+    <span>Largest Expense</span>
+    <span class="stat-largest-expense red">Rs. {{ largest_expense|floatformat:2 }}</span>
+</div>
+
 </div>
         </div>
 
@@ -103,33 +102,38 @@
 
         <div class="table-card">
     <h3>Recent Transactions</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        
-        <tbody>
-            {% for trans in transactions %}
-            <tr>
-                <td>{{ trans.date|date:"M d, Y" }}</td>
-                <td>{{ trans.category }}</td>
-                <td>{{ trans.transaction_type }}</td>
-                <td class="{% if trans.transaction_type == 'Expense' %}negative{% else %}positive{% endif %}">
-                    Rs. {{ trans.amount }}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No transactions found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
+  <table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Action</th> 
+        </tr>
+    </thead>
+    
+    <tbody>
+        {% for trans in transactions %}
+        <tr data-id="{{ trans.id }}" data-type="{{ trans.transaction_type }}">
+            <td>{{ trans.date|date:"M d, Y" }}</td>
+            <td>{{ trans.category }}</td>
+            <td>{{ trans.transaction_type }}</td>
+            <td class="{% if trans.transaction_type == 'Expense' %}negative{% else %}positive{% endif %}">
+                Rs. {{ trans.amount }}
+            </td>
+            <td>
+                <i class="fas fa-trash delete-transactionhome" style="cursor:pointer;color:rgb(18, 18, 18);"></i>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No transactions found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 </div>
     </div>
 
@@ -169,6 +173,8 @@
 
 {% block extra_js %}
 <script>
+
+    
     // 1. Initialize Date
     document.getElementById("transactionkoDate").value = new Date().toISOString().split('T')[0];
 
@@ -235,20 +241,14 @@ document.getElementById("receiptInput").addEventListener("change", function() {
     });
 });
 const ctx = document.getElementById('categoryChart').getContext('2d');
-new Chart(ctx, {
+window.categoryChartInstance = new Chart(ctx, {
     type: 'pie',
     data: {
         labels: [{% for item in category_data %}"{{ item.category|safe }}",{% endfor %}],
         datasets: [{
             data: [{% for item in category_data %}{{ item.total|floatformat:2 }},{% endfor %}],
             backgroundColor: [
-                '#1e3a8a', 
-                '#60a5fa', // Light Blue (Slice 2)
-                '#93c5fd', // Sky Blue (Slice 3)
-                '#bfdbfe', // Pale Blue (Slice 4)
-                '#2563eb', // Royal Blue (Slice 5)
-                '#3b82f6', // Medium Blue (Slice 6)
-                '#a5b4fc'  // Indigo (Slice 7)
+                '#1e3a8a','#60a5fa','#93c5fd','#bfdbfe','#2563eb','#3b82f6','#a5b4fc'
             ],
             borderWidth: 1
         }]
@@ -256,10 +256,61 @@ new Chart(ctx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false } 
-        }
+        plugins: { legend: { display: false } }
     }
 });
+
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("delete-transactionhome")) {
+        const row = e.target.closest("tr");
+        const id = row.dataset.id;
+        const type = row.dataset.type;
+
+        if (!confirm("Delete this transaction?")) return;
+
+        fetch("{% url 'delete_transactionhome' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ id: id, type: type })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                row.remove();
+
+                // Update cards
+                document.querySelector(".cards .value").innerText = "Rs. " + data.balance.toFixed(2);
+                document.querySelector(".cards .value.positive").innerText = "Rs. " + data.total_income.toFixed(2);
+                document.querySelector(".cards .value.negative").innerText = "Rs. " + data.total_expense.toFixed(2);
+
+                // Update quick stats
+                document.querySelector(".stat-net-change").innerText = (data.balance >= 0 ? "+" : "") + data.balance.toFixed(2);
+                document.querySelector(".stat-total-count").innerText = data.total_count;
+                document.querySelector(".stat-avg-expense").innerText = "Rs. " + data.avg_transaction.toFixed(2);
+                document.querySelector(".stat-largest-expense").innerText = "Rs. " + data.largest_expense.toFixed(2);
+
+                // Update progress bar
+                document.querySelector(".progress-fill").style.width = parseFloat(data.progress_percentage).toFixed(1) + "%";
+
+                // Update category chart
+                if (window.categoryChartInstance) {
+                    window.categoryChartInstance.data.labels = data.category_data.map(c => c.category);
+                    window.categoryChartInstance.data.datasets[0].data = data.category_data.map(c => parseFloat(c.total));
+                    window.categoryChartInstance.update();
+                }
+
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(err => console.error(err));
+    }
+});
+
+
+
 </script>
 {% endblock %}

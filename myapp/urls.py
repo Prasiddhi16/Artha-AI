@@ -20,9 +20,10 @@ urlpatterns = [
     path('ajax/add_contribution/', views.add_contribution_ajax, name='add_contribution_ajax'),
     path('delete_goal/', views.delete_goal, name='delete_goal'),
     path("goals/contributions/",views.goal_contributions_ajax,name="goal_contributions_ajax"),
-
-
+    path("delete-transaction/", views.delete_transaction, name="delete_transaction"),
     path("scan-receipt/", views.scan_receipt, name="scan_receipt"),
     path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
+    path("filter-transactions/", views.filter_transactions, name="filter_transactions"),
+     path("delete-transaction-home/", views.delete_transactionhome, name="delete_transactionhome"),
 
 ]
