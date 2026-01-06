@@ -4,7 +4,7 @@ from groq import Groq
 
 load_dotenv()
 
-client = Groq(api_key="DJANGO_SECRET_KEY")
+client = Groq(api_key="SECRET_KEY")
 
 def get_bot_response(user_message):
     try:

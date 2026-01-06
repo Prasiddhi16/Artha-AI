@@ -30,19 +30,20 @@ body {
 
 #chatbot-container {
   position: fixed;
-  top: 180px;      /* push it lower from the top */
   right: 20px;
+  bottom: 20px;
   width: 350px;
-  height: 450px;
+  height: calc(100vh - 150px); /* keeps it within viewport */
+  max-height: 800px;           /* optional cap */
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  bottom:80px;
-
 }
+
+
 
 .hidden {
   display: none !important;
