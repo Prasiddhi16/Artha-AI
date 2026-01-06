@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from decimal import Decimal
 import random, time
-from django.db.models import Sum, Avg, Max
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from datetime import date
@@ -90,12 +90,13 @@ def reset_password(request):
 def home(request):
     user = request.user
 
-    # 1. HANDLE ADD TRANSACTION
+    # ---------- HANDLE ADD TRANSACTION ----------
     if request.method == "POST":
         try:
             amount = request.POST.get("amount")
             transaction_type = request.POST.get("transaction_type")
             category = request.POST.get("category")
+            # Use timezone.now().date() if date is not provided
             date_val = request.POST.get("date") or timezone.now().date()
 
             if not amount:
@@ -106,51 +107,58 @@ def home(request):
 
             if transaction_type == "expense":
                 Expense.objects.create(
-                    user=user, amount=amount, category=category,
-                    description=category, date=date_val
+                    user=user,
+                    amount=amount,
+                    category=category,
+                    description=category,
+                    date=date_val
                 )
                 messages.success(request, f"Expense of Rs. {amount} added successfully!")
+
             elif transaction_type == "income":
                 Income.objects.create(
-                    user=user, amount=amount, category=category,
-                    description=category, date=date_val
+                    user=user,
+                    amount=amount,
+                    category=category,
+                    description=category,
+                    date=date_val
                 )
                 messages.success(request, f"Income of Rs. {amount} added successfully!")
+
             return redirect('home')
+
         except Exception as e:
             messages.error(request, f"Error: {e}")
             return redirect('home')
 
-    # 2. DASHBOARD TOTALS
-    # We fetch fresh querysets here to ensure clean data
-    all_expenses = Expense.objects.filter(user=user)
-    all_incomes = Income.objects.filter(user=user)
+    # ---------- DASHBOARD DATA ----------
+    expenses_qs = Expense.objects.filter(user=user)
+    incomes_qs = Income.objects.filter(user=user)
 
-    total_income = all_incomes.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
-    total_expense = all_expenses.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+    # 1. Aggregates for Top Cards
+    total_income = incomes_qs.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+    total_expense = expenses_qs.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
     balance = total_income - total_expense
-
-    # 3. GROUPED DATA FOR PIE CHART (FIXES MULTIPLE FOOD ENTRIES)
-    # .order_by() is empty to stop date-sorting from breaking the group
-    category_data = all_expenses.values('category').annotate(
-        total=Sum('amount')
-    ).order_by('-total')
-
-    # 4. QUICK STATS
-    total_count = all_expenses.count() + all_incomes.count()
-    avg_transaction = all_expenses.aggregate(Avg('amount'))['amount__avg'] or 0
-    largest_expense = all_expenses.aggregate(Max('amount'))['amount__max'] or 0
+    
+    # 2. Aggregates for Quick Stats
+    from django.db.models import Avg, Max
     net_change = total_income - total_expense
+    total_count = expenses_qs.count() + incomes_qs.count()
+    avg_transaction = expenses_qs.aggregate(Avg('amount'))['amount__avg'] or Decimal('0.00')
+    largest_expense = expenses_qs.aggregate(Max('amount'))['amount__max'] or Decimal('0.00')
 
-    # 5. RECENT TRANSACTIONS (FOR THE TABLE)
-    recent_incomes = list(all_incomes.order_by('-date')[:10])
-    recent_expenses = list(all_expenses.order_by('-date')[:10])
+    # 3. GROUPED Data for Pie Chart and Legend (Fixes the duplicates)
+    category_data = expenses_qs.values('category').annotate(total=Sum('amount')).order_by('-total')
 
-    for i in recent_incomes: i.transaction_type = 'Income'
-    for e in recent_expenses: e.transaction_type = 'Expense'
+    # 4. Recent Transactions List
+    # We add attributes to objects manually for the combined list
+    for i in incomes_qs:
+        i.transaction_type = 'Income'
+    for e in expenses_qs:
+        e.transaction_type = 'Expense'
 
     transactions = sorted(
-        recent_incomes + recent_expenses,
+        list(incomes_qs) + list(expenses_qs),
         key=lambda x: x.date,
         reverse=True
     )[:10]
@@ -159,12 +167,12 @@ def home(request):
         'total_income': total_income,
         'total_expense': total_expense,
         'balance': balance,
-        'transactions': transactions,
-        'category_data': category_data,
+        'net_change': net_change,
         'total_count': total_count,
         'avg_transaction': avg_transaction,
         'largest_expense': largest_expense,
-        'net_change': net_change,
+        'category_data': category_data, # Grouped data
+        'transactions': transactions,
     }
 
     return render(request, 'myapp/home.html', context)
@@ -322,7 +330,6 @@ def chatbot_api(request):
             return JsonResponse({"reply": "Error: " + str(e)}, status=400)
     return JsonResponse({"error": "Invalid request"}, status=400)
 @csrf_exempt
-@login_required
 def scan_receipt(request):
     if request.method == "POST":
         try:
@@ -330,41 +337,30 @@ def scan_receipt(request):
             if not receipt:
                 return JsonResponse({"error": "No file uploaded"}, status=400)
 
-            # Save file temporarily
             media_path = os.path.join(os.getcwd(), "media", "receipts")
             os.makedirs(media_path, exist_ok=True)
+            
             save_path = os.path.join(media_path, receipt.name)
 
             with open(save_path, "wb+") as f:
                 for chunk in receipt.chunks():
                     f.write(chunk)
 
-            # 1. OCR Extraction
             data = extract_receipt_data(save_path)
 
-            # 2. Convert string type to Title Case (Income/Expense)
-            t_type = str(data["type"]).strip().title()
+            # Save to Database
+            Transaction.objects.create(
+                amount=data["amount"],
+                category=data["category"],
+                transaction_type=data["type"],
+                date=data["date"]
+            )
 
-            # 3. SAVE TO DATABASE (This makes it dynamic!)
-            if t_type == "Income":
-                Income.objects.create(
-                    user=request.user,
-                    amount=Decimal(data["amount"]),
-                    category=data["category"],
-                    description="Scanned Receipt",
-                    date=data["date"]
-                )
-            else:
-                Expense.objects.create(
-                    user=request.user,
-                    amount=Decimal(data["amount"]),
-                    category=data["category"],
-                    description="Scanned Receipt",
-                    date=data["date"]
-                )
-
-            return JsonResponse({"status": "success", "amount": data["amount"]})
+            return JsonResponse({"status": "success", "data": data})
 
         except Exception as e:
+            print(f"CRITICAL ERROR: {str(e)}")
             return JsonResponse({"error": str(e)}, status=500)
+
     return JsonResponse({"error": "Invalid request"}, status=400)
+
