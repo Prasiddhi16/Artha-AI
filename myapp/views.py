@@ -5,16 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from decimal import Decimal
 import random, time
-<<<<<<< HEAD
 from django.db.models import Sum, Count
 from django.db.models.functions import ExtractMonth, ExtractYear
 from .models import User, Expense, Income, Goal
 from django.db.models import Sum
 from django.db.models import Avg
 from django.db.models import Max
-=======
-from django.db.models import Sum, Avg, Max
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from datetime import date
@@ -32,7 +28,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import GoalContribution, Goal
-<<<<<<< HEAD
 from myapp.services.ai_insights import generate_ai_insights
 from .models import Transaction
 from datetime import timedelta
@@ -55,18 +50,6 @@ def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
 def settings_view(request): return render(request, 'myapp/settings.html')
 def chatbot(request): return render(request, 'myapp/chatbot.html')
-=======
-
-import random
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.core.mail import send_mail
-from .models import PasswordResetOTP
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 
 
 # ---------------- Signup ----------------
@@ -107,7 +90,6 @@ def logout_view(request):
 
 def chatbot(request):
     return render(request, 'myapp/chatbot.html')
-<<<<<<< HEAD
 
 # ---------------- Forgot Password ----------------
 def forgot_password(request):
@@ -132,8 +114,6 @@ def reset_password(request):
 
 
 
-=======
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 # ---------------- Home / Dashboard ----------------
 @login_required(login_url='signin')
 def home(request):
@@ -218,28 +198,16 @@ def home(request):
 
     return render(request, 'myapp/home.html', context)
 # ---------------- Goals ----------------
-<<<<<<< HEAD
 @login_required(login_url='signin')
 def goals(request):
     user = request.user
 
     # ---------------- Handle Goal Form ----------------
-=======
-
-@login_required(login_url='signin')
-def goals(request):
-
-    
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     if request.method == "POST":
         form = GoalForm(request.POST)
         if form.is_valid():
             goal = form.save(commit=False)
-<<<<<<< HEAD
             goal.user = user
-=======
-            goal.user = request.user
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
             goal.save()
             messages.success(request, "Goal added successfully!")
             return redirect('goals')
@@ -248,7 +216,6 @@ def goals(request):
     else:
         form = GoalForm()
 
-<<<<<<< HEAD
     # ---------------- Fetch Goals ----------------
     user_goals = Goal.objects.filter(user=user)
 
@@ -260,9 +227,6 @@ def goals(request):
     overall_progress = (total_saved / total_target * 100) if total_target > 0 else 0
 
     # ---------------- Milestones ----------------
-=======
-    user_goals = Goal.objects.filter(user=request.user)
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     icon_map = {
         "First Quarter": "fas fa-seedling",
         "Halfway There": "fas fa-flag",
@@ -271,7 +235,6 @@ def goals(request):
     }
 
     for goal in user_goals:
-<<<<<<< HEAD
         total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
         goal.total_contributed = total
         goal.remaining_amount = goal.target_amount - total
@@ -294,40 +257,12 @@ def goals(request):
         for perc, name in zip(milestone_amounts, milestone_names):
             amount_m = goal.target_amount * Decimal(perc)
             if total >= amount_m:
-=======
-        total = goal.contributions.aggregate(
-            Sum('amount')
-        )['amount__sum'] or Decimal('0.00')
-        goal.total_contributed = total
-        goal.remaining_amount = goal.target_amount - total
-        goal.progress_percent = min(
-    (total / goal.target_amount * 100) if goal.target_amount > 0 else 0,
-    100
-)
-
-        if goal.target_date:
-            today = date.today()
-            remaining = (goal.target_date - today).days
-            goal.days_remaining = remaining if remaining > 0 else 0
-        else:
-            goal.days_remaining = None
- # -------- Milestones --------
-        milestone_amounts = [0.25, 0.5, 0.75, 1.0]  # 25%, 50%, 75%, 100%
-        milestone_names = ["First Quarter", "Halfway There", "Final Stretch", "Goal Achieved"]
-        milestones = []
-        active_set = False  # Track first active milestone
-
-        for perc, name in zip(milestone_amounts, milestone_names):
-            amount = goal.target_amount * Decimal(perc)
-            if total >= amount:
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
                 status = "completed"
             elif not active_set:
                 status = "active"
                 active_set = True
             else:
                 status = "upcoming"
-<<<<<<< HEAD
             milestones.append({
                 "name": name,
                 "amount": float(amount_m),
@@ -360,47 +295,6 @@ def goals(request):
     }
 
     return render(request, "myapp/goals.html", context)
-=======
-                icon_map = {
-    "First Quarter": "fas fa-seedling",
-    "Halfway There": "fas fa-flag",
-    "Final Stretch": "fas fa-flag-checkered",
-    "Goal Achieved": "fas fa-star"
-}
-            milestones.append({
-                "name": name,
-                 "amount": float(amount),
-                "status": status,
-                 "icon": icon_map[name]
-            })
-
-        goal.dynamic_milestones = milestones
-
-#  Overview calculations   
-        
-    total_goals = user_goals.count()
-    completed_goals = sum(1 for g in user_goals if g.progress_percent >= 100)
-    total_target = sum(g.target_amount for g in user_goals) if user_goals else Decimal('0.00')
-    total_saved = sum(g.total_contributed for g in user_goals) if user_goals else Decimal('0.00')
-    overall_progress = min(
-    (total_saved / total_target * 100) if total_target > 0 else 0,
-    100
-)
-    return render(
-        request,
-        'myapp/goals.html',
-        {
-            'user_goals': user_goals,
-            'form': form,
-            'total_goals': total_goals,
-            'completed_goals': completed_goals,
-            'total_target': total_target,
-            'total_saved': total_saved,
-            'overall_progress': min(round(overall_progress, 2),100),
-        }
-    )
-
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 
 
 @login_required(login_url='signin')
@@ -639,7 +533,6 @@ def goal_contributions_ajax(request):
          "individuals": individual_amounts,
               "color": ladder_color 
     })
-<<<<<<< HEAD
 @login_required(login_url='signin')
 def review(request):
     user = request.user
@@ -673,7 +566,7 @@ def review(request):
         reverse=True
     )
 
-    # 🔥 USE AI SERVICE (THIS WAS MISSING)
+    #  USE AI SERVICE (THIS WAS MISSING)
     ai_insights = generate_ai_insights(transactions)
 
     context = {
@@ -887,181 +780,6 @@ def category_trend_api(request):
 
 # ---------------- Static Pages ----------------
 def budget(request):return render(request, 'myapp/budget.html')
-=======
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
-from .models import PasswordResetOTP
-import random
-from django.utils import timezone
-
-User = get_user_model()
-
-# ---------------- Helper function ----------------
-def generate_otp():
-    return str(random.randint(100000, 999999))
-
-def send_otp_email(email, otp):
-    # Replace with your email backend logic
-    print(f"Sending OTP {otp} to {email}")  # DEBUG only
-    # send_mail('Your OTP', f'Your OTP is {otp}', 'from@example.com', [email])
-
-# ---------------- Forgot Password ----------------
-def forgot_password(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        user = User.objects.filter(email=email).first()
-        if user:
-            otp = generate_otp()
-            PasswordResetOTP.objects.create(user=user, otp=otp, created_at=timezone.now())
-            send_otp_email(email, otp)
-            request.session['reset_user'] = user.id
-            messages.success(request, "OTP sent to your email")
-            return redirect("verify_otp")
-        else:
-            messages.error(request, "No account found with this email")
-    return render(request, "myapp/forgot_password.html")
-from django.core.mail import send_mail
-
-def send_otp_email(email, otp):
-    subject = "Your OTP for Password Reset"
-    message = f"Hello!\n\nYour OTP is: {otp}\nIt is valid for 5 minutes."
-    from_email = None  # uses DEFAULT_FROM_EMAIL
-    recipient_list = [email]
-    send_mail(subject, message, from_email, recipient_list)
-
-
-# ---------------- Verify OTP ----------------
-def verify_otp(request):
-    if request.method == "POST":
-        otp = request.POST.get("otp")
-        user_id = request.session.get('reset_user')
-        otp_obj = PasswordResetOTP.objects.filter(user_id=user_id, otp=otp).last()
-
-        if otp_obj and (timezone.now() - otp_obj.created_at).total_seconds() < 300:  # 5 min expiry
-            messages.success(request, "OTP verified! Please reset your password")
-            return redirect("reset_password")
-        else:
-            messages.error(request, "Invalid or expired OTP")
-
-    return render(request, "myapp/verify_otp.html")
-
-
-# ---------------- Reset Password ----------------
-def reset_password(request):
-    if request.method == "POST":
-        new_password = request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
-        if new_password != confirm_password:
-            messages.error(request, "Passwords do not match")
-        else:
-            user_id = request.session.get('reset_user')
-            user = User.objects.get(id=user_id)
-            user.password = make_password(new_password)
-            user.save()
-            messages.success(request, "Password updated successfully! You can now sign in.")
-            return redirect("signin")
-    return render(request, "myapp/reset_password.html")
-from datetime import datetime
-from django.db.models import Sum
-from .models import Budget, MoneyFlow, Expense
-
-@login_required
-def budget_view(request):
-    now = datetime.now()
-    month = int(request.GET.get('month', now.month))
-    year = int(request.GET.get('year', now.year))
-
-    # --- NEW: ADD SAVING LOGIC HERE ---
-    if request.method == "POST":
-        form_type = request.POST.get('form_type')
-
-        if form_type == 'add_category':
-            category_name = request.POST.get('category')
-            amount = request.POST.get('amount')
-            icon = request.POST.get('icon', '💰')
-
-            # Create the budget record
-            Budget.objects.create(
-                user=request.user,
-                category=category_name,
-                amount=amount,
-                icon=icon,
-                month=month,
-                year=year
-            )
-        
-        elif form_type == 'add_party':
-            person_name = request.POST.get('person_name')
-            amount = request.POST.get('amount')
-            flow_type = request.POST.get('flow_type')
-
-            MoneyFlow.objects.create(
-                user=request.user,
-                person_name=person_name,
-                amount=amount,
-                flow_type=flow_type
-            )
-        
-        return redirect('budget') # Refresh page to show new data
-
-    # --- EXISTING DISPLAY LOGIC ---
-    budgets = Budget.objects.filter(user=request.user, month=month, year=year)
-    budget_data = []
-    total_budget = 0
-    total_spent = 0
-
-    for b in budgets:
-        spent = Expense.objects.filter(
-            user=request.user,
-            category=b.category,
-            date__month=month,
-            date__year=year
-        ).aggregate(Sum('amount'))['amount__sum'] or 0
-        
-        remaining = b.amount - spent
-        percent = (spent / b.amount * 100) if b.amount > 0 else 0
-        
-        budget_data.append({
-            'obj': b,
-            'spent': spent,
-            'remaining': remaining,
-            'percent': round(percent, 1),
-            'is_over': spent > b.amount
-        })
-        
-        total_budget += b.amount
-        total_spent += spent
-
-    flows = MoneyFlow.objects.filter(user=request.user)
-    you_owe_list = flows.filter(flow_type='topay')
-    owed_to_you_list = flows.filter(flow_type='toreceive')
-    
-    you_owe_total = you_owe_list.aggregate(Sum('amount'))['amount__sum'] or 0
-    owed_to_you_total = owed_to_you_list.aggregate(Sum('amount'))['amount__sum'] or 0
-    net_flow = owed_to_you_total - you_owe_total
-
-    context = {
-        'budget_data': budget_data,
-        'total_budget': total_budget,
-        'total_spent': total_spent,
-        'remaining_total': total_budget - total_spent,
-        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else 0,
-        'you_owe_list': you_owe_list,
-        'owed_to_you_list': owed_to_you_list,
-        'you_owe_total': you_owe_total,
-        'owed_to_you_total': owed_to_you_total,
-        'net_flow': net_flow,
-    }
-
-    return render(request, 'myapp/budget.html', context)
-# ---------------- Static Pages ----------------
-def analytics(request): return render(request, 'myapp/analytics.html')
-def review(request): return render(request, 'myapp/review.html')
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
 def settings_view(request): return render(request, 'myapp/settings.html')
@@ -1124,7 +842,6 @@ def scan_receipt(request):
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-<<<<<<< HEAD
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 # transaction deletion
@@ -1286,6 +1003,3 @@ def delete_transactionhome(request):
         })
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
-=======
-    return JsonResponse({"error": "Invalid request"}, status=400)
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310

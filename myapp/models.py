@@ -80,11 +80,8 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=100)
     target_date = models.DateField()
-<<<<<<< HEAD
     created = models.DateField(auto_now_add=True)
 
-=======
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     
 
     def __str__(self):
@@ -100,11 +97,9 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
-<<<<<<< HEAD
     
 
 
-=======
    
 
 class PasswordResetOTP(models.Model):
@@ -151,4 +146,3 @@ class MoneyFlow(models.Model):
 
     def __str__(self):
         return f"{self.person_name} - {self.flow_type}: {self.amount}"
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
