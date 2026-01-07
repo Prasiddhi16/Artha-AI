@@ -308,7 +308,52 @@ def add_contribution_ajax(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+@login_required(login_url='signin')
+def review(request):
+    user = request.user
 
+    # 1. Fetch Transactions for the UI
+    expenses = Expense.objects.filter(user=user)
+    incomes = Income.objects.filter(user=request.user)
+
+    # 2. Calculate initial summary totals
+    total_income = incomes.aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    total_expense = expenses.aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    filtered_total = total_income - total_expense
+
+    # 3. Prepare the list for the "Transactions" tab
+    expense_list = list(expenses)
+    income_list = list(incomes)
+    
+    # Tag them so the UI knows which is which
+    for e in expense_list: e.transaction_type = "Expense"
+    for i in income_list: i.transaction_type = "Income"
+
+    # Combine and sort by date descending
+    transactions = sorted(
+        expense_list + income_list,
+        key=lambda x: x.date,
+        reverse=True
+    )
+
+    # 4. 🔥 EXECUTE AI INSIGHTS SERVICE
+    # This calls the logic in myapp/services/ai_insights.py
+    # Ensure this function returns a dictionary with keys: 
+    # 'monthly_forecast', 'spending_trend', 'top_category', 'savings_rate', 'category_breakdown'
+    ai_data = generate_ai_insights(user)
+
+    context = {
+        "transactions": transactions,
+        "filtered_total": filtered_total,
+        "total_income": total_income,
+        "total_expense": total_expense,
+        "income_count": incomes.count(),
+        "expense_count": expenses.count(),
+        "total_count": len(transactions),
+        "ai": ai_data  # This matches the {{ ai.xxx }} variables in your review.html
+    }
+
+    return render(request, "myapp/review.html", context)
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
 def budget(request):return render(request, 'myapp/budget.html')
