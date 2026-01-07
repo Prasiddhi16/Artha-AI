@@ -58,11 +58,8 @@
             {% if forloop.counter0 == 0 %}#1e3a8a{% elif forloop.counter0 == 1 %}#60a5fa{% elif forloop.counter0 == 2 %}#93c5fd{% elif forloop.counter0 == 3 %}#bfdbfe{% elif forloop.counter0 == 4 %}#2563eb{% else %}#3b82f6{% endif %};">
         </span>
         <span style="font-size: 0.9rem;">
-<<<<<<< HEAD
             <strong>{{ item.category }}:</strong> Rs. {{ item.total|default:0 }}
-=======
             <strong>{{ item.category }}:</strong> Rs. {{ item.total|floatformat:2 }}
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         </span>
     </div>
     {% endfor %}
@@ -73,7 +70,6 @@
     <h3>Quick Stats</h3>
     <p>This month's overview</p>
     <div class="qs-row">
-<<<<<<< HEAD
     <span>Net Change</span>
     <span class="stat-net-change {% if net_change >= 0 %}green{% else %}red{% endif %}">
         {% if net_change >= 0 %}+{% endif %}{{ net_change|floatformat:2 }}
@@ -93,7 +89,6 @@
     <span class="stat-largest-expense red">Rs. {{ largest_expense|floatformat:2 }}</span>
 </div>
 
-=======
         <span>Net Change</span>
         <span class="{% if net_change >= 0 %}green{% else %}red{% endif %}">
             {% if net_change >= 0 %}+{% endif %}{{ net_change|floatformat:2 }}
@@ -114,7 +109,6 @@
         <span>Largest Expense</span>
         <span class="red">Rs. {{ largest_expense|floatformat:2 }}</span>
     </div>
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 </div>
         </div>
 
@@ -129,7 +123,6 @@
 
         <div class="table-card">
     <h3>Recent Transactions</h3>
-<<<<<<< HEAD
   <table>
     <thead>
         <tr>
@@ -162,7 +155,6 @@
     </tbody>
 </table>
 
-=======
     <table>
         <thead>
             <tr>
@@ -190,7 +182,6 @@
             {% endfor %}
         </tbody>
         </table>
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 </div>
     </div>
 
@@ -230,11 +221,8 @@
 
 {% block extra_js %}
 <script>
-<<<<<<< HEAD
 
     
-=======
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     // 1. Initialize Date
     document.getElementById("transactionkoDate").value = new Date().toISOString().split('T')[0];
 
@@ -301,20 +289,15 @@ document.getElementById("receiptInput").addEventListener("change", function() {
     });
 });
 const ctx = document.getElementById('categoryChart').getContext('2d');
-<<<<<<< HEAD
 window.categoryChartInstance = new Chart(ctx, {
-=======
 new Chart(ctx, {
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     type: 'pie',
     data: {
         labels: [{% for item in category_data %}"{{ item.category|safe }}",{% endfor %}],
         datasets: [{
             data: [{% for item in category_data %}{{ item.total|floatformat:2 }},{% endfor %}],
             backgroundColor: [
-<<<<<<< HEAD
                 '#1e3a8a','#60a5fa','#93c5fd','#bfdbfe','#2563eb','#3b82f6','#a5b4fc'
-=======
                 '#1e3a8a', 
                 '#60a5fa', // Light Blue (Slice 2)
                 '#93c5fd', // Sky Blue (Slice 3)
@@ -322,7 +305,6 @@ new Chart(ctx, {
                 '#2563eb', // Royal Blue (Slice 5)
                 '#3b82f6', // Medium Blue (Slice 6)
                 '#a5b4fc'  // Indigo (Slice 7)
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
             ],
             borderWidth: 1
         }]
@@ -330,7 +312,6 @@ new Chart(ctx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-<<<<<<< HEAD
         plugins: { legend: { display: false } }
     }
 });
@@ -387,12 +368,10 @@ document.addEventListener("click", function(e) {
 
 
 
-=======
         plugins: {
             legend: { display: false } 
         }
     }
 });
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 </script>
 {% endblock %}

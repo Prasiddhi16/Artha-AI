@@ -10,13 +10,11 @@
 {% block content %}
 <div class="review-page">
 
-<<<<<<< HEAD
     <div class="page-header">
         <h2 style="font-size: 28px;">Review Transactions</h2>
         <p style="font-size: 20px;">Search, filter, and analyze your transaction history</p>
     </div>
 
-=======
    
     <div class="page-header">
     <h2 style="font-size: 28px;">Review Transactions</h2>
@@ -24,13 +22,11 @@
     </div>
 
  
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('transactions')">Transactions</button>
         <button class="tab-btn" onclick="openTab('ai-insights')">AI Insights</button>
     </div>
 
-<<<<<<< HEAD
     <div id="transactions-view">
         <div class="summary-grid">
             <div class="card">
@@ -50,7 +46,6 @@
             </div>
         </div>
 
-=======
   
     <div id="transactions-view">
 
@@ -73,7 +68,6 @@
         </div>
 
         <!-- Filter Section -->
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         <div class="card filter-section">
             <div class="filter-header">
                 <h3><i class="fas fa-filter"></i> Filters & Search</h3>
@@ -86,22 +80,18 @@
             <div class="filter-controls">
                 <div class="filter-group">
                     <label>Type</label>
-<<<<<<< HEAD
                     <select id="typeSelect">
                         <option value="All Types">All Types</option>
                         <option value="Income">Income</option>
                         <option value="Expense">Expense</option>
-=======
                     <select>
                         <option>All Types</option>
                         <option>Income</option>
                         <option>Expense</option>
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Category</label>
-<<<<<<< HEAD
                     <select id="categorySelect">
                         <option value="All Categories">All Categories</option>
                         <option value="Groceries">Groceries</option>
@@ -109,7 +99,6 @@
                         <option value="Entertainment">Entertainment</option>
                         <option value="Freelance">Freelance</option>
                         <option value="Housing">Housing</option>
-=======
                     <select>
                         <option>All Categories</option>
                         <option>Groceries</option>
@@ -117,12 +106,10 @@
                         <option>Entertainment</option>
                         <option>Freelance</option>
                         <option>Housing</option>
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Sort By</label>
-<<<<<<< HEAD
                     <select id="sortFilter">
                         <option value="date_desc">Date Desc</option>
                         <option value="date_asc">Date Asc</option>
@@ -130,12 +117,10 @@
                         <option value="amount_asc">Amount Asc</option>
                         <option value="type_asc">Type Asc</option>
                         <option value="type_desc">Type Desc</option>
-=======
                     <select>
                         <option>Date</option>
                         <option>Amount</option>
                         <option>Category</option>
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
                     </select>
                 </div>
                 <div class="filter-group action-group">
@@ -145,7 +130,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div id="transactions-list">
             {% for t in transactions %}
             <div class="trans-item" data-id="{{ t.id }}" data-type="{{ t.transaction_type }}">
@@ -295,7 +279,6 @@
         </div>
     </div>
 </div>
-=======
         <!-- Transaction List -->
         <div class="transaction-list-container">
             <h4>Transaction History: <span class="text-muted">Showing 6 out of 6 transactions</span></h4>
@@ -542,12 +525,10 @@
         </div>
     </div>
      
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 {% endblock %}
 
 {% block extra_js %}
 <script>
-<<<<<<< HEAD
     document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.querySelector(".search-input");
         const typeSelect = document.getElementById("typeSelect");
@@ -679,7 +660,6 @@
             });
         }
     });
-=======
 function openTab(tabName) {
     const transactionsView = document.getElementById('transactions-view');
     const aiView = document.getElementById('ai-insights-view');
@@ -701,6 +681,5 @@ function openTab(tabName) {
 document.addEventListener('DOMContentLoaded', () => {
     openTab('transactions');
 });
->>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 </script>
 {% endblock %}
