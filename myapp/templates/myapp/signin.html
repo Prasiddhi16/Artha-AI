@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Tracker – Login</title>
+  <link rel="stylesheet" href="{% static 'myapp/css/signup.css' %}">
+</head>
+<body>
+<div class="container" id="loginPage">
+  <!-- Left Side -->
+  <div class="left">
+    <div class="logo-box">
+      <div class="logo">💲</div>
+      <h1>Artha AI</h1>
+      <p class="subtitle">Take control of your financial future</p>
+    </div>
+    <ul class="features">
+      <li>
+        <span class="icon">➜</span>
+        <div>
+          <h3>Track Every Transaction</h3>
+          <p>Monitor your income and expenses with ease</p>
+        </div>
+      </li>
+      <li>
+        <span class="icon">➜</span>
+        <div>
+          <h3>Smart Analytics</h3>
+          <p>Get AI-powered insights</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Right Side / Login Form -->
+  <div class="right">
+    <div class="card">
+      <h2>Welcome back</h2>
+      <p class="subtitle">Enter your credentials</p>
+
+      <form method="POST" action="{% url 'signin' %}">
+        {% csrf_token %}
+        
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="john.doe@example.com" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+
+        <div class="remember">
+          <label>
+            <input type="checkbox" name="remember_me"> Remember me
+          </label>
+    <a href="{% url 'forgot_password' %}" class="link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn">Sign In</button>
+      </form>
+
+      <p class="bottom-text">
+        Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Optional JS: Add enter key submit or error handling -->
+<script>
+  // Simple JS could go here if needed later
+</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+
+.main-content{
+width:100%;
+height:100%;
+border:none;
+border-radius: 15px;
+padding:10px;
+}
+
+.option-list button{
+    border:none;
+    background-color:white;
+    font-size:15px; 
+    padding:10px;
+    margin:3px;
+}
+
+.topic{
+    font-size: large;
+}
+
+.option-list a{
+    text-decoration: none;
+    color:red;
+}
+.overlay{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    right:0;
+    display:none;
+    background-color:rgba(0,0,0,0.1);
+    z-index:1000;
+     backdrop-filter: blur(2px);
+    justify-content:center;
+    align-items:center;
+}
+
+.dialog{
+    display:none;
+    background-color: white;
+    width:450px;
+    border: 1px solid rgb(121, 120, 120);
+    border-radius:15px;
+    padding:20px;
+    width:40vw;
+    height:80vh;
+    overflow-y: auto;
+   
+}
+
+
+.head-text{
+    font-size:20px;
+    font-weight:bold;
+    display:inline;
+}
+.sub-text{
+    color:rgb(56, 56, 56);
+    font-size:18px;
+    display:inline;
+}
+.tabs{
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    vertical-align: center ;
+    border-radius:15px;
+    background-color:rgb(189, 187, 187);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.tab{
+    background-color:rgb(189, 187, 187);
+    border:none;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:550;
+    justify-content:space-between;
+    padding:4px;
+    margin-top:2px;
+    margin-bottom: 2px;
+} 
+
+.tab.active{
+    background-color: aliceblue;
+}
+
+.psection{
+    display:none;
+    border: 1px solid rgb(121, 120, 120);
+    border-radius:15px;
+    padding:20px;
+}
+.psection.active{
+    display:block;
+}
+.first-text{
+    font-weight:bold;
+    font-size:18px;
+    display:inline;
+}
+.second-text{
+    font-size:17px;
+    color:rgb(80, 80, 80);
+    display:inline;
+    position:relative;
+}
+.line{
+    display:flex;
+    justify-content:space-between;
+}
+.switch{
+    width:32px;
+    height:17px;
+    display:inline-block; 
+    justify-self: right;
+}
+.switch input{
+   display:none;
+}
+.toggle{
+    position:relative;
+    display:inline-block;
+    width:32px;
+    height:17px;
+    border:1px solid black;
+    border-radius:32px;
+    background-color:rgb(148, 183, 236);
+}
+.toggle:before{
+    content:"";
+    display:inline-block;
+    position:relative;
+    width:15px;
+    height:13px;
+    border-radius:50%;
+    border:1px solid black;
+    background-color: aliceblue;
+  
+}
+.switch input:checked+.toggle{
+    background-color:navy;
+}
+.switch input:checked+.toggle:before{
+    transform:translateX(14px);
+}
+#picture{
+    display:flex;
+    gap:20px;
+}
+#circle{
+    height:80px;
+    width:80px;
+    border:1px solid gray;
+    border-radius:50%;
+    margin:1px;
+    padding:1px;
+    display:inline-block;
+}
+#change-picture{
+    display:inline-block;
+    height:fit-content;
+    margin:2px;
+    padding:4px;
+    border:1px solid gray;
+    border-radius:5px;
+    font-size:15px;
+    font-weight:bold;
+}
+.sub-info{
+    font-size:16px;
+    color:rgb(80, 79, 79);
+    display:block;
+    margin:2px;
+}
+#center{
+    align-items: center;
+    position:relative;
+    top:16px;
+}
+#usernames{
+   display:flex;
+   justify-content: space-between;
+}
+.name{
+   flex:1;
+}
+label{
+    font-size:17px;
+    font-weight:bold;
+}
+input{
+    font-size:15px;
+    border:1px solid gray;
+    border-radius:5px;
+    height:fit-content;
+    padding:5px;
+    margin:5px;
+}
+.save{
+    width:100%;
+    background-color:rgba(45, 124, 72, 0.774);
+    color:white;
+    font-size:18px;
+    border:1px solid gray;
+    border-radius:5px;
+    padding:7px;
+    margin:7px;     
+}
+.delete{
+    width:100%;
+    background-color:rgba(202, 25, 40, 0.774);
+    color:white;
+    font-size:18px;
+    border:1px solid gray;
+    border-radius:5px;
+    padding:7px;
+    margin:7px; 
+}
+#alignment{
+text-align:center;
+}
+
+
+
+
+.privacy-section{
+    border: 1px solid rgb(121, 120, 120);
+    border-radius:15px;
+    padding:20px;
+}
+#align{
+    text-align:center;
+}
+.export{
+     width:100%;
+    font-size:18px;
+    border:1px solid gray;
+    border-radius:5px;
+    padding:7px;
+    margin:7px; 
+}
