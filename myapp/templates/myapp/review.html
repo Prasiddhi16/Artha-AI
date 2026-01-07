@@ -10,40 +10,35 @@
 {% block content %}
 <div class="review-page">
 
-   
     <div class="page-header">
-    <h2 style="font-size: 28px;">Review Transactions</h2>
+        <h2 style="font-size: 28px;">Review Transactions</h2>
         <p style="font-size: 20px;">Search, filter, and analyze your transaction history</p>
     </div>
 
- 
     <div class="tabs">
         <button class="tab-btn active" onclick="openTab('transactions')">Transactions</button>
         <button class="tab-btn" onclick="openTab('ai-insights')">AI Insights</button>
     </div>
 
-  
     <div id="transactions-view">
-
         <div class="summary-grid">
             <div class="card">
                 <h4 class="summary-title">Filtered Total</h4>
-                <div class="summary-amount">$6150.22</div>
-                <div class="summary-count">15 transactions</div>
+                <div class="summary-amount" id="filteredTotal">₹ {{ filtered_total }}</div>
+                <div class="summary-count" id="totalCount">{{ total_count }} transactions</div>
             </div>
             <div class="card">
                 <h4 class="summary-title">Filtered Income</h4>
-                <div class="summary-amount blue">$4250.00</div>
-                <div class="summary-count">3 transactions</div>
+                <div class="summary-amount blue" id="incomeTotal">₹ {{ total_income }}</div>
+                <div class="summary-count" id="incomeCount">{{ income_count }} transactions</div>
             </div>
             <div class="card">
                 <h4 class="summary-title">Filtered Expenses</h4>
-                <div class="summary-amount red">$1900.22</div>
-                <div class="summary-count">12 transactions</div>
+                <div class="summary-amount red" id="expenseTotal">₹ {{ total_expense }}</div>
+                <div class="summary-count" id="expenseCount">{{ expense_count }} transactions</div>
             </div>
         </div>
 
-        <!-- Filter Section -->
         <div class="card filter-section">
             <div class="filter-header">
                 <h3><i class="fas fa-filter"></i> Filters & Search</h3>
@@ -56,29 +51,32 @@
             <div class="filter-controls">
                 <div class="filter-group">
                     <label>Type</label>
-                    <select>
-                        <option>All Types</option>
-                        <option>Income</option>
-                        <option>Expense</option>
+                    <select id="typeSelect">
+                        <option value="All Types">All Types</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Category</label>
-                    <select>
-                        <option>All Categories</option>
-                        <option>Groceries</option>
-                        <option>Transportation</option>
-                        <option>Entertainment</option>
-                        <option>Freelance</option>
-                        <option>Housing</option>
+                    <select id="categorySelect">
+                        <option value="All Categories">All Categories</option>
+                        <option value="Groceries">Groceries</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Freelance">Freelance</option>
+                        <option value="Housing">Housing</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label>Sort By</label>
-                    <select>
-                        <option>Date</option>
-                        <option>Amount</option>
-                        <option>Category</option>
+                    <select id="sortFilter">
+                        <option value="date_desc">Date Desc</option>
+                        <option value="date_asc">Date Asc</option>
+                        <option value="amount_desc">Amount Desc</option>
+                        <option value="amount_asc">Amount Asc</option>
+                        <option value="type_asc">Type Asc</option>
+                        <option value="type_desc">Type Desc</option>
                     </select>
                 </div>
                 <div class="filter-group action-group">
@@ -88,276 +86,289 @@
             </div>
         </div>
 
-        <!-- Transaction List -->
-        <div class="transaction-list-container">
-            <h4>Transaction History: <span class="text-muted">Showing 6 out of 6 transactions</span></h4>
-
-            <!-- Example Transactions -->
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-shopping-cart"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Weekly shopping <span class="badge gray">Groceries</span></div>
-                    <div class="trans-date">Nov 8, 2025</div>
+        <div id="transactions-list">
+            {% for t in transactions %}
+            <div class="trans-item" data-id="{{ t.id }}" data-type="{{ t.transaction_type }}">
+                <div class="trans-icon {% if t.transaction_type == 'Expense' %}red-bg{% else %}blue-bg{% endif %}">
+                    <i class="fas {% if t.transaction_type == 'Expense' %}fa-shopping-cart{% else %}fa-hand-holding-usd{% endif %}"></i>
                 </div>
-                <div class="trans-amount red">-$125.50</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+                <div class="trans-details">
+                    <div class="trans-name">
+                        {{ t.description|default:t.category }}
+                        <span class="badge gray">{{ t.category }}</span>
+                    </div>
+                    <div class="trans-date">{{ t.date }}</div>
+                </div>
+                <div class="trans-amount {% if t.transaction_type == 'Expense' %}red{% else %}green{% endif %}">
+                    {% if t.transaction_type == 'Expense' %}-{% else %}+{% endif %}₹{{ t.amount }}
+                </div>
+                <div class="trans-delete">
+                    <i class="fas fa-trash delete-transaction"></i>
+                </div>
             </div>
+            {% empty %}
+            <p>No transactions found.</p>
+            {% endfor %}
+        </div>
+    </div>
 
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-gas-pump"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Gas station <span class="badge teal">Transportation</span></div>
-                    <div class="trans-date">Nov 7, 2025</div>
-                </div>
-                <div class="trans-amount red">-$45.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-ticket-alt"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Concert tickets <span class="badge purple">Entertainment</span></div>
-                    <div class="trans-date">Nov 6, 2025</div>
-                </div>
-                <div class="trans-amount red">-$89.99</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon blue-bg"><i class="fas fa-laptop-code"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Web design project <span class="badge green">Freelance</span></div>
-                    <div class="trans-date">Nov 5, 2025</div>
-                </div>
-                <div class="trans-amount green">+$250.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon red-bg"><i class="fas fa-utensils"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Dinner at restaurant <span class="badge gray">Food</span></div>
-                    <div class="trans-date">Nov 4, 2025</div>
-                </div>
-                <div class="trans-amount red">-$60.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
-            </div>
-
-            <div class="trans-item">
-                <div class="trans-icon blue-bg"><i class="fas fa-hand-holding-usd"></i></div>
-                <div class="trans-details">
-                    <div class="trans-name">Freelance logo design <span class="badge green">Freelance</span></div>
-                    <div class="trans-date">Nov 3, 2025</div>
-                </div>
-                <div class="trans-amount green">+$350.00</div>
-                <div class="trans-action"><i class="far fa-trash-alt"></i></div>
+    <div id="ai-insights-view" style="display: none;">
+        <div class="ai-banner">
+            <div class="ai-icon"><i class="fas fa-robot"></i></div>
+            <div>
+                <h3>AI Financial Insights</h3>
+                <p>Powered by intelligent analysis of your spending patterns</p>
             </div>
         </div>
 
-    </div>
+        <div class="bento-grid">
+            <div class="card insight-blue">
+                <div class="card-header">
+                    <span class="card-title">Monthly Spending Forecast</span>
+                    <span class="badge purple">Prediction</span>
+                </div>
+                <p class="card-text">Based on your current spending pattern, you're projected to spend <strong>₹{{ ai.monthly_forecast.projected_total }}</strong> this month. This is ₹{{ ai.monthly_forecast.avg_daily }} per day on average.</p>
+            </div>
 
-    
-           <div id="ai-insights-view" style="display: none;">
-                    
-                    <div class="ai-banner">
-                        <div class="ai-icon"><i class="fas fa-robot"></i></div>
-                        <div>
-                            <h3>AI Financial Insights</h3>
-                            <p>Powered by intelligent analysis of your spending patterns</p>
-                        </div>
+            <div class="card insight-green-1">
+                <div class="card-header">
+                    <span class="card-title">Spending Trend: {{ ai.spending_trend.trend }}</span>
+                    <span class="badge green">Trend</span>
+                </div>
+                <p class="card-text">Your spending has {{ ai.spending_trend.trend|lower }} by <strong>{{ ai.spending_trend.percentage }}%</strong> compared to your earlier transactions. Keep tracking your goals!</p>
+            </div>
+
+            <div class="card insight-orange">
+                <div class="card-header">
+                    <span class="card-title">Top Spending: {{ ai.top_category.name }}</span>
+                    <span class="badge orange">Category</span>
+                </div>
+                <p class="card-text">{{ ai.top_category.name }} accounts for <strong>₹{{ ai.top_category.amount }} ({{ ai.top_category.percentage }}%)</strong> of your total expenses. Consider if this aligns with your priorities.</p>
+            </div>
+
+            <div class="card insight-green-2">
+                <div class="card-header">
+                    <span class="card-title">Savings Rate Analysis</span>
+                    <span class="badge teal">Savings</span>
+                </div>
+                <p class="card-text">You're currently saving <strong>{{ ai.savings_rate }}%</strong> of your income. Financial experts recommend saving at least 20% of your income for long-term health.</p>
+            </div>
+        </div>
+
+        <div class="insight-section">
+            <h3 class="section-title-icon"><i class="far fa-lightbulb icon-green"></i> Personalized Recommendations</h3>
+            <p class="section-subtitle">Smart suggestions to improve your financial health</p>
+            
+            <div class="recommendation-card mb-20">
+                <div class="recommendation-content">
+                    <i class="fas fa-seedling icon-teal-sm"></i>
+                    <div>
+                        <h4 class="recommendation-title">Optimize {{ ai.top_category.name }} Spending</h4>
+                        <p class="recommendation-text">Your {{ ai.top_category.name }} expenses are currently your highest. Look for ways to reduce costs in this category or set a stricter budget.</p>
                     </div>
+                </div>
+                <a href="{% url 'budget' %}" class="review-link">→ Review category budget</a>
+            </div>
 
-                    <div class="bento-grid">
-                        <div class="card insight-blue">
-                            <div class="card-header">
-                                <span class="card-title">Monthly Spending Forecast</span>
-                                <span class="badge purple">Prediction</span>
-                            </div>
-                            <p class="card-text">Based on your current spending pattern, you're projected to spend <strong>$1900.22</strong> this month. This is $63.34 per day on average.</p>
-                        </div>
-
-                        <div class="card insight-green-1">
-                            <div class="card-header">
-                                <span class="card-title">Spending Trend: Declining</span>
-                                <span class="badge green">Trend</span>
-                            </div>
-                            <p class="card-text">Your spending has decreased by <strong>75.5%</strong> compared to your earlier transactions. Great job managing your expenses!</p>
-                        </div>
-
-                        <div class="card insight-orange">
-                            <div class="card-header">
-                                <span class="card-title">Top Spending: Housing</span>
-                                <span class="badge orange">Category</span>
-                            </div>
-                            <p class="card-text">Housing accounts for <strong>$1200.00 (63.2%)</strong> of your total expenses. Consider if this aligns with your priorities.</p>
-                        </div>
-
-                        <div class="card insight-green-2">
-                            <div class="card-header">
-                                <span class="card-title">Savings Rate Analysis</span>
-                                <span class="badge teal">Savings</span>
-                            </div>
-                            <p class="card-text">You're currently saving <strong>55.3%</strong> of your income. Financial experts recommend saving at least 20% of your income for long-term financial health.</p>
-                        </div>
+            <div class="recommendation-card">
+                <div class="recommendation-content">
+                    <i class="fas fa-chart-line icon-teal-sm"></i>
+                    <div>
+                        <h4 class="recommendation-title">Boost Your Savings Rate</h4>
+                        <p class="recommendation-text">Your current rate is {{ ai.savings_rate }}%. Keep it up! Aiming for a higher percentage will help you reach your goals faster.</p>
                     </div>
+                </div>
+                <a href="{% url 'goals' %}" class="review-link">→ Boost your goals</a>
+            </div>
+        </div>
 
-                    <div class="insight-section">
-                        <h3 class="section-title-icon"><i class="far fa-lightbulb icon-green"></i> Personalized Recommendations</h3>
-                        <p class="section-subtitle">Smart suggestions to improve your financial health</p>
-                        
-                        <div class="recommendation-card mb-20">
-                            <div class="recommendation-content">
-                                <i class="fas fa-seedling icon-teal-sm"></i>
-                                <div>
-                                    <h4 class="recommendation-title">Optimize Housing Spending</h4>
-                                    <p class="recommendation-text">Your Housing expenses are quite high. Look for ways to reduce costs in this category, such as comparing prices or finding alternatives.</p>
-                                </div>
-                            </div>
-                            <a href="#" class="review-link">→ Review category budget</a>
-                        </div>
+        <hr class="section-divider">
 
-                        <div class="recommendation-card mb-20">
-                            <div class="recommendation-content">
-                                <i class="fas fa-exclamation-triangle icon-teal-sm"></i>
-                                <div>
-                                    <h4 class="recommendation-title">Large Transactions Detected</h4>
-                                    <p class="recommendation-text">You have 1 transaction significantly above your average. Make sure these align with your financial goals.</p>
-                                </div>
-                            </div>
-                            <a href="#" class="review-link">→ Review large expenses</a>
-                        </div>
-
-                        <div class="recommendation-card">
-                            <div class="recommendation-content">
-                                <i class="fas fa-chart-line icon-teal-sm"></i>
-                                <div>
-                                    <h4 class="recommendation-title">Excellent Spending Control!</h4>
-                                    <p class="recommendation-text">Your spending is trending downward. Keep up the great work! Consider allocating the savings toward your financial goals.</p>
-                                </div>
-                            </div>
-                            <a href="#" class="review-link">→ Boost your goals</a>
-                        </div>
+        <div class="insights-dual-container">
+            <div class="card projection-panel-full">
+                <div class="card-header-icon">
+                    <i class="far fa-calendar-alt icon-purple-bg"></i>
+                    <h4>End of Month Projection</h4>
+                </div>
+                <p class="projection-note-small">Based on your current spending pace</p>
+                
+                <div class="projection-flex">
+                    <div>
+                        <h5 class="projection-summary-title">Current Spending</h5>
+                        <div class="projection-amount">₹{{ ai.monthly_forecast.current_spent }}</div>
                     </div>
-
-                    <hr class="section-divider">
-
-                    <div class="insights-dual-container">
-                        
-                        <div class="card projection-panel-full">
-                            <div class="card-header-icon">
-                                <i class="far fa-calendar-alt icon-purple-bg"></i>
-                                <h4>End of Month Projection</h4>
-                            </div>
-                            <p class="projection-note-small">Based on your current spending pace</p>
-                            
-                            <div class="projection-flex">
-                                <div>
-                                    <h5 class="projection-summary-title">Current Spending</h5>
-                                    <div class="projection-amount">$1900.22</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <h5 class="projection-summary-title">Projected Total</h5>
-                                    <div class="projection-amount blue-text">$3293.71</div>
-                                </div>
-                            </div>
-
-                            <div class="days-left-container">
-                                <i class="far fa-clock"></i> 22 days remaining • $63.34/day average
-                            </div>
-
-                        </div>
-
-
-                        <div class="card category-analysis-panel">
-                            <h3 class="section-title-plain">Category Spending Analysis</h3>
-                            <p class="section-subtitle">Your top spending categories</p>
-
-                            <div class="category-list">
-                                <div class="category-item">
-                                    <span class="category-rank">1</span>
-                                    <div class="category-details">
-                                        <div class="category-name">Housing</div>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar progress-green" style="width: 63.2%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="category-value">
-                                        <strong>$1200.00</strong>
-                                        <span class="category-percentage">63.2%</span>
-                                    </div>
-                                </div>
-                                <div class="category-item">
-                                    <span class="category-rank">2</span>
-                                    <div class="category-details">
-                                        <div class="category-name">Groceries</div>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar progress-green" style="width: 8.9%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="category-value">
-                                        <strong>$168.25</strong>
-                                        <span class="category-percentage">8.9%</span>
-                                    </div>
-                                </div>
-                                <div class="category-item">
-                                    <span class="category-rank">3</span>
-                                    <div class="category-details">
-                                        <div class="category-name">Entertainment</div>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar progress-green" style="width: 7.2%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="category-value">
-                                        <strong>$135.97</strong>
-                                        <span class="category-percentage">7.2%</span>
-                                    </div>
-                                </div>
-                                <div class="category-item">
-                                    <span class="category-rank">4</span>
-                                    <div class="category-details">
-                                        <div class="category-name">Healthcare</div>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar progress-green" style="width: 6.3%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="category-value">
-                                        <strong>$120.00</strong>
-                                        <span class="category-percentage">6.3%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div style="text-align: right;">
+                        <h5 class="projection-summary-title">Projected Total</h5>
+                        <div class="projection-amount blue-text">₹{{ ai.monthly_forecast.projected_total }}</div>
                     </div>
                 </div>
 
-            </main>
+                <div class="days-left-container">
+                    <i class="far fa-clock"></i> {{ ai.monthly_forecast.days_remaining }} days remaining • ₹{{ ai.monthly_forecast.avg_daily }}/day average
+                </div>
+            </div>
+
+            <div class="card category-analysis-panel">
+                <h3 class="section-title-plain">Category Spending Analysis</h3>
+                <p class="section-subtitle">Your top spending categories</p>
+
+                <div class="category-list">
+                    {% for item in ai.category_breakdown %}
+                    <div class="category-item">
+                        <span class="category-rank">{{ forloop.counter }}</span>
+                        <div class="category-details">
+                            <div class="category-name">{{ item.category }}</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar progress-green" style="width: {{ item.percentage }}%;"></div>
+                            </div>
+                        </div>
+                        <div class="category-value">
+                            <strong>₹{{ item.amount }}</strong>
+                            <span class="category-percentage">{{ item.percentage }}%</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No expense data available.</p>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
-     
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-function openTab(tabName) {
-    const transactionsView = document.getElementById('transactions-view');
-    const aiView = document.getElementById('ai-insights-view');
-    const buttons = document.querySelectorAll('.tab-btn');
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.querySelector(".search-input");
+        const typeSelect = document.getElementById("typeSelect");
+        const categorySelect = document.getElementById("categorySelect");
+        const sortSelect = document.getElementById("sortFilter");
 
-    if(tabName === 'transactions') {
-        transactionsView.style.display = 'block';
-        aiView.style.display = 'none';
-        buttons[0].classList.add('active');
-        buttons[1].classList.remove('active');
-    } else {
-        transactionsView.style.display = 'none';
-        aiView.style.display = 'block';
-        buttons[0].classList.remove('active');
-        buttons[1].classList.add('active');
+        function fetchFilteredTransactions() {
+            const search = searchInput.value;
+            const type = typeSelect.value;
+            const category = categorySelect.value;
+            const sort = sortSelect.value;  
+
+            const params = new URLSearchParams({ search, type, category, sort });
+
+            fetch("{% url 'filter_transactions' %}?" + params.toString())
+                .then(res => res.json())
+                .then(data => {
+                    renderTransactions(data.transactions);
+                    updateSummary(data);
+                });
+        }
+
+        function renderTransactions(transactions) {
+            const container = document.getElementById("transactions-list");
+            container.innerHTML = ""; 
+
+            if (transactions.length === 0) {
+                container.innerHTML = "<p>No transactions found.</p>";
+                return;
+            }
+
+            transactions.forEach(t => {
+                const html = `
+                <div class="trans-item" data-id="${t.id}" data-type="${t.transaction_type}">
+                    <div class="trans-icon ${t.transaction_type === "Expense" ? "red-bg" : "blue-bg"}">
+                        <i class="fas ${t.transaction_type === "Expense" ? "fa-shopping-cart" : "fa-hand-holding-usd"}"></i>
+                    </div>
+                    <div class="trans-details">
+                        <div class="trans-name">
+                            ${t.description}
+                            <span class="badge gray">${t.category}</span>
+                        </div>
+                        <div class="trans-date">${t.date}</div>
+                    </div>
+                    <div class="trans-amount ${t.transaction_type === "Expense" ? "red" : "green"}">
+                        ${t.transaction_type === "Expense" ? "-" : "+"}₹${t.amount.toFixed(2)}
+                    </div>
+                    <div class="trans-delete">
+                        <i class="fas fa-trash delete-transaction"></i>
+                    </div>
+                </div>`;
+                container.insertAdjacentHTML("beforeend", html);
+            });
+        }
+
+        function updateSummary(data) {
+            document.getElementById("filteredTotal").innerText = "₹ " + data.filtered_total.toFixed(2);
+            document.getElementById("incomeTotal").innerText = "₹ " + data.total_income.toFixed(2);
+            document.getElementById("expenseTotal").innerText = "₹ " + data.total_expense.toFixed(2);
+            document.getElementById("incomeCount").innerText = data.income_count + " transactions";
+            document.getElementById("expenseCount").innerText = data.expense_count + " transactions";
+            document.getElementById("totalCount").innerText = data.total_count + " transactions";
+        }
+
+        searchInput.addEventListener("input", fetchFilteredTransactions);
+        typeSelect.addEventListener("change", fetchFilteredTransactions);
+        categorySelect.addEventListener("change", fetchFilteredTransactions);
+        sortSelect.addEventListener("change", fetchFilteredTransactions);
+
+        document.querySelector(".clear-btn").addEventListener("click", () => {
+            searchInput.value = "";
+            typeSelect.value = "All Types";
+            categorySelect.value = "All Categories";
+            fetchFilteredTransactions();
+        });
+    });
+
+    function openTab(tabName) {
+        const transactionsView = document.getElementById('transactions-view');
+        const aiView = document.getElementById('ai-insights-view');
+        const buttons = document.querySelectorAll('.tab-btn');
+
+        if(tabName === 'transactions') {
+            transactionsView.style.display = 'block';
+            aiView.style.display = 'none';
+            buttons[0].classList.add('active');
+            buttons[1].classList.remove('active');
+        } else {
+            transactionsView.style.display = 'none';
+            aiView.style.display = 'block';
+            buttons[0].classList.remove('active');
+            buttons[1].classList.add('active');
+        }
     }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    openTab('transactions');
-});
+    document.addEventListener('DOMContentLoaded', () => {
+        openTab('transactions');
+    });
+
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("delete-transaction")) {
+            const row = e.target.closest(".trans-item");
+            const id = row.dataset.id;
+            const type = row.dataset.type;
+
+            if (!confirm("Delete this transaction?")) return;
+
+            fetch("{% url 'delete_transaction' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: id, type: type })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    row.remove();
+                    document.getElementById("filteredTotal").innerText = "₹" + data.filtered_total.toFixed(2);
+                    document.getElementById("incomeTotal").innerText = "₹" + data.total_income.toFixed(2);
+                    document.getElementById("expenseTotal").innerText = "₹" + data.total_expense.toFixed(2);
+                    document.getElementById("incomeCount").innerText = data.income_count + " transactions";
+                    document.getElementById("expenseCount").innerText = data.expense_count + " transactions";
+                    document.getElementById("totalCount").innerText = data.total_count;
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

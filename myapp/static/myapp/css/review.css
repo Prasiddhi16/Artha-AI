@@ -148,6 +148,7 @@ body {
     width: 100%;
 }
 
+
 .action-group { flex: 0.5; }
 .clear-btn {
     width: 100%;
@@ -184,6 +185,18 @@ body {
     align-items: center;
     font-size: 1.1rem;
 }
+.trans-delete {
+    margin-left: auto;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s ease;
+}
+
+.trans-delete:hover {
+   color: #911313;
+    transform: scale(1.15);
+}
+
 .trans-icon.red-bg { background-color: #fef2f2; color: #ef4444; }
 .trans-icon.blue-bg { background-color: #eff6ff; color: #3b82f6; }
 

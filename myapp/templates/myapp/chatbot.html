@@ -3,118 +3,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
     <link rel="stylesheet" href="{% static 'myapp/css/chatstyle.css' %}">
 </head>
 <body>
-    <div id="chatbot-icon">
-        💬
+
+<div id="chatbot-icon">💬</div>
+
+<div id="chatbot-container" class="hidden">
+    <div id="chatbot-header">
+        <span>Artha AI Chat</span>
+        <button id="close-btn">&times;</button>
     </div>
-    <div id="chatbot-containeer" class="hidden">
-<div id="chatbot-header">
-    <div id="text">Chatbot</div>
-    <button id="close-btn">&times;</button>
-</div>
-<div id="chatbot-body">
-    <div id="chatbot-message">
-         
+    <div id="chatbot-body">
+        <div id="chatbot-messages"></div>
+    </div>
+    <div id="chatbot-input-container">
+        <input type="text" id="chatbot-input" placeholder="Ask about finance...">
+        <button id="send-btn">Send</button>
     </div>
 </div>
-<div id="chatbot-input-containeer">
-    <input type="text" id="chatbot-input" placeholder="Type a message" >
-<button id="send-btn">Send</button>
-</div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-  const chatbotContainer = document.getElementById("chatbot-containeer");
-  const closeBtn = document.getElementById("close-btn");
-  const sendBtn = document.getElementById("send-btn");
-  const chatbotInput = document.getElementById("chatbot-input");
-  const chatbotMessages = document.getElementById("chatbot-message");
-  const chatbotIcon = document.getElementById("chatbot-icon");
 
-  chatbotIcon.addEventListener("click", function () {
-    chatbotContainer.classList.remove("hidden");
-  });
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const icon = document.getElementById("chatbot-icon");
+    const container = document.getElementById("chatbot-container");
+    const closeBtn = document.getElementById("close-btn");
+    const sendBtn = document.getElementById("send-btn");
+    const input = document.getElementById("chatbot-input");
+    const messages = document.getElementById("chatbot-messages");
 
-  closeBtn.addEventListener("click", function () {
-    chatbotContainer.classList.add("hidden");
-  });
+    icon.onclick = () => container.classList.toggle("hidden");
+    closeBtn.onclick = () => container.classList.add("hidden");
 
-  sendBtn.addEventListener("click", sendMessage);
-  chatbotInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
-  });
-//mssg send garya ho yo
-  function sendMessage() {
-    const userMessage = chatbotInput.value.trim();//yo trim vanne le space haru lai hataucha
-    if (userMessage) {
-      appendMessage("user", userMessage);
-      chatbotInput.value = "";
-      getBotResponse(userMessage);
-    }
-  }
-
-  function appendMessage(sender, message) {
-    const messageElement = document.createElement("div");
-    messageElement.classList.add("message", sender);
-    messageElement.textContent = message;
-    chatbotMessages.appendChild(messageElement);
-    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-  }
-//api token leko
-  async function getBotResponse(userMessage) {
-  const apiKey = "sk-9fe2d78e3d3941aab806674539fa0f7b"; 
-  const apiUrl = "https://api.deepseek.com/v1/chat/completions";
-
-  appendMessage("bot", "🤖 AI is typing...");
-//exception handling vayo yo
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-   body: JSON.stringify({
-    model: "deepseek-chat",
-    messages: [
-        { role: "user", content: userMessage }
-    ]
-})
-
-    });
-
-    const data = await response.json();
-
-    let botMessage = " No response from AI model.";
-    if (data?.choices?.length > 0) {
-    botMessage = data.choices[0].message.content;
-}
-
-    else if (typeof data?.error === "string") {
-      botMessage = data.error;
+    function appendMessage(sender, text) {
+        const div = document.createElement("div");
+        div.className = `message ${sender}`;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
     }
 
-    const botElements = chatbotMessages.getElementsByClassName("bot");
-    if (botElements.length) {
-      botElements[botElements.length - 1].textContent = botMessage;
-    } else {
-      appendMessage("bot", botMessage);
+    async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        appendMessage("user", text);
+        input.value = "";
+
+        try {
+            const response = await fetch("/api/chatbot/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ message: text })
+            });
+            const data = await response.json();
+            appendMessage("bot", data.reply);
+        } catch {
+            appendMessage("bot", "Server error.");
+        }
     }
 
-  } catch (error) {
-    console.error("Error fetching bot response:", error);
-    appendMessage("bot", " Error contacting AI model. Please try again.");
-  }
-}
-
+    sendBtn.onclick = sendMessage;
+    input.onkeypress = (e) => { if(e.key === "Enter") sendMessage(); };
 });
-
-    </script>
+</script>
 </body>
 </html>
