@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../myproject"
+		},
+		{
+			"path": "../One"
+		},
+		{
+			"path": "../static"
+		},
+		{
+			"path": "../venv"
+		}
+	]
+}

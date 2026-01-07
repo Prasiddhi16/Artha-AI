@@ -1,0 +1,701 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Goals page {% endblock %}
+{% block content %}
+       
+        <div class="main-content">
+        <div class="overview">
+            <div class="textblock">
+        <section  class="idea">Financial Goals</section>
+        <section class="work">Track and achieve your savings targets</section>
+             </div>
+            <button class="addgoalbtn"><i class="fas fa-plus-circle"></i>   Add Goal</button>
+             <div id="addgoal-dialog" class="dialoggoal">
+            <div class="dialog-content">
+    <span id="close-dialog" class="close">&times;</span>
+    <br>
+    <div class="dialogtopic"> Add Financial Goal</div>
+    <div class="dialogexplain">Create a new savings goal to track your progress</div>
+
+   <form method="POST" class="goal-form">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="goal-title">Goal Title</label>
+        <input type="text" id="goal-title" name="title" placeholder="e.g., Emergency Fund" required>
+    </div>
+
+    <div class="form-group">
+        <label for="target-amount">Target Amount</label>
+        <input type="number" id="target-amount" name="target_amount" placeholder="₹ 0.00" min="0" step="5" required>
+    </div>
+
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option value="" disabled selected>Select category</option>
+            <option value="savings">Savings</option>
+            <option value="investment">Investment</option>
+            <option value="emergency">Emergency</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="target-date">Target Date</label>
+        <input type="date" id="target-date" name="target_date" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="submit-btn">Add Goal</button>
+        <button type="button" class="cancel-btn" onclick="handleCancel()">Cancel</button>
+    </div>
+</form>
+
+  
+
+    </div>
+    </div>
+        </div>
+        <div class="goalview">
+            <div class="viewcard">
+                <div class="content">
+                <section class="main">
+                    <span>Total Goals</span>
+                    <i  class="fas fa-bullseye"></i>
+                </section>
+                <section class="goalnumber" id="total-goals">{{ total_goals }}</section>
+                <section class="completegoal" id="completed-goals">{{completed_goals}} goals completed</section>
+                </div>
+            </div>
+
+            <div class="viewcard">
+                <div class="content">
+                <section class="main">
+                    <span>Total Target</span>
+                   <i class="fas fa-arrow-trend-up"></i> 
+                </section>
+                <section class="goalnumber" id="total-target" style="color:rgb(109,109,224);">₹ {{total_target}}</section>
+                <section class="completegoal" id="total-saved">₹ {{ total_saved }} saved</section>
+            </div>
+            </div>
+
+            <div class="viewcard">
+    <div class="content">
+                <section class="main">
+                    <span>Overall Progress</span>
+                    <i class="fas fa-calendar"></i>
+                </section>
+                <section class="goalnumber" id="overall-progress-text">{{ overall_progress }}%</section>
+               <div class="progressbar">
+               <div class="progressfill" id="overall-progress-bar" style="width:{{ overall_progress }}%;"></div>
+                </div>
+
+            </div>
+            </div>
+
+        </div>
+      <div class="slot-container">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="showPanel(this, 'goals')">
+      <span class="tab-icon"><i class="fas fa-bullseye"></i></span> My Goals
+    </button>
+    <button class="tab-btn" onclick="showPanel(this, 'milestones')">
+      <span class="tab-icon"><i class="fas fa-flag"></i></span> Milestones
+    </button>
+  </div>
+
+<div id="milestones" class="tab-panel">
+    <span class="active">Milestones</span>
+    <div class="milestonegrid">
+        {% for goal in user_goals %}
+        <div class="milestonecard" data-goal-id="{{ goal.id }}">
+            <div class="goalheader">
+                <span class="goalname"><i class="fas fa-trophy"></i> {{ goal.title }}</span>
+                
+<button class="complete">{{ goal.progress_percent|floatformat:0 }}% Complete</button>
+            </div>
+            <div class="type">Track your progress checkpoints</div>
+            <div class="milestone-tracker">
+                {% for milestone in goal.dynamic_milestones %}
+                <div class="milestone-item {{ milestone.status }}">
+                    <div class="container">
+                        <div class="milestone-label">
+                            {% if milestone.name == "First Quarter" %}
+                                <i class="fas fa-seedling"></i>
+                            {% elif milestone.name == "Halfway There" %}
+                                <i class="fas fa-flag"></i>
+                            {% elif milestone.name == "Final Stretch" %}
+                                <i class="fas fa-flag-checkered"></i>
+                            {% else %}
+                                <i class="fas fa-star"></i>
+                            {% endif %}
+                            {{ milestone.name }}
+                        </div>
+                        <div class="milestone-status">
+                            {% if milestone.status == "completed" %}
+                                <i class="fas fa-check-circle" style="color:green;"></i> Completed
+                            {% elif milestone.status == "active" %}
+                                <i class="fas fa-hourglass" style="color:gold;"></i> Next
+                            {% else %}
+                                <i class="fas fa-running" style="color:navy;"></i> Upcoming
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="milestone-target">₹{{ milestone.amount|floatformat:2 }}</div>
+                </div>
+                
+                {% endfor %}
+            </div>
+            <button class="ladder-btn" data-goal-id="{{ goal.id }}">View Contribution 
+</button>
+        </div>
+        
+        {% empty %}
+        <p>No goals to track milestones yet.</p>
+        {% endfor %}
+    </div>
+</div>
+  </div>
+  <div id="ladder-dialog" class="dialoggoal">
+  <div class="dialog-content">
+    <span id="close-ladder-dialog" class="close">&times;</span>
+
+    <div class="dialogtopic">Contribution Ladder</div>
+    <div class="dialogexplain">
+        Contribution amount over time
+    </div>
+
+    <canvas id="ladderChart" height="120"></canvas>
+  </div>
+</div>
+
+
+  <div id="goals" class="tab-panel active">
+            <span class="active">Active Goals</span>
+            <div class="goalgrid">
+            {% for goal in user_goals %}
+<div class="goalcard" data-goal-id="{{ goal.id }}">
+
+  <div class="goalheader">
+    <span class="goalname">
+      <i class="fas fa-bullseye"></i> {{ goal.title }}
+    </span>
+   <i class="fas fa-trash-alt delete-goal" data-goal-id="{{ goal.id }}"></i>
+  </div>
+
+  <div class="type">{{ goal.category|title }}</div>
+
+  <div class="progresscard">
+    <div class="info">Progress</div>
+
+    <div class="values">
+      <span class="goalsaved">₹{{ goal.total_contributed }}</span>
+      <span class="divider">/</span>
+      <span class="goalvalue">₹{{ goal.target_amount }}</span>
+    </div>
+
+    <div class="progressbar">
+  <div class="progressfill" style="width:{{ goal.progress_percent|floatformat:1 }}%;"></div>
+</div>
+
+<div class="percentage">
+  {{ goal.progress_percent|floatformat:1 }}% complete
+</div>
+  </div>
+
+  <div class="goalend">
+    <div class="inf">
+      Remaining
+      <div class="goalremaining">
+         ₹{{ goal.remaining_amount|floatformat:2 }}
+      </div>
+    </div>
+
+    <div class="inf">
+      Deadline
+      <div class="goaldeadline">
+        {% if goal.days_remaining is not None %}
+    {{ goal.days_remaining }} days
+  {% else %}
+    N/A
+  {% endif %}
+      </div>
+    </div>
+  </div>
+{% if goal.progress_percent >= 100 %}
+    <button class="contributebtn completed-btn" disabled>
+        🎉 Goal Completed
+    </button>
+{% else %}
+    <button class="contributebtn"
+            data-goal-id="{{ goal.id }}"
+            data-goal-title="{{ goal.title }}"
+            data-total="{{ goal.total_contributed }}"
+            data-target="{{ goal.target_amount }}"
+            data-progress="{{ goal.progress_percent|floatformat:0 }}"
+             data-created="{{ goal.created|date:'Y-m-d' }}">
+        Add Contribution
+    </button>
+{% endif %}
+
+</div>
+{% empty %}
+<p>No goals added yet.</p>
+{% endfor %}
+
+<div id="addcontribution-dialog" class="dialoggoal">
+  <div class="dialog-content">
+    <span id="close-contribution-dialog" class="close">&times;</span>
+    <br>
+    <div class="dialogtopic">Add Contribution</div>
+    <div class="dialogexplain">Record a new contribution towards your goal</div>
+
+    <div class="topbox">
+      <div class="line1">
+        <div class="ctext">
+          Current Progress
+        </div>
+        <div class="cprogresscard">
+          <div class="values">
+            <span class="goalsaved">₹0</span>
+            <span class="divider">/</span>
+            <span class="goalvalue">₹0</span>
+          </div>
+          <div class="progressbar">
+            <div class="progressfill" style="width:0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" class="contribution-form" id="contribution-form">
+      {% csrf_token %}
+      <input type="hidden" name="goal_id" id="contribution-goal-id">
+
+      <div class="form-group">
+        <label for="contribution-amount">Contribution Amount</label>
+        <input type="number" id="contribution-amount" name="amount" placeholder="₹ 0.00" min="0" step="5" required>
+      </div>
+
+      <div class="form-group">
+        <label for="contribution-date">Contribution Date</label>
+        <input type="date" id="contribution-date" name="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="contribution-note">Note (optional)</label>
+        <input type="text" id="contribution-note" name="note" placeholder="e.g., Salary deposit">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="submit-btn">Add Contribution</button>
+        <button type="button" class="cancel-btn" onclick="handleContributionCancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+            
+            </div>
+            </div>
+        
+  {% endblock %}
+
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'myapp/css/goalsstyle.css' %}">
+{% endblock %}
+
+
+
+{% block extra_js %}
+ <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+ <script>
+function launchConfetti() {
+    confetti({
+        particleCount: 120,
+        angle: 60,
+        spread: 90,
+        origin: { x: 0, y: 0.6 },
+        colors: ['#6d6de0', '#ffd700', '#00ff99', '#ff6b6b']
+    });
+    confetti({
+        particleCount: 120,
+        angle: 120,
+        spread: 90,
+        origin: { x: 1, y: 0.6 },
+        colors: ['#6d6de0', '#ffd700', '#00ff99', '#ff6b6b']
+    });
+}
+</script>
+
+<script>
+    let ladderChart = null;
+
+
+const ladderDialog = document.getElementById("ladder-dialog");
+const closeLadderBtn = document.getElementById("close-ladder-dialog");
+const ctx = document.getElementById("ladderChart").getContext("2d");
+
+// Open ladder modal
+document.querySelectorAll(".ladder-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const goalId = btn.dataset.goalId;
+
+    fetch(`{% url 'goal_contributions_ajax' %}?goal_id=${goalId}`)
+      .then(res => res.json())
+      .then(data => {
+        ladderDialog.style.display = "block";
+
+        if (ladderChart) ladderChart.destroy();
+
+        ladderChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: "Contribution Amount",
+              data: data.amounts,
+              stepped: true,        
+              borderWidth: 3,
+              borderColor: data.color,
+              fill: false,
+              tension: 0
+            }]
+          },
+          options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const idx = context.dataIndex;
+            const indiv = data.individuals[idx];  // individual contribution
+            return ` Contribution Amount  ₹${indiv.toFixed(2)}`;        // tooltip shows individual
+          }
+        }
+      }
+    },
+            scales: {
+              x: {
+                title: { display: true, text: "Date" }
+              },
+              y: {
+                title: { display: true, text: "Amount (₹)" }
+              }
+            }
+          }
+        });
+      });
+  });
+});
+
+// Close modal
+closeLadderBtn.addEventListener("click", () => {
+  ladderDialog.style.display = "none";
+});
+
+window.addEventListener("click", e => {
+  if (e.target === ladderDialog) ladderDialog.style.display = "none";
+});
+
+      
+    // Add Goal dialog elements
+const addGoalBtn = document.querySelector('.addgoalbtn');
+const addGoalDialog = document.getElementById('addgoal-dialog');
+const closeGoalBtn = document.getElementById('close-dialog');
+
+// Open dialog on button click
+addGoalBtn.addEventListener('click', () => {
+  addGoalDialog.style.display = 'block';
+});
+
+// Close dialog when clicking the close icon
+closeGoalBtn.addEventListener('click', () => {
+  addGoalDialog.style.display = 'none';
+});
+
+// Close when clicking outside the dialog
+window.addEventListener('click', (e) => {
+  if (e.target === addGoalDialog) {
+    addGoalDialog.style.display = 'none';
+  }
+});
+
+// Cancel button function
+function handleCancel() {
+  document.querySelector('.goal-form').reset();
+  addGoalDialog.style.display = 'none';
+}
+
+  // Contribution dialog elements
+const contributionDialog = document.getElementById('addcontribution-dialog');
+const closeContributionBtn = document.getElementById('close-contribution-dialog');
+const contributionForm = document.getElementById('contribution-form');
+const contributionGoalIdInput = document.getElementById('contribution-goal-id');
+
+// Add click event to all contribution buttons
+document.querySelectorAll('.contributebtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const goalId = btn.dataset.goalId;
+    const goalTitle = btn.dataset.goalTitle;
+    const total = btn.dataset.total;
+    const target = btn.dataset.target;
+    const progress = btn.dataset.progress;
+    const createdDate = btn.dataset.created;
+
+    // Fill hidden input with goal ID
+    contributionGoalIdInput.value = goalId;
+
+    // Update top box info dynamically
+    contributionDialog.querySelector('.goalsaved').textContent = `₹${total}`;
+    contributionDialog.querySelector('.goalvalue').textContent = `₹${target}`;
+    contributionDialog.querySelector('.progressfill').style.width = `${progress}%`;
+    // Restrict date input
+    const dateInput = document.getElementById('contribution-date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = createdDate;       // cannot choose before goal created
+    dateInput.value = today;     // default to goal creation date
+
+
+    // Show dialog
+    contributionDialog.style.display = 'block';
+  });
+});
+
+
+
+// Close dialog
+closeContributionBtn.addEventListener('click', () => {
+  contributionDialog.style.display = 'none';
+});
+
+// Close when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === contributionDialog) {
+    contributionDialog.style.display = 'none';
+  }
+});
+
+// Cancel button function
+function handleContributionCancel() {
+  contributionForm.reset();
+  contributionDialog.style.display = 'none';
+}
+contributionForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  contributionDialog.style.display = 'none';
+
+  const formData = new FormData(contributionForm);
+  const goalId = contributionGoalIdInput.value;
+
+
+  fetch("{% url 'add_contribution_ajax' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    // Find the goal card in the DOM
+    const goalCard = document.querySelector(`.goalcard[data-goal-id='${data.id}']`);
+    if (!goalCard) return;
+    let progress = parseFloat(data.progress_percent);
+progress = Math.min(progress, 100); 
+    // Update progress values
+    goalCard.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+    goalCard.querySelector('.goalremaining').textContent = `₹${parseFloat(data.remaining_amount).toFixed(2)}`;
+    goalCard.querySelector('.progressfill').style.width = `${progress}%`;
+    goalCard.querySelector('.percentage').textContent = `${progress}% complete`;
+
+    if (progress >= 100) {
+    const btn = goalCard.querySelector('.contributebtn');
+    if (btn) {
+        btn.outerHTML = `
+            <button class="contributebtn completed-btn" disabled>
+                🎉 Goal Completed
+            </button>
+        `;
+    }
+}
+
+    // Update contribution dialog top box
+const topBox = contributionDialog.querySelector('.topbox');
+if (topBox) {
+     const progressFill = topBox.querySelector('.cprogresscard .progressfill');
+    const goalSaved = topBox.querySelector('.cprogresscard .values .goalsaved');
+    const goalValue = topBox.querySelector('.cprogresscard .values .goalvalue');
+    
+    if (progressFill) progressFill.style.width = `${parseFloat(data.progress_percent).toFixed(1)}%`;
+    if (goalSaved) goalSaved.textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+    if (goalValue) goalValue.textContent = `₹${parseFloat(data.target_amount).toFixed(2)}`;
+
+    const btn = document.querySelector(`.contributebtn[data-goal-id='${data.id}']`);
+if (btn) {
+    btn.dataset.total = data.total_contributed;
+    btn.dataset.target = data.target_amount;
+    btn.dataset.progress = data.progress_percent;
+}
+}
+
+    // Update dialog too
+   contributionGoalIdInput.value = goalId;
+   contributionDialog.querySelector('.goalsaved').textContent = `₹${parseFloat(data.total_contributed).toFixed(2)}`;
+contributionDialog.querySelector('.goalvalue').textContent = `₹${parseFloat(data.target_amount).toFixed(2)}`;
+contributionDialog.querySelector('.progressfill').style.width = `${parseFloat(data.progress_percent)}%`;
+
+
+    contributionForm.reset();
+    contributionDialog.style.display = 'none';
+    
+      const milestoneCard = document.querySelector(`.milestonecard[data-goal-id='${data.id}']`);
+      //update milestones
+    if (milestoneCard && data.milestones) {
+        const tracker = milestoneCard.querySelector('.milestone-tracker');
+        tracker.innerHTML = '';
+        data.milestones.forEach(m => {
+            tracker.innerHTML += `
+            <div class="milestone-item ${m.status}">
+                <div class="container">
+                    <div class="milestone-label">
+                        <i class="${m.icon}"></i> ${m.name}
+                    </div>
+                    <div class="milestone-status">
+                        ${m.status === "completed" ? '<i class="fas fa-check-circle" style="color:green;"></i> Completed' :
+                          m.status === "active" ? '<i class="fas fa-hourglass" style="color:gold;"></i> Next' :
+                          '<i class="fas fa-running" style="color:navy;"></i> Upcoming'}
+                    </div>
+                </div>
+                 <div class="milestone-target">₹${parseFloat(m.amount).toFixed(2)}</div>
+            </div>`;
+        });
+        const completeBtn = milestoneCard.querySelector('.complete');
+    if (completeBtn) {
+        completeBtn.textContent = `${parseFloat(progress).toFixed(0)}% Complete`;
+    }
+   
+  }
+    document.getElementById("total-goals").innerText = data.total_goals;
+document.getElementById("completed-goals").innerText =
+  data.completed_goals + " goals completed";
+
+document.getElementById("total-target").innerText =
+  "₹ " + parseFloat(data.total_target).toFixed(2);
+
+document.getElementById("total-saved").innerText =
+  "₹ " + parseFloat(data.total_saved).toFixed(2) + " saved";
+
+document.getElementById("overall-progress-text").innerText =
+  data.overall_progress + "%";
+
+document.getElementById("overall-progress-bar").style.width =
+  data.overall_progress + "%";
+
+  if (parseFloat(progress) >= 100) {
+        launchConfetti(); // celebrate
+
+        // Ask if user wants to delete
+        setTimeout(() => {
+            if (confirm(`Congratulations! You completed "${data.title}". Do you want to delete this goal?`)) {
+                // Trigger delete AJAX
+                const formData = new FormData();
+                formData.append('goal_id', data.id);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                fetch("{% url 'delete_goal' %}", {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(resp => resp.json())
+                .then(delData => {
+                    if (delData.success) {
+                    // Remove goal card
+                    const goalCardToDelete = document.querySelector(`.goalcard[data-goal-id='${data.id}']`);
+                    if (goalCardToDelete) goalCardToDelete.remove();
+
+                    // Remove milestone card
+                    const milestoneCardToDelete = document.querySelector(`.milestonecard[data-goal-id='${data.id}']`);
+                    if (milestoneCardToDelete) milestoneCardToDelete.remove();
+
+                    document.getElementById("total-goals").innerText = delData.total_goals;
+                    document.getElementById("completed-goals").innerText = delData.completed_goals + " goals completed";
+                    document.getElementById("total-target").innerText = "₹ " + parseFloat(delData.total_target).toFixed(2);
+                    document.getElementById("total-saved").innerText = "₹ " + parseFloat(delData.total_saved).toFixed(2) + " saved";
+                    document.getElementById("overall-progress-text").innerText = delData.overall_progress + "%";
+                    document.getElementById("overall-progress-bar").style.width = delData.overall_progress + "%";
+
+                    alert("Goal and its milestones deleted successfully!");
+                } else if (delData.error) {
+                    alert(delData.error);
+                }
+            });
+        }
+    }, 500);
+}
+  })
+  .catch(err => console.error(err));
+});
+
+
+// Contribution dialog elements
+
+function showPanel(button, panelId) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+
+  button.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+// Delete goal functionality
+document.querySelectorAll('.goalcard .fa-trash-alt').forEach(icon => {
+  icon.addEventListener('click', () => {
+    if (!confirm("Are you sure you want to delete this goal?")) return;
+
+    const goalCard = icon.closest('.goalcard');
+    const goalId = goalCard.dataset.goalId;
+    
+
+    const formData = new FormData();
+    formData.append('goal_id', goalId);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'delete_goal' %}", {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+   .then(data => {
+  if (data.error) {
+    alert(data.error);
+  } else if (data.success) {
+    goalCard.remove(); // Remove goal card
+    const milestoneCard = document.querySelector(`.milestonecard[data-goal-id='${goalId}']`);
+    if (milestoneCard) milestoneCard.remove();
+
+    // Update overview cards dynamically
+    document.getElementById("total-goals").innerText = data.total_goals;
+    document.getElementById("completed-goals").innerText = data.completed_goals + " goals completed";
+    document.getElementById("total-target").innerText = "₹ " + parseFloat(data.total_target).toFixed(2);
+    document.getElementById("total-saved").innerText = "₹ " + parseFloat(data.total_saved).toFixed(2) + " saved";
+    document.getElementById("overall-progress-text").innerText = data.overall_progress + "%";
+    document.getElementById("overall-progress-bar").style.width = data.overall_progress + "%";
+
+    alert("Goal and its milestones deleted successfully!");
+  }
+
+ }) .catch(err => console.error(err));
+  });
+});
+
+     </script>
+    
+  {% endblock %}

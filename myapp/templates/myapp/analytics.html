@@ -1,0 +1,260 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Analytics page {% endblock %}
+{% block content %}
+    <div class="main-container">
+    <div class="analyzepage">
+    <div class="analyzetop">
+        <h2>Analytics</h2>
+        <p>Detailed insights into your financial habits</p>
+    </div>
+    <br />
+    <hr>
+    <br>
+    <div class="boxes">
+        <div class="box"> 
+            <section class="headbox">
+            <p>Total Income</p>
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            </section>
+            <br>
+            <p class="inumber">$3567.2</p>
+            <p class="footbox">All time</p>  
+            
+        </div>
+        <div class="box">
+            <section class="headbox">
+            <p>Total Expense</p>
+            <i class="fa-solid fa-arrow-trend-down"></i>
+            </section>
+            <br>
+            <p class="enumber">$3567.2</p>
+            <p class="footbox">All time</p>  
+            
+        </div>
+        <div class="box"> 
+            <section class="headbox">
+            <p>Avg Monthly Income</p>
+            <i class="fa-solid fa-dollar-sign"></i>
+            </section>
+            <br>
+            <p class="inumber">$3567.2</p>
+            <p class="footbox">Per Month</p>  
+           
+        </div>
+        <div class="box"> 
+            <section class="headbox">
+            <p>Avg Monthly Expense</p>
+            <i class="fa-regular fa-calendar"></i>
+            </section>
+            <br>
+            <p class="enumber">$3567.2</p>
+            <p class="footbox">Per Month</p>  
+            
+        </div>
+    </div>
+
+    <br />
+
+    <div class="tabs">
+    <button type="button" class="tab active" id="overview-tab">Overview </button>
+    <button type="button" class="tab" id="trends-tab">Trends</button>
+    <button type="button" class="tab" id="categories-tab">Categories</button>
+    </div>
+    <br>
+    <div class="content active" id="overview">
+    <div class="box">
+        <p class="headtext">Expenses by Category</p>
+        <p class="foottext">Breakdown of your spending</p>
+        <canvas class="pie-chart"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                </div>
+    </div>
+    <div class="box">
+        <p class="headtext">Income vs Expenses</p>
+        <p class="foottext">Daily Comparison</p>
+    </div>
+    </div>
+
+    <div class="content" id="trends">
+        <div class="box">
+        <p class="headtext">Income vs Expenses</p>
+        <p class="foottext">Daily Comparison</p>
+        <canvas class="bar-graph"></canvas>
+        </div>
+
+        <div class="box">
+        <p class="headtext">Category Spending Trends</p>
+        <p class="foottext">Track how a category changes over time</p>
+        <div class="categorySelector">
+        <select name="category">
+          <option>Food & Dining</option>
+          <option>Transport</option> 
+          <option>Groceries</option> 
+          <option>Housing</option> 
+          <option>Utilities</option> 
+          <option>Entertainment</option> 
+          <option>Others</option> 
+        </select>
+        </div>
+        <canvas id="line-graph"></canvas>
+        </div>
+        <div class="box">
+        <p class="headtext">Monthly Breakdown</p>
+        <p class="foottext">Summary of each months' activity</p> 
+        <br />
+        <div>
+        <section class="headbox">
+            <p>October 2025</p>
+            <p>6 transactions</p>
+        </section>
+        <div class="boxes">
+            <div class="incomebox">
+                <p class="footbox">Income</p>
+                <p class="inumber2">$2899.99</p>
+            </div>
+            <div class="expensebox">
+                <p class="footbox">Expense</p>
+                <p class="enumber2">$1099.67</p>
+            </div>
+        </div>
+        </div>
+
+        <div>
+        <section class="headbox">
+            <p>November 2025</p>
+            <p>7 transactions</p>
+        </section>
+        <div class="boxes">
+            <div class="incomebox">
+                <p class="footbox">Income</p>
+                <p class="inumber2">$2899.99</p>
+            </div>
+            <div class="expensebox">
+                <p class="footbox">Expense</p>
+                <p class="enumber2">$1099.67</p>
+            </div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="content" id="categories">
+        <div class="box">
+        <p class="headtext">Expenses by Category</p>
+        <p class="foottext">Breakdown of your spending</p>
+        <canvas class="pie-chart"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                </div>
+        </div>
+        <div class="box">
+        <p class="headtext">Top Spending Categories</p>
+        <p class="foottext">Where your money goes</p>
+        <br />
+            <div>
+                <section class="headbox">
+                <p>Housing</p>
+                <p>$112.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:61%;"></div>
+                </div>
+                <div class="footbox">
+                <p>61% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Groceries</p>
+                <p>$96.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:31%;"></div>
+                </div>
+                <div class="footbox">
+                <p>31% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Entertainment</p>
+                <p>$48.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:8%;"></div>
+                </div>
+                <div class="footbox">
+                <p>8% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Healthcare</p>
+                <p>$20.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:2%;"></div>
+                </div>
+                <div class="footbox">
+                <p>2% of total expenses<p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    </div>
+    </div>
+    {% endblock %}
+
+    {% block extra_css %} 
+    <link rel="stylesheet" href="{% static 'myapp/css/analytics.css' %}">
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+    const tab=document.querySelectorAll(".tab");
+    const content=document.querySelectorAll(".content");
+    const overviewtab=document.getElementById("overview-tab");
+    const trendstab=document.getElementById("trends-tab");
+    const categoriestab=document.getElementById("categories-tab");
+
+    function switchTab(tabname){
+        tab.forEach(sec=>sec.classList.remove("active"));
+        document.getElementById(tabname).classList.add("active");
+    }
+    function switchContent(contentname){
+        content.forEach(sec=>sec.classList.remove("active"));
+        document.getElementById(contentname).classList.add("active");
+    }
+
+    overviewtab.addEventListener("click",()=>{
+        switchTab("overview-tab");
+        switchContent("overview");
+    });
+    trendstab.addEventListener("click",()=>{
+        switchTab("trends-tab");
+        switchContent("trends");
+    });
+    categoriestab.addEventListener("click",()=>{
+        switchTab("categories-tab");
+        switchContent("categories");
+    });
+
+    </script>
+    {% endblock %}
