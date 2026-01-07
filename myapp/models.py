@@ -3,6 +3,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from django.conf import settings
 
+class Transaction(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.CharField(max_length=100)
+    transaction_type = models.CharField(max_length=50) # Income or Expense
+    date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.category} - {self.amount}"
+
 
 
 # ---------------- User Manager ----------------
@@ -70,10 +80,13 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=100)
     target_date = models.DateField()
+    created = models.DateField(auto_now_add=True)
+
+    
 
     def __str__(self):
         return f"{self.user.email} - Goal: {self.title}"
-     # ---------------- Goal Model ----------------
+     # ---------------- GoalContribution Model ----------------
 
 class GoalContribution(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -84,9 +97,6 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
-
-
-
-
+    
 
 

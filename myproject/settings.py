@@ -1,6 +1,10 @@
 import os
 from pathlib import Path
 import pymysql
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # PyMySQL setup for Django MySQL backend
 pymysql.version_info = (2, 2, 1, 'final', 0)
@@ -97,3 +101,5 @@ STATICFILES_DIRS = [BASE_DIR / 'static',]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
