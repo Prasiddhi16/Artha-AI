@@ -80,8 +80,11 @@ class Goal(models.Model):
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=100)
     target_date = models.DateField()
+<<<<<<< HEAD
     created = models.DateField(auto_now_add=True)
 
+=======
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     
 
     def __str__(self):
@@ -97,6 +100,55 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
+<<<<<<< HEAD
     
 
 
+=======
+   
+
+class PasswordResetOTP(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(default=timezone.now)
+    attempts = models.IntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
+# ---------------- Budget Model ----------------
+class Budget(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    category = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)  # The budget limit
+    icon = models.CharField(max_length=10, default="💰") # To store emojis like 🏠, 🛒
+    month = models.IntegerField() # 1-12
+    year = models.IntegerField()
+
+    class Meta:
+        unique_together = ('user', 'category', 'month', 'year')
+
+    def __str__(self):
+        return f"{self.category} - {self.month}/{self.year}: {self.amount}"
+
+# ---------------- Money Flow Model ----------------
+class MoneyFlow(models.Model):
+    FLOW_TYPES = (
+        ('topay', 'You owe'),
+        ('toreceive', 'Owed to you'),
+    )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    person_name = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    flow_type = models.CharField(max_length=10, choices=FLOW_TYPES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.person_name} - {self.flow_type}: {self.amount}"
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310

@@ -18,8 +18,14 @@
             <i class="fa-solid fa-arrow-trend-up"></i>
             </section>
             <br>
+<<<<<<< HEAD
             <p class="inumber">Rs. {{ month_income|floatformat:2 }}</p>
             <p class="footbox">This Month</p>   
+=======
+            <p class="inumber">$3567.2</p>
+            <p class="footbox">All time</p>  
+            
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         </div>
         <div class="box">
             <section class="headbox">
@@ -27,8 +33,13 @@
             <i class="fa-solid fa-arrow-trend-down"></i>
             </section>
             <br>
+<<<<<<< HEAD
             <p class="enumber">Rs. {{ month_expense|floatformat:2 }}</p>
             <p class="footbox">This Month</p>  
+=======
+            <p class="enumber">$3567.2</p>
+            <p class="footbox">All time</p>  
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
             
         </div>
         <div class="box"> 
@@ -37,7 +48,11 @@
             <i class="fa-solid fa-dollar-sign"></i>
             </section>
             <br>
+<<<<<<< HEAD
             <p class="inumber">Rs. {{ avg_income|floatformat:2 }}</p>
+=======
+            <p class="inumber">$3567.2</p>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
             <p class="footbox">Per Month</p>  
            
         </div>
@@ -47,7 +62,11 @@
             <i class="fa-regular fa-calendar"></i>
             </section>
             <br>
+<<<<<<< HEAD
             <p class="enumber">Rs. {{ avg_expense|floatformat:2 }}</p>
+=======
+            <p class="enumber">$3567.2</p>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
             <p class="footbox">Per Month</p>  
             
         </div>
@@ -65,6 +84,7 @@
     <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
+<<<<<<< HEAD
             <div class="month_selector">
             <button class="nav-btn" onclick="updateMonth(-1)" aria-label="Previous month">&#8249;</button>
             <span class="current-month"></span>
@@ -74,10 +94,22 @@
             
             <canvas class="pieChart"></canvas>
 
+=======
+        <canvas class="pie-chart"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                </div>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     </div>
     <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
+<<<<<<< HEAD
         <div class="date_selector">
                 <label for="startDate">From:</label>
                 <input type="date" class="startDate">
@@ -86,6 +118,8 @@
         </div>
             <button class="loadWeekly">Load Bar Graph</button>
         <canvas class="barGraph"></canvas>
+=======
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     </div>
     </div>
 
@@ -93,6 +127,7 @@
         <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
+<<<<<<< HEAD
         <div class="date_selector">
                 <label for="startDate">From:</label>
                 <input type="date" class="startDate">
@@ -101,12 +136,19 @@
             </div>
             <button class="loadWeekly">Load Bar Graph</button>
             <canvas class="barGraph"></canvas>
+=======
+        <canvas class="bar-graph"></canvas>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         </div>
 
         <div class="box">
         <p class="headtext">Category Spending Trends</p>
         <p class="foottext">Track how a category changes over time</p>
+<<<<<<< HEAD
         <div id="categorySelector">
+=======
+        <div class="categorySelector">
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         <select name="category">
           <option>Food & Dining</option>
           <option>Transport</option> 
@@ -117,6 +159,7 @@
           <option>Others</option> 
         </select>
         </div>
+<<<<<<< HEAD
         <div id="line_month_select">
             <button class="nav-btn" onclick="updateLineMonth(-1)" aria-label="Previous month">&#8249;</button>
             <span id="line-month"></span>
@@ -135,10 +178,23 @@
         <section class="headbox">
             <p>{{ month.name }} {{ month.year }}</p>
             <p>{{ month.count }} transactions</p>
+=======
+        <canvas id="line-graph"></canvas>
+        </div>
+        <div class="box">
+        <p class="headtext">Monthly Breakdown</p>
+        <p class="foottext">Summary of each months' activity</p> 
+        <br />
+        <div>
+        <section class="headbox">
+            <p>October 2025</p>
+            <p>6 transactions</p>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         </section>
         <div class="boxes">
             <div class="incomebox">
                 <p class="footbox">Income</p>
+<<<<<<< HEAD
                 <p class="inumber2">Rs. {{ month.income|floatformat:2 }}</p>
             </div>
             <div class="expensebox">
@@ -149,12 +205,41 @@
         </div>
         {% endfor %}
         </div>
+=======
+                <p class="inumber2">$2899.99</p>
+            </div>
+            <div class="expensebox">
+                <p class="footbox">Expense</p>
+                <p class="enumber2">$1099.67</p>
+            </div>
+        </div>
+        </div>
+
+        <div>
+        <section class="headbox">
+            <p>November 2025</p>
+            <p>7 transactions</p>
+        </section>
+        <div class="boxes">
+            <div class="incomebox">
+                <p class="footbox">Income</p>
+                <p class="inumber2">$2899.99</p>
+            </div>
+            <div class="expensebox">
+                <p class="footbox">Expense</p>
+                <p class="enumber2">$1099.67</p>
+            </div>
+        </div>
+        </div>
+    </div>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     </div>
 
     <div class="content" id="categories">
         <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
+<<<<<<< HEAD
                 <div class="month_selector">
                 <button class="nav-btn" onclick="updateMonth(-1)" aria-label="Previous month">&#8249;</button>
                 <span class="current-month"></span>
@@ -162,17 +247,88 @@
                 </div>
                 <button class="loadMonthly">Load Pie Chart</button>
                 <canvas class="pieChart"></canvas>
+=======
+        <canvas class="pie-chart"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                </div>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
         </div>
         <div class="box">
         <p class="headtext">Top Spending Categories</p>
         <p class="foottext">Where your money goes</p>
         <br />
+<<<<<<< HEAD
             <div id="top-spending-list">
                
             </div>           
         </div>
 
     </div>
+=======
+            <div>
+                <section class="headbox">
+                <p>Housing</p>
+                <p>$112.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:61%;"></div>
+                </div>
+                <div class="footbox">
+                <p>61% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Groceries</p>
+                <p>$96.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:31%;"></div>
+                </div>
+                <div class="footbox">
+                <p>31% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Entertainment</p>
+                <p>$48.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:8%;"></div>
+                </div>
+                <div class="footbox">
+                <p>8% of total expenses</p>
+                </div>
+            </div>
+            <br />
+            <div>
+                <section class="headbox">
+                <p>Healthcare</p>
+                <p>$20.99</p>
+                </section> 
+                <div class="progressbar">
+                    <div class="progressfill" style="width:2%;"></div>
+                </div>
+                <div class="footbox">
+                <p>2% of total expenses<p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    </div>
+    </div>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     {% endblock %}
 
     {% block extra_css %} 
@@ -199,18 +355,25 @@
     overviewtab.addEventListener("click",()=>{
         switchTab("overview-tab");
         switchContent("overview");
+<<<<<<< HEAD
        
+=======
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     });
     trendstab.addEventListener("click",()=>{
         switchTab("trends-tab");
         switchContent("trends");
+<<<<<<< HEAD
        
+=======
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     });
     categoriestab.addEventListener("click",()=>{
         switchTab("categories-tab");
         switchContent("categories");
     });
 
+<<<<<<< HEAD
     //bargraph
     let barGraphs=[];
 
@@ -524,5 +687,7 @@
     loadLineGraph();
 
 
+=======
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     </script>
     {% endblock %}

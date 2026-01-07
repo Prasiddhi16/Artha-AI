@@ -308,6 +308,7 @@ def add_contribution_ajax(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+<<<<<<< HEAD
 @login_required(login_url='signin')
 def review(request):
     user = request.user
@@ -354,6 +355,9 @@ def review(request):
     }
 
     return render(request, "myapp/review.html", context)
+=======
+
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 # ---------------- Static Pages ----------------
 def analytics(request): return render(request, 'myapp/analytics.html')
 def budget(request):return render(request, 'myapp/budget.html')
