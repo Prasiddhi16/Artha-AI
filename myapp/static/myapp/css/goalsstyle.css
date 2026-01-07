@@ -402,6 +402,111 @@ background-color: white;
   font-weight: 600;
   margin-bottom: 15px;
 }
+.recommendation-container {
+  margin-top: 25px;
+  background: #f8fffd;
+  border: 1px solid #b6ead7;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.recommendation-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.recommendation-header i {
+  font-size: 20px;
+  color: #28c76f;
+}
+
+.recommendation-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.recommendation-header p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.recommendation-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+   border: 1px solid rgba(128, 128, 128, 0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border:3px;
+  
+}
+
+.recommendation-card i {
+  font-size: 15px;
+}
+
+.recommendation-card.info {
+  background: #eef5ff;
+   border: 1px solid rgba(128, 128, 128, 0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.recommendation-card.warning {
+  background: #fff1e6;
+   border: 1px solid rgba(128, 128, 128, 0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.recommendation-card.highlight {
+  background: #f6efff;
+   border: 1px solid rgba(128, 128, 128, 0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.rec-text h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.rec-text p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.badge {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.badge.success {
+  background: #d7f5e7;
+  color: #1b8f5a;
+}
+
+.badge.danger {
+  background: #ffd6d6;
+  color: #b71c1c;
+}
+
+.saving-capacity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #2e7d32;
+}
+
 .goalgrid {
   margin-top: 30px;
   display: grid;

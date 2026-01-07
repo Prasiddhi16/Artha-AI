@@ -93,6 +93,69 @@
             </div>
 
         </div>
+
+        <!-- Smart Savings Recommendations -->
+         {% if smart_recommendations %}
+<div class="recommendation-container">
+  <div class="recommendation-header">
+    <i class="fas fa-lightbulb"></i>
+    <div>
+      <h3>Smart Savings Recommendations</h3>
+      <p>AI-powered suggestions to optimize your goals</p>
+    </div>
+  </div>
+
+  <!-- Recommendation Item -->
+  {% for rec in smart_recommendations %}
+<div class="recommendation-card info">
+  <i class="fas fa-coins"></i>
+
+  <div class="rec-text">
+    <h3>Daily Savings for {{ rec.title }}</h3>
+    <p>
+      Save ₹{{ rec.daily }} / day
+      (₹{{ rec.monthly }} / month)
+    </p>
+  </div>
+
+  <span class="badge {% if rec.achievable %}success{% else %}danger{% endif %}">
+    {{ rec.achievable|yesno:"Achievable,Action Needed" }}
+  </span>
+</div>
+{% endfor %}
+{% endif %}
+
+  {% if missed_deadline_goal %}
+  <div class="recommendation-card warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    <div class="rec-text">
+      <h3>{{ missed_deadline_goal.title }} Deadline Passed</h3>
+      <p>Consider extending the deadline or increasing contributions</p>
+    </div>
+    <span class="badge danger">Action Needed</span>
+  </div>
+  {% endif %}
+
+  <div class="recommendation-card highlight">
+    <i class="fas fa-coins"></i>
+    <div class="rec-text">
+      <h3>Automated Savings Opportunity</h3>
+      <p>
+        Reducing daily expenses by <b>10%</b> could save an extra
+        <b>₹{{ auto_saving }}</b>/month
+      </p>
+    </div>
+  </div>
+
+  <div class="saving-capacity">
+    <i class="fas fa-chart-line"></i>
+    <span>
+      You can save approximately
+      <b>₹{{ saving_capacity }}</b>/month based on income & expenses
+    </span>
+  </div>
+</div>
+
       <div class="slot-container">
   <div class="tab-buttons">
     <button class="tab-btn active" onclick="showPanel(this, 'goals')">
