@@ -5,7 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from decimal import Decimal
 import random, time
-from django.db.models import Sum, Avg, Max
+from django.db.models import Sum
+from django.db.models import Avg
+from django.db.models import Max
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from datetime import date
@@ -23,6 +25,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import GoalContribution, Goal
+from myapp.services.ai_insights import generate_ai_insights
+from .models import Transaction
+from datetime import timedelta
 
 
 
@@ -507,25 +512,16 @@ def goal_contributions_ajax(request):
          "individuals": individual_amounts,
               "color": ladder_color 
     })
-
-
-# ---------------- Review Pages ----------------
 @login_required(login_url='signin')
 def review(request):
     user = request.user
 
-    # ---------------- FETCH DATA ----------------
     expenses = Expense.objects.filter(user=user)
     incomes = Income.objects.filter(user=user)
 
-    # ---------------- TOTALS ----------------
-    total_income = incomes.aggregate(
-        total=Sum('amount')
-    )['total'] or Decimal('0.00')
-
-    total_expense = expenses.aggregate(
-        total=Sum('amount')
-    )['total'] or Decimal('0.00')
+    # Totals
+    total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+    total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
 
     filtered_total = total_income - total_expense
 
@@ -533,7 +529,7 @@ def review(request):
     expense_count = expenses.count()
     total_count = income_count + expense_count
 
-    # ---------------- COMBINE TRANSACTIONS ----------------
+    # Combine transactions
     expense_list = list(expenses)
     income_list = list(incomes)
 
@@ -549,7 +545,9 @@ def review(request):
         reverse=True
     )
 
-    # ---------------- CONTEXT ----------------
+    # 🔥 USE AI SERVICE (THIS WAS MISSING)
+    ai_insights = generate_ai_insights(transactions)
+
     context = {
         "transactions": transactions,
 
@@ -560,6 +558,9 @@ def review(request):
         "income_count": income_count,
         "expense_count": expense_count,
         "total_count": total_count,
+
+        # AI DATA
+        "ai": ai_insights
     }
 
     return render(request, "myapp/review.html", context)
