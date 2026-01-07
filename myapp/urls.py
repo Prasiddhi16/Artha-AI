@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
     path("filter-transactions/", views.filter_transactions, name="filter_transactions"),
      path("delete-transaction-home/", views.delete_transactionhome, name="delete_transactionhome"),
+    
 
 ]

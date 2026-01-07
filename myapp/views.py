@@ -28,6 +28,11 @@ from .models import GoalContribution, Goal
 from myapp.services.ai_insights import generate_ai_insights
 from .models import Transaction
 from datetime import timedelta
+from .services.financial_analysis import (
+    get_user_financial_snapshot,
+    get_missed_deadline_goal
+)
+from .services.recommendation_engine import generate_smart_recommendations
 
 
 
@@ -177,16 +182,16 @@ def home(request):
 
     return render(request, 'myapp/home.html', context)
 # ---------------- Goals ----------------
-
 @login_required(login_url='signin')
 def goals(request):
+    user = request.user
 
-    
+    # ---------------- Handle Goal Form ----------------
     if request.method == "POST":
         form = GoalForm(request.POST)
         if form.is_valid():
             goal = form.save(commit=False)
-            goal.user = request.user
+            goal.user = user
             goal.save()
             messages.success(request, "Goal added successfully!")
             return redirect('goals')
@@ -195,7 +200,17 @@ def goals(request):
     else:
         form = GoalForm()
 
-    user_goals = Goal.objects.filter(user=request.user)
+    # ---------------- Fetch Goals ----------------
+    user_goals = Goal.objects.filter(user=user)
+
+    # ---------------- Overview Calculations ----------------
+    total_goals = user_goals.count()
+    completed_goals = sum(1 for g in user_goals if g.contributions.aggregate(Sum('amount'))['amount__sum'] or 0 >= g.target_amount)
+    total_target = sum(g.target_amount for g in user_goals) if user_goals else Decimal('0.00')
+    total_saved = sum(g.contributions.aggregate(Sum('amount'))['amount__sum'] or 0 for g in user_goals) if user_goals else Decimal('0.00')
+    overall_progress = (total_saved / total_target * 100) if total_target > 0 else 0
+
+    # ---------------- Milestones ----------------
     icon_map = {
         "First Quarter": "fas fa-seedling",
         "Halfway There": "fas fa-flag",
@@ -204,76 +219,66 @@ def goals(request):
     }
 
     for goal in user_goals:
-        total = goal.contributions.aggregate(
-            Sum('amount')
-        )['amount__sum'] or Decimal('0.00')
+        total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
         goal.total_contributed = total
         goal.remaining_amount = goal.target_amount - total
         goal.progress_percent = min(
-    (total / goal.target_amount * 100) if goal.target_amount > 0 else 0,
-    100
-)
+            (total / goal.target_amount * 100) if goal.target_amount > 0 else 0,
+            100
+        )
 
         if goal.target_date:
-            today = date.today()
-            remaining = (goal.target_date - today).days
-            goal.days_remaining = remaining if remaining > 0 else 0
+            remaining_days = (goal.target_date - date.today()).days
+            goal.days_remaining = max(remaining_days, 0)
         else:
             goal.days_remaining = None
- # -------- Milestones --------
-        milestone_amounts = [0.25, 0.5, 0.75, 1.0]  # 25%, 50%, 75%, 100%
+
+        # Dynamic Milestones
+        milestone_amounts = [0.25, 0.5, 0.75, 1.0]
         milestone_names = ["First Quarter", "Halfway There", "Final Stretch", "Goal Achieved"]
         milestones = []
-        active_set = False  # Track first active milestone
-
+        active_set = False
         for perc, name in zip(milestone_amounts, milestone_names):
-            amount = goal.target_amount * Decimal(perc)
-            if total >= amount:
+            amount_m = goal.target_amount * Decimal(perc)
+            if total >= amount_m:
                 status = "completed"
             elif not active_set:
                 status = "active"
                 active_set = True
             else:
                 status = "upcoming"
-                icon_map = {
-    "First Quarter": "fas fa-seedling",
-    "Halfway There": "fas fa-flag",
-    "Final Stretch": "fas fa-flag-checkered",
-    "Goal Achieved": "fas fa-star"
-}
             milestones.append({
                 "name": name,
-                 "amount": float(amount),
+                "amount": float(amount_m),
                 "status": status,
-                 "icon": icon_map[name]
+                "icon": icon_map[name]
             })
-
         goal.dynamic_milestones = milestones
 
-#  Overview calculations   
-        
-    total_goals = user_goals.count()
-    completed_goals = sum(1 for g in user_goals if g.progress_percent >= 100)
-    total_target = sum(g.target_amount for g in user_goals) if user_goals else Decimal('0.00')
-    total_saved = sum(g.total_contributed for g in user_goals) if user_goals else Decimal('0.00')
-    overall_progress = min(
-    (total_saved / total_target * 100) if total_target > 0 else 0,
-    100
-)
-    return render(
-        request,
-        'myapp/goals.html',
-        {
-            'user_goals': user_goals,
-            'form': form,
-            'total_goals': total_goals,
-            'completed_goals': completed_goals,
-            'total_target': total_target,
-            'total_saved': total_saved,
-            'overall_progress': min(round(overall_progress, 2),100),
-        }
-    )
+    # ---------------- Smart Recommendations ----------------
+    financials = get_user_financial_snapshot(user)
+    smart_recs = generate_smart_recommendations(user, user_goals, financials)
+    missed_goal = get_missed_deadline_goal(user_goals)
+    auto_saving = round(financials["expense"] * 0.10, 2)
 
+    # ---------------- Render Context ----------------
+    context = {
+        "user_goals": user_goals,
+        "form": form,
+        "total_goals": total_goals,
+        "completed_goals": completed_goals,
+        "total_target": total_target,
+        "total_saved": total_saved,
+        "overall_progress": min(round(overall_progress, 2), 100),
+
+        # AI Recommendations
+        "smart_recommendations": smart_recs,
+        "missed_deadline_goal": missed_goal,
+        "saving_capacity": round(financials["saving_capacity"], 2),
+        "auto_saving": auto_saving,
+    }
+
+    return render(request, "myapp/goals.html", context)
 
 
 @login_required(login_url='signin')
@@ -792,3 +797,9 @@ def delete_transactionhome(request):
         })
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+    
+    from .services.financial_analysis import (
+    get_user_financial_snapshot,
+    get_missed_deadline_goal
+)
+    
