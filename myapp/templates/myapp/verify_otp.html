@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<<<<<<< HEAD
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP – Artha AI</title>
     <link rel="stylesheet" href="{% static 'myapp/css/signup.css' %}">
@@ -24,6 +25,23 @@
                 {% endfor %}
             </div>
         {% endif %}
+=======
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/verify_otp.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Verify OTP</h2>
+            <p>Enter the OTP sent to your email</p>
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="otp" placeholder="Enter OTP" required maxlength="6">
+                <button type="submit">Verify OTP</button>
+            </form>
+            <a href="{% url 'forgot_password' %}" class="back-link">Back to Forgot Password</a>
+        </div>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
     </div>
 </body>
 </html>

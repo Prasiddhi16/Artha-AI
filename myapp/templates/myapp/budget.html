@@ -63,6 +63,7 @@
         </button>
       </div>
 
+<<<<<<< HEAD
     <dialog class="budgetForms" id="addCategoryForm"> 
       <form method="dialog">
        <div class="form-info">
@@ -100,6 +101,55 @@
       </form>
     </dialog>
 
+=======
+    <dialog class="budgetForms" id="addCategoryForm">
+<form method="POST" action="{% url 'budget' %}">
+
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="add_category">
+    
+    <div class="form-info">
+      <p class="first-text">Add Category</p><br>
+      <p class="second-text">Add a new budget</p>
+    </div>
+    <hr>
+    
+    <div class="budget-form">
+      <label for="category">Category name</label><br>
+      <select name="category" required>
+        <option>Food & Dining</option>
+        <option>Transport</option>
+        <option>Groceries</option>
+        <option>Housing</option>
+        <option>Utilities</option>
+        <option>Entertainment</option>
+        <option>Others</option>
+      </select>
+    </div>
+
+    <div class="budget-form">
+      <label for="amount"> Monthly Budget Amount </label><br>
+      <input type="number" name="amount" step="0.01" placeholder="0.00" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="icon"> Icon </label><br>
+      <select name="icon">
+        <option value="💰">💰 Money</option>
+        <option value="🍔">🍔 Food</option>
+        <option value="🚗">🚗 Transport</option>
+        <option value="🏠">🏠 Housing</option>
+        <option value="🎬">🎬 Fun</option>
+      </select>
+    </div>
+
+    <div class="budgetform-actions">
+      <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel</button>
+      <button type="submit" class="submit-button">Add Category</button>
+    </div>
+  </form>
+</dialog>
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
       <div class="categories-list">
         <!-- Rent Category -->
         <div class="category-item">
@@ -235,6 +285,7 @@
           Add Party
         </button>
       </div>
+<<<<<<< HEAD
 
     <dialog class="budgetForms" id="addPartyForm">
       <form  method="dialog">
@@ -265,6 +316,44 @@
       </form>
     </dialog>
 
+=======
+<dialog class="budgetForms" id="addPartyForm">
+<form method="POST" action="{% url 'budget' %}">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="add_party">
+
+    <div class="form-info">
+      <p class="first-text">Add Money Flow</p><br>
+      <p class="second-text">Track money you owe or money owed to you</p>
+    </div>
+    <hr>
+
+    <div class="budget-form">
+      <label for="person_name"> Name </label><br>
+      <input type="text" name="person_name" placeholder="Enter person's name" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="amount"> Amount </label><br>
+      <input type="number" name="amount" step="0.01" placeholder="0.00" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="flow_type">Type</label><br>
+      <select name="flow_type">
+        <option value="topay">You owe</option>
+        <option value="toreceive">Owed to you</option>
+      </select>
+    </div>
+
+    <div class="budgetform-actions">
+      <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel</button>
+      <button type="submit" class="submit-button">Add</button>
+    </div>
+  </form>
+</dialog>
+    
+>>>>>>> 1b48a6279169d56bfffdc2a42aa5f29db03b0310
 
       <div class="money-flow-content">
         <!-- You Owe -->
