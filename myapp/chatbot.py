@@ -4,7 +4,6 @@ from groq import Groq
 
 load_dotenv()
 
-client = Groq(api_key="SECRET_KEY")
 client = Groq(api_key="api key")
 
 def get_bot_response(user_message):
