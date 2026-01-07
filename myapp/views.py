@@ -5,12 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from decimal import Decimal
 import random, time
-<<<<<<< HEAD
 from django.db.models import Sum, Count
 from django.db.models.functions import ExtractMonth, ExtractYear
-
 from .models import User, Expense, Income, Goal
-=======
 from django.db.models import Sum
 from django.db.models import Avg
 from django.db.models import Max
@@ -24,7 +21,6 @@ from .ocr.receipt_parser import extract_receipt_data
 from .models import Transaction
 import os
 from .models import User, Expense, Income, Goal,GoalContribution
->>>>>>> afd9b33ab1cf51fdd34ca69d89f6f6a21ffe284a
 from .forms import SignUpForm
 from .forms import GoalForm
 from .forms import GoalContributionForm
@@ -591,7 +587,7 @@ def review(request):
     return render(request, "myapp/review.html", context)
 
 
-<<<<<<< HEAD
+
 @login_required(login_url='sigin')
 def analytics(request):
     user=request.user
@@ -781,9 +777,8 @@ def category_trend_api(request):
 
 
               
-=======
+
 # ---------------- Static Pages ----------------
-def analytics(request): return render(request, 'myapp/analytics.html')
 def budget(request):return render(request, 'myapp/budget.html')
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
