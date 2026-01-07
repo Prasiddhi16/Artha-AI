@@ -17,6 +17,9 @@ urlpatterns = [
     path('help/', views.help_view, name='help'),
     path('profile/', views.profile, name='profile'),
     path('chatbot/', views.chatbot, name='chatbot'),
+    path('api/weekly_summary/',views.weekly_summary_api,name='weekly_summary_api'),
+    path('api/monthly_category/',views.monthly_category_api,name='monthly_category_api'),
+    path('api/category_trend/', views.category_trend_api, name='category_trend_api'),
     path('ajax/add_contribution/', views.add_contribution_ajax, name='add_contribution_ajax'),
     path('delete_goal/', views.delete_goal, name='delete_goal'),
     path("goals/contributions/",views.goal_contributions_ajax,name="goal_contributions_ajax"),
@@ -25,6 +28,4 @@ urlpatterns = [
     path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
     path("filter-transactions/", views.filter_transactions, name="filter_transactions"),
      path("delete-transaction-home/", views.delete_transactionhome, name="delete_transactionhome"),
-    
-
 ]

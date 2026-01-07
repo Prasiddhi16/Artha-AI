@@ -18,9 +18,8 @@
             <i class="fa-solid fa-arrow-trend-up"></i>
             </section>
             <br>
-            <p class="inumber">$3567.2</p>
-            <p class="footbox">All time</p>  
-            
+            <p class="inumber">Rs. {{ month_income|floatformat:2 }}</p>
+            <p class="footbox">This Month</p>   
         </div>
         <div class="box">
             <section class="headbox">
@@ -28,8 +27,8 @@
             <i class="fa-solid fa-arrow-trend-down"></i>
             </section>
             <br>
-            <p class="enumber">$3567.2</p>
-            <p class="footbox">All time</p>  
+            <p class="enumber">Rs. {{ month_expense|floatformat:2 }}</p>
+            <p class="footbox">This Month</p>  
             
         </div>
         <div class="box"> 
@@ -38,7 +37,7 @@
             <i class="fa-solid fa-dollar-sign"></i>
             </section>
             <br>
-            <p class="inumber">$3567.2</p>
+            <p class="inumber">Rs. {{ avg_income|floatformat:2 }}</p>
             <p class="footbox">Per Month</p>  
            
         </div>
@@ -48,7 +47,7 @@
             <i class="fa-regular fa-calendar"></i>
             </section>
             <br>
-            <p class="enumber">$3567.2</p>
+            <p class="enumber">Rs. {{ avg_expense|floatformat:2 }}</p>
             <p class="footbox">Per Month</p>  
             
         </div>
@@ -66,19 +65,27 @@
     <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
-        <canvas class="pie-chart"></canvas>
+            <div class="month_selector">
+            <button class="nav-btn" onclick="updateMonth(-1)" aria-label="Previous month">&#8249;</button>
+            <span class="current-month"></span>
+            <button class="nav-btn" onclick="updateMonth(1)" aria-label="Next month">&#8250;</button>
+            </div>
+            <button class="loadMonthly">Load Pie Chart</button>
+            
+            <canvas class="pieChart"></canvas>
 
-                <div class="legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
-                </div>
     </div>
     <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
+        <div class="date_selector">
+                <label for="startDate">From:</label>
+                <input type="date" class="startDate">
+                <label for="endDate">To:</label>
+                <input type="date" class="endDate">
+        </div>
+            <button class="loadWeekly">Load Bar Graph</button>
+        <canvas class="barGraph"></canvas>
     </div>
     </div>
 
@@ -86,13 +93,20 @@
         <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
-        <canvas class="bar-graph"></canvas>
+        <div class="date_selector">
+                <label for="startDate">From:</label>
+                <input type="date" class="startDate">
+                <label for="endDate">To:</label>
+                <input type="date" class="endDate">
+            </div>
+            <button class="loadWeekly">Load Bar Graph</button>
+            <canvas class="barGraph"></canvas>
         </div>
 
         <div class="box">
         <p class="headtext">Category Spending Trends</p>
         <p class="foottext">Track how a category changes over time</p>
-        <div class="categorySelector">
+        <div id="categorySelector">
         <select name="category">
           <option>Food & Dining</option>
           <option>Transport</option> 
@@ -103,122 +117,61 @@
           <option>Others</option> 
         </select>
         </div>
-        <canvas id="line-graph"></canvas>
+        <div id="line_month_select">
+            <button class="nav-btn" onclick="updateLineMonth(-1)" aria-label="Previous month">&#8249;</button>
+            <span id="line-month"></span>
+            <button class="nav-btn" onclick="updateLineMonth(1)" aria-label="Next month">&#8250;</button>
         </div>
+        <button class="loadLine">Load Line Graph</button>
+        <canvas id="lineGraph"></canvas>
+        </div>
+
         <div class="box">
         <p class="headtext">Monthly Breakdown</p>
         <p class="foottext">Summary of each months' activity</p> 
+        {% for month in monthly_history %}
         <br />
         <div>
         <section class="headbox">
-            <p>October 2025</p>
-            <p>6 transactions</p>
+            <p>{{ month.name }} {{ month.year }}</p>
+            <p>{{ month.count }} transactions</p>
         </section>
         <div class="boxes">
             <div class="incomebox">
                 <p class="footbox">Income</p>
-                <p class="inumber2">$2899.99</p>
+                <p class="inumber2">Rs. {{ month.income|floatformat:2 }}</p>
             </div>
             <div class="expensebox">
                 <p class="footbox">Expense</p>
-                <p class="enumber2">$1099.67</p>
+                <p class="enumber2">Rs.{{ month.expense|floatformat:2 }}</p>
             </div>
         </div>
         </div>
-
-        <div>
-        <section class="headbox">
-            <p>November 2025</p>
-            <p>7 transactions</p>
-        </section>
-        <div class="boxes">
-            <div class="incomebox">
-                <p class="footbox">Income</p>
-                <p class="inumber2">$2899.99</p>
-            </div>
-            <div class="expensebox">
-                <p class="footbox">Expense</p>
-                <p class="enumber2">$1099.67</p>
-            </div>
+        {% endfor %}
         </div>
-        </div>
-    </div>
     </div>
 
     <div class="content" id="categories">
         <div class="box">
         <p class="headtext">Expenses by Category</p>
         <p class="foottext">Breakdown of your spending</p>
-        <canvas class="pie-chart"></canvas>
-
-                <div class="legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
+                <div class="month_selector">
+                <button class="nav-btn" onclick="updateMonth(-1)" aria-label="Previous month">&#8249;</button>
+                <span class="current-month"></span>
+                <button class="nav-btn" onclick="updateMonth(1)" aria-label="Next month">&#8250;</button>
                 </div>
+                <button class="loadMonthly">Load Pie Chart</button>
+                <canvas class="pieChart"></canvas>
         </div>
         <div class="box">
         <p class="headtext">Top Spending Categories</p>
         <p class="foottext">Where your money goes</p>
         <br />
-            <div>
-                <section class="headbox">
-                <p>Housing</p>
-                <p>$112.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:61%;"></div>
-                </div>
-                <div class="footbox">
-                <p>61% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Groceries</p>
-                <p>$96.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:31%;"></div>
-                </div>
-                <div class="footbox">
-                <p>31% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Entertainment</p>
-                <p>$48.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:8%;"></div>
-                </div>
-                <div class="footbox">
-                <p>8% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Healthcare</p>
-                <p>$20.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:2%;"></div>
-                </div>
-                <div class="footbox">
-                <p>2% of total expenses<p>
-                </div>
-            </div>
-            
+            <div id="top-spending-list">
+               
+            </div>           
         </div>
-    </div>
 
-    </div>
     </div>
     {% endblock %}
 
@@ -246,15 +199,330 @@
     overviewtab.addEventListener("click",()=>{
         switchTab("overview-tab");
         switchContent("overview");
+       
     });
     trendstab.addEventListener("click",()=>{
         switchTab("trends-tab");
         switchContent("trends");
+       
     });
     categoriestab.addEventListener("click",()=>{
         switchTab("categories-tab");
         switchContent("categories");
     });
+
+    //bargraph
+    let barGraphs=[];
+
+    function loadBarGraph(start=null,end=null){
+
+        if (start && end && new Date(start) > new Date(end)) {
+        alert("Invalid Date: Start date cannot be after the end date.");
+        return; // Stop execution,current chart stays on canvas
+    }
+        let url='/api/weekly_summary/';
+        if(start && end){
+            url+=`?start=${start}&end=${end}`;
+        }
+
+        fetch(url)
+        .then(res => res.json())
+        .then(result => {
+
+            if (!result.data || result.data.length === 0) {
+            alert("No data available for the selected date range.");
+            return; // Current chart remains visible
+            }
+        
+        const data=result.data;
+
+        //X-axis
+        const labels=[...new Set(data.map(d=>d.date))].sort((a, b) => new Date(a) - new Date(b));
+
+        //income per date
+        const income=labels.map(date =>
+            data.find(d=>d.date===date && d.type==='income')?.total || 0
+        );
+
+        //expense per date
+        const expense=labels.map(date=>
+        data.find(d => d.date===date && d.type==='expense')?.total || 0
+        );
+
+        //destroy previous charts if it exists
+        barGraphs.forEach(chart => chart.destroy());
+            barGraphs = [];
+
+        const canvases = document.querySelectorAll(".barGraph");
+        canvases.forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+
+        barGraph=new Chart(ctx,{        
+            type:'bar',
+            data:{
+            labels:labels,
+            datasets:[
+            {label:'Income',data:income, backgroundColor:'rgb(0,0,128)'},
+            {label:'Expense',data:expense, backgroundColor:'rgb(161, 5, 18)'}
+            ]
+            },
+            options:{
+                responsive:true,
+                plugins:{
+                    legend:{position:'bottom'}
+                }
+            }
+        });
+        barGraphs.push(barGraph);
+        });
+        });
+    }
+    //button click for custom date
+    document.querySelectorAll('.loadWeekly').forEach(btn => {
+    btn.addEventListener("click", () => {
+       const container = btn.closest('.box');
+
+        const startInput = container.querySelector('.startDate');
+        const endInput = container.querySelector('.endDate');
+
+        const start = startInput ? startInput.value : null;
+        const end = endInput ? endInput.value : null;
+
+        if(start && end){
+            loadBarGraph(start, end);
+        } else {
+            alert('Please select both start and end dates');
+        }
+    });
+    });
+    
+
+    loadBarGraph(); //default
+
+    // Syncs any date input with its counterparts across tabs
+        document.addEventListener('input', (e) => {
+    if (e.target.classList.contains('startDate') || e.target.classList.contains('endDate')) {
+        document.querySelectorAll(`.${e.target.className}`).forEach(el => el.value = e.target.value);
+    }
+    });
+
+
+    //for month selector    
+    const months=[
+    'January','February','March','April','May','June','July','August','September','October','November','December'];
+
+    const today=new Date();
+    let currentMonth= today.getMonth();
+    let currentYear= today.getFullYear();
+
+    function renderMonthLabel() {
+    document.querySelectorAll('.current-month').forEach(elem => {
+        elem.innerText = `${months[currentMonth]} ${currentYear}`;
+    });
+    }
+    
+    function updateMonth(sign){
+    currentMonth+=sign;
+    if(currentMonth>11){
+        currentMonth=0;
+        currentYear++;
+    }
+    else if(currentMonth<0){
+        currentMonth=11;
+    currentYear--;
+    }
+    renderMonthLabel();
+    }
+
+    //piechart
+    let pieCharts=[];
+
+    function loadPieChart(month=null,year=null){
+        const m = month || (currentMonth + 1);
+        const y = year || currentYear;
+
+        url='/api/monthly_category/';
+        if(m && y){
+        url+=`?month=${m}&year=${y}`;
+        }
+        
+        fetch(url)
+        .then(res => res.json())
+        .then(result =>{
+
+            if (!result.data || result.data.length === 0) {
+            alert(`No data available for ${months[m- 1]} ${y}`);
+            return; // Exit, old pie chart stays on canvas
+            }
+
+        const data=result.data;
+
+        const totalMonthExpense = data.reduce((sum, item) => sum + Number(item.total), 0);
+
+        // Update the Progress Bars dynamically
+        const listContainer = document.getElementById('top-spending-list');
+
+        if (listContainer) {
+        listContainer.innerHTML = '';
+
+        data.forEach(item => {
+            const totalValue = Number(item.total);
+            const percentage = totalMonthExpense > 0 ? ((totalValue / totalMonthExpense) * 100).toFixed(1) : 0;
+
+            listContainer.innerHTML += `
+                <div class="category-item">
+                    <section class="headbox">
+                        <p>${item.category}</p>
+                        <p>Rs. ${totalValue.toFixed(2)}</p>
+                    </section> 
+                    <div class="progressbar">
+                        <div class="progressfill" style="width: ${percentage}%;"></div>
+                    </div>
+                    <div class="footbox">
+                        <p>${percentage}% of total expenses</p>
+                    </div>
+                </div>
+                `;
+        });
+        }
+
+        //x axis
+        const labels=data.map(d=>d.category);
+        //values
+        const values = data.map(d => parseFloat(d.total));
+
+        //destroy previous chart if exists
+        pieCharts.forEach(chart => chart.destroy());
+        pieCharts = [];
+
+        const canvases = document.querySelectorAll(".pieChart");
+        canvases.forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+
+        pieChart=new Chart(ctx,{
+            type:'pie',
+            data:{
+                labels:labels,
+            datasets:[
+            {data:values,
+            backgroundColor:[
+            '#00172d', '#002a4a', '#003f67', '#005684', '#006da1',
+                '#0085bd', '#009eda', '#40b8f2', '#80d1f7', '#c0e8fb'
+            ]
+            }]
+            },
+            options:{
+                responsive:true,
+                plugins:{
+                    legend:{position:'bottom'}
+                }
+            }
+        });
+        pieCharts.push(pieChart);
+        });
+        });
+    }
+    //button click for pie chart
+    document.querySelectorAll('.loadMonthly').forEach(btn => {
+    btn.addEventListener("click", () => {
+        loadPieChart(currentMonth + 1, currentYear);
+    });
+    });
+
+    renderMonthLabel();
+    loadPieChart(currentMonth+1,currentYear);//default
+
+
+    //line graph
+    let lineGraph;
+   
+    let lineMonth = currentMonth;
+    let lineYear = currentYear;
+    function lineMonthLabel() {
+    const elem = document.getElementById('line-month');
+    if (elem) {
+        elem.innerText = `${months[lineMonth]} ${lineYear}`;
+    }
+    }
+    function updateLineMonth(sign){
+    lineMonth+=sign;
+    if(lineMonth>11){
+        lineMonth=0;
+        lineYear++;
+    }
+    else if(lineMonth<0){
+        lineMonth=11;
+        lineYear--;
+    }
+    lineMonthLabel();
+    }
+
+    function loadLineGraph(){
+        const category=document.querySelector('#categorySelector select').value;
+        url=`/api/category_trend/?month=${lineMonth+1}`+`&year=${lineYear}`+`&category=${encodeURIComponent(category)}`;
+
+       fetch(url)
+       .then(res=>res.json())
+       .then(result=>{
+
+        if (!result.days || result.values.every(v => v === 0)) {
+            alert(`No data found for "${category}" in ${months[lineMonth]} ${lineYear}`);
+            return;
+        }
+
+        const days=result.days;
+        const values=result.values;
+        const predicted=result.predicted;
+
+        if(!result.category) return;
+    
+        if(lineGraph) lineGraph.destroy();
+
+        lineGraph=new Chart(document.getElementById('lineGraph'),{
+            type:'line',
+            data:{
+                labels:days,
+                datasets:[{
+                            label: `${category} actual`,
+                            data: values,
+                            tension: 0.4,
+                            fill: false,
+                            borderWidth: 2,
+                            backgroundColor:'rgb(0,0,128)',
+                            borderColor:'rgb(0,0,128)'
+                },
+                {
+                          label: `${category} predicted`,
+                          data:predicted,
+                          borderColor: 'rgba(255, 99, 132, 0.8)',
+                          borderDash: [5,5],  // dashed line for prediction
+                          fill: false,
+                          tension: 0.4
+                }
+                ]
+            },
+            options:{
+                responsive:true,
+                plugins:{
+                    legend:{position:'bottom'}
+                },
+                scales:{
+                y:{beginAtZero : true}
+                }
+            }
+        });
+       });
+       
+    }
+
+    //change
+    document.querySelector('.loadLine').addEventListener("click",loadLineGraph);
+    
+
+    //default
+    lineMonthLabel();
+    loadLineGraph();
+
 
     </script>
     {% endblock %}
