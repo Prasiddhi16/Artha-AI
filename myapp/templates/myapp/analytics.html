@@ -20,9 +20,6 @@
             <br>
             <p class="inumber">Rs. {{ month_income|floatformat:2 }}</p>
             <p class="footbox">This Month</p>   
-            <p class="inumber">$3567.2</p>
-            <p class="footbox">All time</p>  
-            
         </div>
         <div class="box">
             <section class="headbox">
@@ -32,8 +29,6 @@
             <br>
             <p class="enumber">Rs. {{ month_expense|floatformat:2 }}</p>
             <p class="footbox">This Month</p>  
-            <p class="enumber">$3567.2</p>
-            <p class="footbox">All time</p>  
             
         </div>
         <div class="box"> 
@@ -43,7 +38,6 @@
             </section>
             <br>
             <p class="inumber">Rs. {{ avg_income|floatformat:2 }}</p>
-            <p class="inumber">$3567.2</p>
             <p class="footbox">Per Month</p>  
            
         </div>
@@ -54,7 +48,6 @@
             </section>
             <br>
             <p class="enumber">Rs. {{ avg_expense|floatformat:2 }}</p>
-            <p class="enumber">$3567.2</p>
             <p class="footbox">Per Month</p>  
             
         </div>
@@ -81,15 +74,6 @@
             
             <canvas class="pieChart"></canvas>
 
-        <canvas class="pie-chart"></canvas>
-
-                <div class="legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
-                </div>
     </div>
     <div class="box">
         <p class="headtext">Income vs Expenses</p>
@@ -117,14 +101,12 @@
             </div>
             <button class="loadWeekly">Load Bar Graph</button>
             <canvas class="barGraph"></canvas>
-        <canvas class="bar-graph"></canvas>
         </div>
 
         <div class="box">
         <p class="headtext">Category Spending Trends</p>
         <p class="foottext">Track how a category changes over time</p>
         <div id="categorySelector">
-        <div class="categorySelector">
         <select name="category">
           <option>Food & Dining</option>
           <option>Transport</option> 
@@ -153,16 +135,6 @@
         <section class="headbox">
             <p>{{ month.name }} {{ month.year }}</p>
             <p>{{ month.count }} transactions</p>
-        <canvas id="line-graph"></canvas>
-        </div>
-        <div class="box">
-        <p class="headtext">Monthly Breakdown</p>
-        <p class="foottext">Summary of each months' activity</p> 
-        <br />
-        <div>
-        <section class="headbox">
-            <p>October 2025</p>
-            <p>6 transactions</p>
         </section>
         <div class="boxes">
             <div class="incomebox">
@@ -177,32 +149,6 @@
         </div>
         {% endfor %}
         </div>
-                <p class="inumber2">$2899.99</p>
-            </div>
-            <div class="expensebox">
-                <p class="footbox">Expense</p>
-                <p class="enumber2">$1099.67</p>
-            </div>
-        </div>
-        </div>
-
-        <div>
-        <section class="headbox">
-            <p>November 2025</p>
-            <p>7 transactions</p>
-        </section>
-        <div class="boxes">
-            <div class="incomebox">
-                <p class="footbox">Income</p>
-                <p class="inumber2">$2899.99</p>
-            </div>
-            <div class="expensebox">
-                <p class="footbox">Expense</p>
-                <p class="enumber2">$1099.67</p>
-            </div>
-        </div>
-        </div>
-    </div>
     </div>
 
     <div class="content" id="categories">
@@ -216,15 +162,6 @@
                 </div>
                 <button class="loadMonthly">Load Pie Chart</button>
                 <canvas class="pieChart"></canvas>
-        <canvas class="pie-chart"></canvas>
-
-                <div class="legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#1e3a8a"></div> Housing</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#60a5fa"></div> Food & Dining</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#93c5fd"></div> Groceries</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#bfdbfe"></div> Transportation</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#dbeafe"></div> Utilities</div>
-                </div>
         </div>
         <div class="box">
         <p class="headtext">Top Spending Categories</p>
@@ -235,63 +172,6 @@
             </div>           
         </div>
 
-    </div>
-            <div>
-                <section class="headbox">
-                <p>Housing</p>
-                <p>$112.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:61%;"></div>
-                </div>
-                <div class="footbox">
-                <p>61% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Groceries</p>
-                <p>$96.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:31%;"></div>
-                </div>
-                <div class="footbox">
-                <p>31% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Entertainment</p>
-                <p>$48.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:8%;"></div>
-                </div>
-                <div class="footbox">
-                <p>8% of total expenses</p>
-                </div>
-            </div>
-            <br />
-            <div>
-                <section class="headbox">
-                <p>Healthcare</p>
-                <p>$20.99</p>
-                </section> 
-                <div class="progressbar">
-                    <div class="progressfill" style="width:2%;"></div>
-                </div>
-                <div class="footbox">
-                <p>2% of total expenses<p>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-
-    </div>
     </div>
     {% endblock %}
 

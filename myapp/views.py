@@ -31,6 +31,7 @@ from .models import GoalContribution, Goal
 from myapp.services.ai_insights import generate_ai_insights
 from .models import Transaction
 from datetime import timedelta
+from datetime import date
 from .services.financial_analysis import (
     get_user_financial_snapshot,
     get_missed_deadline_goal
@@ -44,7 +45,7 @@ from django.db import models
 import numpy as np
 
 # ---------------- Static Pages ----------------
-def budget(request):return render(request, 'myapp/budget.html')
+
 def review(request): return render(request, 'myapp/review.html')
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
@@ -91,27 +92,81 @@ def logout_view(request):
 def chatbot(request):
     return render(request, 'myapp/chatbot.html')
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
+from .models import PasswordResetOTP
+import random
+from django.utils import timezone
+
+User = get_user_model()
+
+# ---------------- Helper function ----------------
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def send_otp_email(email, otp):
+    # Replace with your email backend logic
+    print(f"Sending OTP {otp} to {email}")  # DEBUG only
+    # send_mail('Your OTP', f'Your OTP is {otp}', 'from@example.com', [email])
+
 # ---------------- Forgot Password ----------------
 def forgot_password(request):
     if request.method == "POST":
-        messages.success(request, "OTP sent successfully!")
-        return redirect('verify_otp')
-    return render(request, 'myapp/forgotpassword.html')
+        email = request.POST.get("email")
+        user = User.objects.filter(email=email).first()
+        if user:
+            otp = generate_otp()
+            PasswordResetOTP.objects.create(user=user, otp=otp, created_at=timezone.now())
+            send_otp_email(email, otp)
+            request.session['reset_user'] = user.id
+            messages.success(request, "OTP sent to your email")
+            return redirect("verify_otp")
+        else:
+            messages.error(request, "No account found with this email")
+    return render(request, "myapp/forgot_password.html")
+from django.core.mail import send_mail
+
+def send_otp_email(email, otp):
+    subject = "Your OTP for Password Reset"
+    message = f"Hello!\n\nYour OTP is: {otp}\nIt is valid for 5 minutes."
+    from_email = None  # uses DEFAULT_FROM_EMAIL
+    recipient_list = [email]
+    send_mail(subject, message, from_email, recipient_list)
+
 
 # ---------------- Verify OTP ----------------
 def verify_otp(request):
     if request.method == "POST":
-        messages.success(request, "OTP verified successfully!")
-        return redirect('reset_password')
-    return render(request, 'myapp/verify_otp.html')
+        otp = request.POST.get("otp")
+        user_id = request.session.get('reset_user')
+        otp_obj = PasswordResetOTP.objects.filter(user_id=user_id, otp=otp).last()
+
+        if otp_obj and (timezone.now() - otp_obj.created_at).total_seconds() < 300:  # 5 min expiry
+            messages.success(request, "OTP verified! Please reset your password")
+            return redirect("reset_password")
+        else:
+            messages.error(request, "Invalid or expired OTP")
+
+    return render(request, "myapp/verify_otp.html")
+
 
 # ---------------- Reset Password ----------------
 def reset_password(request):
     if request.method == "POST":
-        messages.success(request, "Password reset successfully!")
-        return redirect('signin')
-    return render(request, 'myapp/reset_password.html')
-
+        new_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        else:
+            user_id = request.session.get('reset_user')
+            user = User.objects.get(id=user_id)
+            user.password = make_password(new_password)
+            user.save()
+            messages.success(request, "Password updated successfully! You can now sign in.")
+            return redirect("signin")
+    return render(request, "myapp/reset_password.html")
 
 
 # ---------------- Home / Dashboard ----------------
@@ -779,7 +834,6 @@ def category_trend_api(request):
               
 
 # ---------------- Static Pages ----------------
-def budget(request):return render(request, 'myapp/budget.html')
 def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
 def settings_view(request): return render(request, 'myapp/settings.html')
@@ -1003,3 +1057,181 @@ def delete_transactionhome(request):
         })
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
+from .models import PasswordResetOTP
+import random
+from django.utils import timezone
+
+User = get_user_model()
+
+# ---------------- Helper function ----------------
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def send_otp_email(email, otp):
+    # Replace with your email backend logic
+    print(f"Sending OTP {otp} to {email}")  # DEBUG only
+    # send_mail('Your OTP', f'Your OTP is {otp}', 'from@example.com', [email])
+
+# ---------------- Forgot Password ----------------
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        user = User.objects.filter(email=email).first()
+        if user:
+            otp = generate_otp()
+            PasswordResetOTP.objects.create(user=user, otp=otp, created_at=timezone.now())
+            send_otp_email(email, otp)
+            request.session['reset_user'] = user.id
+            messages.success(request, "OTP sent to your email")
+            return redirect("verify_otp")
+        else:
+            messages.error(request, "No account found with this email")
+    return render(request, "myapp/forgot_password.html")
+from django.core.mail import send_mail
+
+def send_otp_email(email, otp):
+    subject = "Your OTP for Password Reset"
+    message = f"Hello!\n\nYour OTP is: {otp}\nIt is valid for 5 minutes."
+    from_email = None  # uses DEFAULT_FROM_EMAIL
+    recipient_list = [email]
+    send_mail(subject, message, from_email, recipient_list)
+
+
+# ---------------- Verify OTP ----------------
+def verify_otp(request):
+    if request.method == "POST":
+        otp = request.POST.get("otp")
+        user_id = request.session.get('reset_user')
+        otp_obj = PasswordResetOTP.objects.filter(user_id=user_id, otp=otp).last()
+
+        if otp_obj and (timezone.now() - otp_obj.created_at).total_seconds() < 300:  # 5 min expiry
+            messages.success(request, "OTP verified! Please reset your password")
+            return redirect("reset_password")
+        else:
+            messages.error(request, "Invalid or expired OTP")
+
+    return render(request, "myapp/verify_otp.html")
+
+
+# ---------------- Reset Password ----------------
+def reset_password(request):
+    if request.method == "POST":
+        new_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        else:
+            user_id = request.session.get('reset_user')
+            user = User.objects.get(id=user_id)
+            user.password = make_password(new_password)
+            user.save()
+            messages.success(request, "Password updated successfully! You can now sign in.")
+            return redirect("signin")
+    return render(request, "myapp/reset_password.html")
+from datetime import datetime
+from django.db.models import Sum
+from .models import Budget, MoneyFlow, Expense
+@login_required
+def budget_view(request):
+    now = datetime.now()
+    month = request.GET.get('month')
+    year = request.GET.get('year')
+    try:
+        month = int(month)
+    except (TypeError, ValueError):
+        month = now.month
+
+    try:
+        year = int(year)
+    except (TypeError, ValueError):
+        year = now.year
+
+
+    # --- NEW: ADD SAVING LOGIC HERE ---
+    if request.method == "POST":
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'add_category':
+            category_name = request.POST.get('category')
+            amount = request.POST.get('amount')
+            icon = request.POST.get('icon', '💰')
+
+            # Create the budget record
+            Budget.objects.create(
+                user=request.user,
+                category=category_name,
+                amount=amount,
+                icon=icon,
+                month=month,
+                year=year
+            )
+        
+        elif form_type == 'add_party':
+            person_name = request.POST.get('person_name')
+            amount = request.POST.get('amount')
+            flow_type = request.POST.get('flow_type')
+
+            MoneyFlow.objects.create(
+                user=request.user,
+                person_name=person_name,
+                amount=amount,
+                flow_type=flow_type
+            )
+        
+        return redirect('budget') # Refresh page to show new data
+
+    # --- EXISTING DISPLAY LOGIC ---
+    budgets = Budget.objects.filter(user=request.user, month=month, year=year)
+    budget_data = []
+    total_budget = 0
+    total_spent = 0
+
+    for b in budgets:
+        spent = Expense.objects.filter(
+            user=request.user,
+            category=b.category,
+            date__month=month,
+            date__year=year
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
+        
+        remaining = b.amount - spent
+        percent = (spent / b.amount * 100) if b.amount > 0 else 0
+        
+        budget_data.append({
+            'obj': b,
+            'spent': spent,
+            'remaining': remaining,
+            'percent': round(percent, 1),
+            'is_over': spent > b.amount
+        })
+        
+        total_budget += b.amount
+        total_spent += spent
+
+    flows = MoneyFlow.objects.filter(user=request.user)
+    you_owe_list = flows.filter(flow_type='topay')
+    owed_to_you_list = flows.filter(flow_type='toreceive')
+    
+    you_owe_total = you_owe_list.aggregate(Sum('amount'))['amount__sum'] or 0
+    owed_to_you_total = owed_to_you_list.aggregate(Sum('amount'))['amount__sum'] or 0
+    net_flow = owed_to_you_total - you_owe_total
+
+    context = {
+        'budget_data': budget_data,
+        'total_budget': total_budget,
+        'total_spent': total_spent,
+        'remaining_total': total_budget - total_spent,
+        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else 0,
+        'you_owe_list': you_owe_list,
+        'owed_to_you_list': owed_to_you_list,
+        'you_owe_total': you_owe_total,
+        'owed_to_you_total': owed_to_you_total,
+        'net_flow': net_flow,
+    }
+
+    return render(request, 'myapp/budget.html', context)
+# ---------------- Static Pages ----------------

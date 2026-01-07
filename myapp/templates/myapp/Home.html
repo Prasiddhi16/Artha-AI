@@ -59,7 +59,6 @@
         </span>
         <span style="font-size: 0.9rem;">
             <strong>{{ item.category }}:</strong> Rs. {{ item.total|default:0 }}
-            <strong>{{ item.category }}:</strong> Rs. {{ item.total|floatformat:2 }}
         </span>
     </div>
     {% endfor %}
@@ -89,26 +88,6 @@
     <span class="stat-largest-expense red">Rs. {{ largest_expense|floatformat:2 }}</span>
 </div>
 
-        <span>Net Change</span>
-        <span class="{% if net_change >= 0 %}green{% else %}red{% endif %}">
-            {% if net_change >= 0 %}+{% endif %}{{ net_change|floatformat:2 }}
-        </span>
-    </div>
-    <div class="progress-bar">
-        <div class="progress-fill" style="width: {% if total_income > 0 %}{{ total_expense|divisibleby:total_income }}{% else %}0{% endif %}%"></div>
-    </div>
-    <div class="qs-row">
-        <span>Total Transactions</span>
-        <span>{{ total_count }}</span>
-    </div>
-    <div class="qs-row">
-        <span>Average Expense</span>
-        <span class="green">Rs. {{ avg_transaction|floatformat:2 }}</span>
-    </div>
-    <div class="qs-row">
-        <span>Largest Expense</span>
-        <span class="red">Rs. {{ largest_expense|floatformat:2 }}</span>
-    </div>
 </div>
         </div>
 
@@ -155,33 +134,6 @@
     </tbody>
 </table>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        
-        <tbody>
-            {% for trans in transactions %}
-            <tr>
-                <td>{{ trans.date|date:"M d, Y" }}</td>
-                <td>{{ trans.category }}</td>
-                <td>{{ trans.transaction_type }}</td>
-                <td class="{% if trans.transaction_type == 'Expense' %}negative{% else %}positive{% endif %}">
-                    Rs. {{ trans.amount }}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No transactions found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
 </div>
     </div>
 
@@ -290,7 +242,6 @@ document.getElementById("receiptInput").addEventListener("change", function() {
 });
 const ctx = document.getElementById('categoryChart').getContext('2d');
 window.categoryChartInstance = new Chart(ctx, {
-new Chart(ctx, {
     type: 'pie',
     data: {
         labels: [{% for item in category_data %}"{{ item.category|safe }}",{% endfor %}],
@@ -298,13 +249,6 @@ new Chart(ctx, {
             data: [{% for item in category_data %}{{ item.total|floatformat:2 }},{% endfor %}],
             backgroundColor: [
                 '#1e3a8a','#60a5fa','#93c5fd','#bfdbfe','#2563eb','#3b82f6','#a5b4fc'
-                '#1e3a8a', 
-                '#60a5fa', // Light Blue (Slice 2)
-                '#93c5fd', // Sky Blue (Slice 3)
-                '#bfdbfe', // Pale Blue (Slice 4)
-                '#2563eb', // Royal Blue (Slice 5)
-                '#3b82f6', // Medium Blue (Slice 6)
-                '#a5b4fc'  // Indigo (Slice 7)
             ],
             borderWidth: 1
         }]
@@ -368,10 +312,5 @@ document.addEventListener("click", function(e) {
 
 
 
-        plugins: {
-            legend: { display: false } 
-        }
-    }
-});
 </script>
 {% endblock %}

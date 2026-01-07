@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
+from datetime import date
 from django.conf import settings
 
 class Transaction(models.Model):
@@ -97,10 +98,6 @@ class GoalContribution(models.Model):
 
     def __str__(self):
         return f"{self.goal.title} contribution: {self.amount}"
-    
-
-
-   
 
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(
@@ -118,12 +115,11 @@ class PasswordResetOTP(models.Model):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
 # ---------------- Budget Model ----------------
 class Budget(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=100)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)  # The budget limit
-    icon = models.CharField(max_length=10, default="💰") # To store emojis like 🏠, 🛒
-    month = models.IntegerField() # 1-12
-    year = models.IntegerField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    month = models.IntegerField()  # 1-12
+    year = models.IntegerField()   # 2026
 
     class Meta:
         unique_together = ('user', 'category', 'month', 'year')
@@ -146,3 +142,5 @@ class MoneyFlow(models.Model):
 
     def __str__(self):
         return f"{self.person_name} - {self.flow_type}: {self.amount}"
+
+

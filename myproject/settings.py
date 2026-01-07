@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 import pymysql
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 # PyMySQL setup for Django MySQL backend
 pymysql.version_info = (2, 2, 1, 'final', 0)
@@ -95,16 +91,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static',]
 # settings.py
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'   # or your provider
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your_app_password' # use app password, not real password
+EMAIL_HOST_USER = 'your email'
+EMAIL_HOST_PASSWORD = 'password' # use app password, not real password
 
 
 
@@ -114,5 +107,3 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
