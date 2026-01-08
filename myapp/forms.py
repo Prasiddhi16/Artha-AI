@@ -2,6 +2,7 @@ from django import forms
 from myapp.models import User
 from django import forms
 from .models import Goal, GoalContribution 
+from .models import Budget, MoneyFlow
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -72,3 +73,16 @@ class ResetPasswordForm(forms.Form):
         if cleaned_data.get("new_password") != cleaned_data.get("confirm_password"):
             raise forms.ValidationError("Passwords do not match")
         return cleaned_data
+    
+
+
+class BudgetForm(forms.ModelForm):
+    class Meta:
+        model = Budget
+        fields = ['category','icon', 'amount', 'month', 'year']
+
+class MoneyFlowForm(forms.ModelForm):
+    class Meta:
+        model = MoneyFlow
+        fields = ['person_name', 'amount', 'flow_type']
+

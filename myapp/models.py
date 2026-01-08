@@ -117,6 +117,7 @@ class PasswordResetOTP(models.Model):
 class Budget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=100)
+    icon = models.CharField(max_length=10, default='💰') 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     month = models.IntegerField()  # 1-12
     year = models.IntegerField()   # 2026

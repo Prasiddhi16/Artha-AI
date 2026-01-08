@@ -404,13 +404,19 @@ const ctx = document.getElementById("ladderChart").getContext("2d");
 // Open ladder modal
 document.querySelectorAll(".ladder-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    const goalId = btn.dataset.goalId;
+     e.preventDefault();
+        e.stopPropagation();
+
+      const goalId = btn.dataset.goalId;
+
+    //  HARD STOP if this is not a real ladder button
+    if (!goalId) return;
+
 
     fetch(`{% url 'goal_contributions_ajax' %}?goal_id=${goalId}`)
       .then(res => res.json())
       .then(data => {
-        ladderDialog.style.display = "block";
-
+        
         if (ladderChart) ladderChart.destroy();
 
         ladderChart = new Chart(ctx, {

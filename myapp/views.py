@@ -1234,4 +1234,3 @@ def budget_view(request):
     }
 
     return render(request, 'myapp/budget.html', context)
-# ---------------- Static Pages ----------------
