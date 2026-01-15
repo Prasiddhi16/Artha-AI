@@ -1,0 +1,430 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %} Budget Page {% endblock %}
+{% block content %}
+
+  <div class="container">
+    <div class="header">
+      <h2>Budget Management</h2>
+      <p class="subtitle">Track your spending and manage your monthly budget</p>
+    </div>
+
+    <!-- Available to Spend Card -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2>Available to Spend</h2>
+          <p class="card-subtitle">Your remaining budget for this month</p>
+        </div>
+        <div class="month-selector">
+          <button class="nav-btn" onclick="updateMonth(-1)" aria-label="Previous month">&#8249;</button>
+          <span class="current-month"></span>
+          <button class="nav-btn" onclick="updateMonth(1)" aria-label="Next month">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="amount-display">
+        <div class="remaining-amount">$143.52</div>
+        <div class="spent-info">
+          <span>$2306.48 of $2450.00 spent</span>
+          <span class="percentage">94%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: 94%"></div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-label">Total Budget</div>
+          <div class="stat-value">$2450.00</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Total Spent</div>
+          <div class="stat-value">$2306.48</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Categories</div>
+          <div class="stat-value stat-accent">5</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budget Categories -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2>Budget Categories</h2>
+          <p class="card-subtitle">Track spending across different categories</p>
+        </div>
+        <button class="add-btn"  id="category-add">
+          <span class="btn-icon">+</span>
+          Add Category
+        </button>
+      </div>
+
+    <dialog class="budgetForms" id="addCategoryForm">
+<form method="POST" action="{% url 'budget' %}">
+
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="add_category">
+    
+    <div class="form-info">
+      <p class="first-text">Add Category</p><br>
+      <p class="second-text">Add a new budget</p>
+    </div>
+    <hr>
+    
+    <div class="budget-form">
+      <label for="category">Category name</label><br>
+      <select name="category" required>
+        <option>Food & Dining</option>
+        <option>Transport</option>
+        <option>Groceries</option>
+        <option>Housing</option>
+        <option>Utilities</option>
+        <option>Entertainment</option>
+        <option>Others</option>
+      </select>
+    </div>
+
+    <div class="budget-form">
+      <label for="amount"> Monthly Budget Amount </label><br>
+      <input type="number" name="amount" step="0.01" placeholder="0.00" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="icon"> Icon </label><br>
+      <select name="icon">
+        <option value="💰">💰 Money</option>
+        <option value="🍔">🍔 Food</option>
+        <option value="🚗">🚗 Transport</option>
+        <option value="🏠">🏠 Housing</option>
+        <option value="🎬">🎬 Fun</option>
+      </select>
+    </div>
+
+    <div class="budgetform-actions">
+      <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel</button>
+      <button type="submit" class="submit-button">Add Category</button>
+    </div>
+  </form>
+</dialog>
+      <div class="categories-list">
+        <!-- Rent Category -->
+        <div class="category-item">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon">🏠</div>
+              <div>
+                <div class="category-name">Rent</div>
+                <div class="category-spent">$1200.00 of $1200.00</div>
+              </div>
+            </div>
+            <div class="category-right">
+              <div>
+                <div class="category-remaining positive">$0.00</div>
+                <div class="category-status">Remaining</div>
+              </div>
+              <button class="edit-btn">⚙️ Edit</button>
+            </div>
+          </div>
+          <div class="category-progress">
+            <div class="category-progress-bar full" style="width: 100%"></div>
+            <span class="usage-label">100% used</span>
+          </div>
+        </div>
+
+        <!-- Groceries Category -->
+        <div class="category-item">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon">🛒</div>
+              <div>
+                <div class="category-name">Groceries</div>
+                <div class="category-spent">$285.50 of $400.00</div>
+              </div>
+            </div>
+            <div class="category-right">
+              <div>
+                <div class="category-remaining positive">$114.50</div>
+                <div class="category-status">Remaining</div>
+              </div>
+              <button class="edit-btn">⚙️ Edit</button>
+            </div>
+          </div>
+          <div class="category-progress">
+            <div class="category-progress-bar" style="width: 71%"></div>
+            <span class="usage-label">71% used</span>
+          </div>
+        </div>
+
+        <!-- Transportation Category -->
+        <div class="category-item">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon">🚗</div>
+              <div>
+                <div class="category-name">Transportation</div>
+                <div class="category-spent">$145.00 of $200.00</div>
+              </div>
+            </div>
+            <div class="category-right">
+              <div>
+                <div class="category-remaining positive">$55.00</div>
+                <div class="category-status">Remaining</div>
+              </div>
+              <button class="edit-btn">⚙️ Edit</button>
+            </div>
+          </div>
+          <div class="category-progress">
+            <div class="category-progress-bar" style="width: 73%"></div>
+            <span class="usage-label">73% used</span>
+          </div>
+        </div>
+
+        <!-- Entertainment Category (Over Budget) -->
+        <div class="category-item over-budget">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon">🎬</div>
+              <div>
+                <div class="category-name">Entertainment</div>
+                <div class="category-spent">$175.98 of $150.00</div>
+              </div>
+            </div>
+            <div class="category-right">
+              <div>
+                <div class="category-remaining negative">-$25.98</div>
+                <div class="category-status error">Over budget</div>
+              </div>
+              <button class="edit-btn">⚙️ Edit</button>
+            </div>
+          </div>
+          <div class="category-progress">
+            <div class="category-progress-bar over" style="width: 100%"></div>
+            <span class="usage-label error">117% used</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <dialog class="budgetForms" id="editForm">
+    <form  method="dialog" >
+      <div class="form-info">
+          <p class="first-text">Edit Budget</p><br>
+          <p class="second-text">Update the monthly budget for category</p>
+        </div><hr>
+        <div class="budget-form">
+          <label for="budget-amount"> Monthly Budget Amount </label><br>
+          <input type="number" id="budget-amount" placeholder="0.00">
+        </div>
+        <div class="budget-form" id="budget-calc">
+          <span>
+            Current Spent:    $20000<br>
+            New Budget:       $1200<br>
+            New Remaining:    $0.00<br>
+          </span>
+        </div>
+        <div class="budgetform-actions"> 
+          <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel </button>
+          <button type="submit" class="submit-button">Save Changes </button>
+        </div>
+    </form>
+  </dialog>
+
+    <!-- Money Flow Tracker -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2>Money Flow Tracker</h2>
+          <p class="card-subtitle">Track money you owe and money owed to you</p>
+        </div>
+        <button class="add-btn" id="party-add">
+          <span class="btn-icon">+</span>
+          Add Party
+        </button>
+      </div>
+<dialog class="budgetForms" id="addPartyForm">
+<form method="POST" action="{% url 'budget' %}">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="add_party">
+
+    <div class="form-info">
+      <p class="first-text">Add Money Flow</p><br>
+      <p class="second-text">Track money you owe or money owed to you</p>
+    </div>
+    <hr>
+
+    <div class="budget-form">
+      <label for="person_name"> Name </label><br>
+      <input type="text" name="person_name" placeholder="Enter person's name" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="amount"> Amount </label><br>
+      <input type="number" name="amount" step="0.01" placeholder="0.00" required>
+    </div>
+
+    <div class="budget-form">
+      <label for="flow_type">Type</label><br>
+      <select name="flow_type">
+        <option value="topay">You owe</option>
+        <option value="toreceive">Owed to you</option>
+      </select>
+    </div>
+
+    <div class="budgetform-actions">
+      <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel</button>
+      <button type="submit" class="submit-button">Add</button>
+    </div>
+  </form>
+</dialog>
+    
+
+      <div class="money-flow-content">
+        <!-- You Owe -->
+        <div class="flow-column">
+          <div class="flow-header">
+            <div class="flow-icon error-icon">⚠️</div>
+            <span class="flow-title">You Owe</span>
+            <span class="flow-total error">$165.50</span>
+          </div>
+          
+          <div class="flow-list">
+            <div class="flow-item">
+              <div class="person-icon">👤</div>
+              <span class="person-name">Sarah Johnson</span>
+              <span class="person-amount error">$45.00</span>
+              <button class="remove-btn" aria-label="Remove">×</button>
+            </div>
+            <div class="flow-item">
+              <div class="person-icon">👤</div>
+              <span class="person-name">Mike Chen</span>
+              <span class="person-amount error">$120.50</span>
+              <button class="remove-btn" aria-label="Remove">×</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Owed to You -->
+        <div class="flow-column">
+          <div class="flow-header">
+            <div class="flow-icon success-icon">✓</div>
+            <span class="flow-title">Owed to You</span>
+            <span class="flow-total success">$200.25</span>
+          </div>
+          
+          <div class="flow-list">
+            <div class="flow-item">
+              <div class="person-icon">👤</div>
+              <span class="person-name">Emma Davis</span>
+              <span class="person-amount success">$75.00</span>
+              <button class="remove-btn" aria-label="Remove">×</button>
+            </div>
+            <div class="flow-item">
+              <div class="person-icon">👤</div>
+              <span class="person-name">Alex Rodriguez</span>
+              <span class="person-amount success">$30.00</span>
+              <button class="remove-btn" aria-label="Remove">×</button>
+            </div>
+            <div class="flow-item">
+              <div class="person-icon">👤</div>
+              <span class="person-name">Tom Wilson</span>
+              <span class="person-amount success">$95.25</span>
+              <button class="remove-btn" aria-label="Remove">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="net-flow">
+        <span class="net-flow-icon">💵</span>
+        <span class="net-flow-label">Net Money Flow</span>
+        <span class="net-flow-amount success">+$34.75</span>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+
+{% block extra_css %} 
+    <link rel="stylesheet" href="{% static 'myapp/css/budget.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const months=[
+'January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const today=new Date();
+let currentMonth= today.getMonth();
+let currentYear= today.getFullYear();
+
+function updateDisplay(){
+  document.querySelector(".current-month").textContent=`${months[currentMonth]}  ${currentYear}`;
+}
+
+function updateMonth(sign){
+  currentMonth+=sign;
+  
+  if(currentMonth>11){
+    currentMonth=0;
+    currentYear++;
+  }
+
+  else if(currentMonth<0){
+    currentMonth=11;
+    currentYear--;
+  }
+  updateDisplay();
+}
+updateDisplay();
+
+
+
+
+ document.addEventListener("DOMContentLoaded",()=>{
+
+  const categoryAdd=document.querySelector("#category-add");
+  const editBtn=document.querySelectorAll(".edit-btn");
+  const partyAdd=document.querySelector("#party-add");
+  const addCategoryForm=document.querySelector("#addCategoryForm");
+  const editForm=document.querySelector("#editForm");
+  const addPartyForm=document.querySelector("#addPartyForm");
+  const dialog=document.querySelectorAll("dialog");
+
+  categoryAdd.addEventListener("click",()=>{
+    addCategoryForm.showModal();
+  });
+
+  editBtn.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      editForm.showModal();
+    });
+  });
+
+  partyAdd.addEventListener("click",()=>{
+    addPartyForm.showModal();
+  });
+
+  dialog.forEach(dialog=>{
+  dialog.addEventListener("click",(e)=>{
+    if( e.target===dialog){
+      dialog.close();}
+  });
+  });
+
+  document.querySelector(".money-flow-content").addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove-btn")) {
+    const flowItem = e.target.closest(".flow-item");
+    if (confirm("Remove this entry?")) {
+  flowItem.remove();
+  }
+  }
+});
+
+});
+
+
+</script>
+{% endblock %}

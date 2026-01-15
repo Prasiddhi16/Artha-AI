@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Artha AI{% endblock %}</title>
+
+ 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <link rel="stylesheet" href="{% static 'myapp/css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'myapp/css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'myapp/css/headerstyle.css' %}">
+  <link rel="stylesheet" href="{% static 'myapp/css/profile.css' %}">
+
+  {% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+
+  {% include 'myapp/navbar.html' %}
+
+
+  <main>
+    {% include 'myapp/header.html' %}
+    {% block content %}{% endblock %}
+    {% include 'myapp/chatbot.html' %}
+  </main>
+
+  
+  <script src="{% static 'myapp/js/loadheader.js' %}"></script>
+  <script src="{% static 'myapp/js/navbar.js' %}"></script>
+  <script src="{% static 'myapp/js/profile.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,365 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block title %} Utilities {% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="header">
+    <h2>Utilities</h2>
+    <p class="subtitle">Financial calculators and notebook for budget planning</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <button id="notebookTab" class="tab-btn active" onclick="switchTab('notebook')">
+        Notebook
+      </button>
+      <button id="calculatorTab" class="tab-btn" onclick="switchTab('calculator')">
+        Calculator
+      </button>
+    </div>
+
+    
+    <div id="notebookContent" class="tab-content active">
+
+      <div class="form-group">
+        <label>Note Title</label>
+        <input type="text" id="noteTitle" placeholder="Enter note title">
+      </div>
+
+      <div class="form-group">
+        <label>Note Content</label>
+        <textarea id="noteContent" rows="3" placeholder="Write your note..."></textarea>
+      </div>
+
+      <button class="submit-button" onclick="saveNote()">Save Note</button>
+
+      <hr>
+
+      <h4>Saved Notes</h4>
+      <div id="savedNotes" class="empty-text">No notes yet</div>
+
+    </div>
+
+    
+    <div id="calculatorContent" class="tab-content">
+
+      <div class="calculator-grid">
+        <button class="calculator-card" onclick="openModal('taxModal')">Tax Calculator</button>
+        <button class="calculator-card" onclick="openModal('emiModal')">EMI Calculator</button>
+        <button class="calculator-card" onclick="openModal('interestModal')">Interest Calculator</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<dialog id="noteModal" class="budgetForms">
+  <button class="modal-close" onclick="this.closest('dialog').close()">×</button>
+  <div class="note-modal-content" style="text-align:center;">
+    <h3 id="modalNoteTitle">Note Title</h3>
+    <p id="modalNoteContent">Note content goes here...</p>
+    <small id="modalNoteDate" style="color:#6e6e73;">Created: 01/01/2026, 12:00 PM</small>
+  </div>
+</dialog>
+
+<dialog id="taxModal" class="budgetForms">
+  <button class="modal-close" onclick="this.closest('dialog').close()">×</button>
+
+  <div class="input-section">
+    <h3>Tax Calculator</h3>
+    <label>Annual Income</label>
+    <input type="number" id="taxIncome">
+
+    <label>Tax Rate (%)</label>
+    <input type="number" id="taxRate">
+
+    <button type="button" class="submit-button" onclick="calculateTax()">Calculate</button>
+  </div>
+
+  <div class="output-section" style="display:none; text-align:center;">
+    <div class="result">
+      <p>Gross: <span id="taxGross">—</span></p>
+      <p>Tax: <span id="taxAmount">—</span></p>
+      <p>After Tax: <span id="taxAfter">—</span></p>
+    </div>
+    <div class="chart-container">
+      <canvas id="taxChart"></canvas>
+    </div>
+  </div>
+</dialog>
+
+
+<dialog id="emiModal" class="budgetForms">
+  <button class="modal-close" onclick="this.closest('dialog').close()">×</button>
+
+  <div class="input-section">
+    <h3>EMI Calculator</h3>
+    <label>Loan Amount</label>
+    <input type="number" id="loanAmount">
+
+    <label>Interest Rate (%)</label>
+    <input type="number" id="emiRate">
+
+    <label>Tenure (Years)</label>
+    <input type="number" id="loanTenure">
+
+    <button type="button" class="submit-button" onclick="calculateEMI()">Calculate</button>
+  </div>
+
+  <div class="output-section" style="display:none; text-align:center;">
+    <div class="result">
+      <p>Monthly EMI: <span id="monthlyEMI">—</span></p>
+      <p>Interest: <span id="emiInterest">—</span></p>
+      <p>Total: <span id="emiTotal">—</span></p>
+    </div>
+    <div class="chart-container">
+      <canvas id="emiChart"></canvas>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="interestModal" class="budgetForms">
+  <button class="modal-close" onclick="this.closest('dialog').close()">×</button>
+
+  <div class="input-section">
+    <h3>Compound Interest</h3>
+    <label>Principal</label>
+    <input type="number" id="principal">
+
+    <label>Rate (%)</label>
+    <input type="number" id="interestRate">
+
+    <label>Years</label>
+    <input type="number" id="timePeriod">
+
+    <label>Frequency</label>
+    <select id="frequency">
+      <option value="12">Monthly</option>
+      <option value="4">Quarterly</option>
+      <option value="1">Annually</option>
+    </select>
+
+    <button type="button" class="submit-button" onclick="calculateInterest()">Calculate</button>
+  </div>
+
+  <div class="output-section" style="display:none; text-align:center;">
+    <div class="result">
+      <p>Interest Earned: <span id="interestEarned">—</span></p>
+      <p>Total: <span id="interestTotal">—</span></p>
+    </div>
+    <div class="chart-container">
+      <canvas id="interestChart"></canvas>
+    </div>
+  </div>
+</dialog>
+
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'myapp/css/utilitiesstyle.css' %}">
+
+<style>
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #ef4444;
+  font-weight: 600;
+}
+.modal-close:hover {
+  color: #b91c1c;
+}
+
+.note-modal-content h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.note-modal-content p {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.note-modal-content small {
+  font-size: 14px;
+  color: #6e6e73;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function switchTab(tab) {
+  document.getElementById("notebookTab").classList.toggle("active", tab === "notebook");
+  document.getElementById("calculatorTab").classList.toggle("active", tab === "calculator");
+  document.getElementById("notebookContent").classList.toggle("active", tab === "notebook");
+  document.getElementById("calculatorContent").classList.toggle("active", tab === "calculator");
+}
+
+
+function openModal(id) {
+  const dialog = document.getElementById(id);
+  dialog.showModal();
+  dialog.querySelector('.input-section').style.display = 'block';
+  dialog.querySelector('.output-section').style.display = 'none';
+  dialog.classList.remove('dialog-output');  // reset size
+}
+
+
+let notes = JSON.parse(localStorage.getItem("utilities_notes")) || [];
+
+function saveNote() {
+  const title = noteTitle.value.trim();
+  const content = noteContent.value.trim();
+  if (!title || !content) return;
+
+  const now = new Date();
+  const createdAt = now.toISOString();
+
+  notes.unshift({ id: Date.now(), title, content, createdAt });
+  localStorage.setItem("utilities_notes", JSON.stringify(notes));
+  renderNotes();
+
+  noteTitle.value = "";
+  noteContent.value = "";
+}
+
+function renderNotes() {
+  const container = document.getElementById("savedNotes");
+
+  if (notes.length === 0) {
+    container.innerHTML = "<p class='empty-text'>No notes yet</p>";
+    return;
+  }
+
+  container.innerHTML = notes.map(n => {
+    const date = new Date(n.createdAt);
+    const formattedDate = date.toLocaleString();
+    return `
+      <div class="note-item" onclick="openNoteDialog(${n.id})">
+        <strong>${n.title}</strong>
+        <p>${n.content}</p>
+        <small>Created: ${formattedDate}</small>
+        <button onclick="deleteNote(${n.id}); event.stopPropagation();">×</button>
+      </div>
+    `;
+  }).join("");
+}
+
+function deleteNote(id) {
+  notes = notes.filter(n => n.id !== id);
+  localStorage.setItem("utilities_notes", JSON.stringify(notes));
+  renderNotes();
+}
+
+function openNoteDialog(noteId) {
+  const note = notes.find(n => n.id === noteId);
+  if (!note) return;
+
+  const dialog = document.getElementById("noteModal");
+  dialog.showModal();
+
+  document.getElementById("modalNoteTitle").textContent = note.title;
+  document.getElementById("modalNoteContent").textContent = note.content;
+
+  const date = new Date(note.createdAt);
+  document.getElementById("modalNoteDate").textContent = "Created: " + date.toLocaleString();
+}
+
+renderNotes();
+
+
+let taxChartInstance, emiChartInstance, interestChartInstance;
+
+function createDonutChart(ctx, labels, data, colors) {
+  return new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: colors, borderWidth: 1 }] },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+
+function calculateTax() {
+  const income = +taxIncome.value || 0;
+  const rate = +taxRate.value || 0;
+  const tax = income * rate / 100;
+
+  const dialog = document.getElementById('taxModal');
+  const inputSection = dialog.querySelector('.input-section');
+  const outputSection = dialog.querySelector('.output-section');
+
+  inputSection.style.display = 'none';
+  outputSection.style.display = 'block';
+  dialog.classList.add('dialog-output');
+
+  taxGross.textContent = income.toFixed(2);
+  taxAmount.textContent = tax.toFixed(2);
+  taxAfter.textContent = (income - tax).toFixed(2);
+
+  const ctx = document.getElementById('taxChart').getContext('2d');
+  if (taxChartInstance) taxChartInstance.destroy();
+  taxChartInstance = createDonutChart(ctx, ['Tax', 'After Tax'], [tax, income - tax], ['#ef4444', '#10b981']);
+}
+
+function calculateEMI() {
+  const P = +loanAmount.value || 0;
+  const r = (+emiRate.value || 0) / 12 / 100;
+  const n = (+loanTenure.value || 0) * 12;
+  if (!P || !r || !n) return;
+
+  const dialog = document.getElementById('emiModal');
+  const inputSection = dialog.querySelector('.input-section');
+  const outputSection = dialog.querySelector('.output-section');
+
+  inputSection.style.display = 'none';
+  outputSection.style.display = 'block';
+  dialog.classList.add('dialog-output');
+
+  monthlyEMI.textContent = (P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1)).toFixed(2);
+  emiTotal.textContent = (monthlyEMI.textContent * n).toFixed(2);
+  emiInterest.textContent = (emiTotal.textContent - P).toFixed(2);
+
+  const ctx = document.getElementById('emiChart').getContext('2d');
+  if (emiChartInstance) emiChartInstance.destroy();
+  emiChartInstance = createDonutChart(ctx, ['Principal', 'Interest'], [P, (emiTotal.textContent - P)], ['#10b981', '#ef4444']);
+}
+
+function calculateInterest() {
+  const P = +principal.value || 0;
+  const r = (+interestRate.value || 0) / 100;
+  const t = +timePeriod.value || 0;
+  const n = +frequency.value || 1;
+  if (!P || !r || !t) return;
+
+  const dialog = document.getElementById('interestModal');
+  const inputSection = dialog.querySelector('.input-section');
+  const outputSection = dialog.querySelector('.output-section');
+
+  inputSection.style.display = 'none';
+  outputSection.style.display = 'block';
+  dialog.classList.add('dialog-output');
+
+  const A = P * Math.pow(1 + r / n, n * t);
+  interestEarned.textContent = (A - P).toFixed(2);
+  interestTotal.textContent = A.toFixed(2);
+
+  const ctx = document.getElementById('interestChart').getContext('2d');
+  if (interestChartInstance) interestChartInstance.destroy();
+  interestChartInstance = createDonutChart(ctx, ['Principal', 'Interest Earned'], [P, (A - P)], ['#10b981', '#ef4444']);
+}
+</script>
+{% endblock %}
