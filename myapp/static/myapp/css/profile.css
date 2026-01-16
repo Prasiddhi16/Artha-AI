@@ -36,6 +36,10 @@ padding:10px;
      backdrop-filter: blur(2px);
     justify-content:center;
     align-items:center;
+    pointer-events: none; /*allows clicks to pass through*/
+}
+.overlay.active{
+    pointer-events: auto;/* Block clicks when active*/
 }
 
 .dialog{
@@ -48,6 +52,9 @@ padding:10px;
     width:40vw;
     height:80vh;
     overflow-y: auto;
+    pointer-events: auto; /* Always allow clicks on dialog */
+    position: relative;
+    z-index: 1001; /* Higher than overlay */
    
 }
 
@@ -111,36 +118,48 @@ padding:10px;
 .line{
     display:flex;
     justify-content:space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 .switch{
     width:32px;
     height:17px;
     display:inline-block; 
     justify-self: right;
+    
 }
 .switch input{
-   display:none;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
 }
 .toggle{
-    position:relative;
+    position:absolute;
+    cursor:pointer;
     display:inline-block;
     width:32px;
     height:17px;
     border:1px solid black;
     border-radius:32px;
     background-color:rgb(148, 183, 236);
+    transition: background-color 0.2s ease;
 }
 .toggle:before{
     content:"";
     display:inline-block;
-    position:relative;
+    position:absolute;
+    left:0;
     width:15px;
     height:13px;
     border-radius:50%;
     border:1px solid black;
     background-color: aliceblue;
-  
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
+  
+
 .switch input:checked+.toggle{
     background-color:navy;
 }
@@ -181,16 +200,14 @@ padding:10px;
     position:relative;
     top:16px;
 }
-#usernames{
-   display:flex;
-   justify-content: space-between;
-}
+
 .name{
    flex:1;
 }
 label{
     font-size:17px;
     font-weight:bold;
+    margin-bottom:10px;
 }
 input{
     font-size:15px;
@@ -199,6 +216,7 @@ input{
     height:fit-content;
     padding:5px;
     margin:5px;
+    width:100%;
 }
 .save{
     width:100%;

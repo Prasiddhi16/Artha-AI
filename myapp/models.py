@@ -40,6 +40,7 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=15, blank=True, null=True)  # make optional
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -47,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['name']
 
     def __str__(self):
         return self.email
@@ -144,4 +145,26 @@ class MoneyFlow(models.Model):
     def __str__(self):
         return f"{self.person_name} - {self.flow_type}: {self.amount}"
 
+# profile models
+class Notification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_settings')
+    email_notifications = models.BooleanField(default=False)
+    push_notifications = models.BooleanField(default=False)
+    monthly_reports = models.BooleanField(default=False)
+    budget_alerts = models.BooleanField(default=False)
+    goal_reminders = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.user.username}'s notifications"
+
+class PrivacySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='privacy_settings')
+    analytics_tracking = models.BooleanField(default=False)
+    crash_reporting = models.BooleanField(default=False)
+    usage_data = models.BooleanField(default=False)
+    spending_insights = models.BooleanField(default=True)
+    two_factor_auth = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.user.username}'s privacy settings"
 

@@ -3,6 +3,8 @@ from myapp.models import User
 from django import forms
 from .models import Goal, GoalContribution 
 from .models import Budget, MoneyFlow
+from .models import Notification, PrivacySettings
+from django.contrib.auth.forms import PasswordChangeForm
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -81,8 +83,48 @@ class BudgetForm(forms.ModelForm):
         model = Budget
         fields = ['category','icon', 'amount', 'month', 'year']
 
+        def clean_amount(self):
+            amount = self.cleaned_data.get('amount')
+
+            if amount is None:
+                raise forms.ValidationError("Amount is required.")
+
+            if amount <= 0:
+                raise forms.ValidationError("Budget must be greater than zero.")
+
+            return amount
+
 class MoneyFlowForm(forms.ModelForm):
     class Meta:
         model = MoneyFlow
         fields = ['person_name', 'amount', 'flow_type']
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'email', 'phone']
+
+        def clean_name(self):
+            name = self.cleaned_data["name"]
+            if len(name) < 2:
+                raise forms.ValidationError("Name is too short.")
+            return name
+
+class NotificationForm(forms.ModelForm):
+    class Meta:
+        model= Notification
+        fields=['email_notifications','push_notifications','monthly_reports','budget_alerts','goal_reminders']
+
+
+class PasswordUpdateForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Current Password'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'New Password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New Password'}))
+
+class PrivacySettingsForm(forms.ModelForm):
+    class Meta:
+        model = PrivacySettings
+        fields = ['analytics_tracking', 'crash_reporting', 'usage_data', 
+                  'spending_insights', 'two_factor_auth']
+
 

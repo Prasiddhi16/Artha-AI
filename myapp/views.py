@@ -43,6 +43,11 @@ from datetime import date, timedelta, datetime
 import calendar
 from django.db import models
 import numpy as np
+from .forms import BudgetForm, MoneyFlowForm
+from .models import Budget, MoneyFlow, Expense
+from .forms import ProfileForm, NotificationForm, PrivacySettingsForm, PasswordUpdateForm
+from .models import Notification, PrivacySettings
+from django.contrib.auth import update_session_auth_hash
 
 # ---------------- Static Pages ----------------
 
@@ -61,6 +66,7 @@ def signup(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
+
             messages.success(request, "Account created successfully! You can now sign in.")
             return redirect('signin')
         else:
@@ -1057,6 +1063,7 @@ def delete_transactionhome(request):
         })
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+    
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
@@ -1132,14 +1139,16 @@ def reset_password(request):
             messages.success(request, "Password updated successfully! You can now sign in.")
             return redirect("signin")
     return render(request, "myapp/reset_password.html")
-from datetime import datetime
-from django.db.models import Sum
-from .models import Budget, MoneyFlow, Expense
+
+
+#budget
 @login_required
 def budget_view(request):
     now = datetime.now()
-    month = request.GET.get('month')
-    year = request.GET.get('year')
+    month = request.GET.get('month', now.month)
+    year = request.GET.get('year', now.year)
+
+
     try:
         month = int(month)
     except (TypeError, ValueError):
@@ -1150,87 +1159,431 @@ def budget_view(request):
     except (TypeError, ValueError):
         year = now.year
 
-
-    # --- NEW: ADD SAVING LOGIC HERE ---
+    #  post logic
     if request.method == "POST":
         form_type = request.POST.get('form_type')
 
+        month = int(request.POST.get('month', month))
+        year = int(request.POST.get('year', year))
+
+
         if form_type == 'add_category':
-            category_name = request.POST.get('category')
-            amount = request.POST.get('amount')
-            icon = request.POST.get('icon', '💰')
+            form = BudgetForm(request.POST)
+            if form.is_valid():
+                budget = form.save(commit=False)
+                budget.user = request.user
+                budget.month = month
+                budget.year = year
+                budget.save()
 
-            # Create the budget record
-            Budget.objects.create(
-                user=request.user,
-                category=category_name,
-                amount=amount,
-                icon=icon,
-                month=month,
-                year=year
-            )
-        
         elif form_type == 'add_party':
-            person_name = request.POST.get('person_name')
-            amount = request.POST.get('amount')
-            flow_type = request.POST.get('flow_type')
+            flow_form = MoneyFlowForm(request.POST)
+            if flow_form.is_valid():
+                flow = flow_form.save(commit=False)
+                flow.user = request.user
+                flow.save()
 
-            MoneyFlow.objects.create(
-                user=request.user,
-                person_name=person_name,
-                amount=amount,
-                flow_type=flow_type
-            )
-        
-        return redirect('budget') # Refresh page to show new data
+        # Redirect back with the month and year so the data shows up immediately
+        return redirect(f'/budget/?month={month}&year={year}')
 
-    # --- EXISTING DISPLAY LOGIC ---
-    budgets = Budget.objects.filter(user=request.user, month=month, year=year)
+    # data display
+    total_income = Income.objects.filter(user=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
+    recommended_budget_limit = float(total_income) * 0.7
+    
+    total_spent = Expense.objects.filter(
+        user=request.user,
+        date__month=month,
+        date__year=year
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+
+
+    #budgets set
+    budgets = Budget.objects.filter(user=request.user, month=month,year=year)
+
+    #All categories with some expense this month
+    all_expense_categories = Expense.objects.filter(
+        user=request.user,
+        date__month=month,
+        date__year=year
+    ).values_list('category', flat=True).distinct()
+
+    # Collect all categories (from budgets + expenses)
+    all_categories = set(budgets.values_list('category', flat=True)) | set(all_expense_categories)
+
+    budget_map = {b.category: b for b in budgets}
     budget_data = []
     total_budget = 0
-    total_spent = 0
 
-    for b in budgets:
+    for category in all_categories:
+        budget = budget_map.get(category)
+
         spent = Expense.objects.filter(
             user=request.user,
-            category=b.category,
+            category=category,
             date__month=month,
             date__year=year
         ).aggregate(Sum('amount'))['amount__sum'] or 0
-        
-        remaining = b.amount - spent
-        percent = (spent / b.amount * 100) if b.amount > 0 else 0
-        
-        budget_data.append({
-            'obj': b,
-            'spent': spent,
-            'remaining': remaining,
-            'percent': round(percent, 1),
-            'is_over': spent > b.amount
-        })
-        
-        total_budget += b.amount
-        total_spent += spent
 
+        if budget:
+            amount = budget.amount
+            remaining = amount - spent
+            percent = (spent / amount * 100) if amount > 0 else     (100 if spent > 0 else 0)
+
+            budget_data.append({
+                'id': budget.id,
+                'category': category,
+                'amount': amount,
+                'icon': budget.icon,
+                'spent': spent,
+                'remaining': remaining,
+                'percent': round(percent, 1),
+                'is_over': spent > amount,
+                'has_budget': True
+            })
+
+            total_budget += amount
+
+        else:
+            budget_data.append({
+                'id': None,
+                'category': category,
+                'amount': 0,
+                'icon': '💰',
+                'spent': spent,
+                'remaining': -spent,
+                'percent': 100,
+                'is_over': True,
+                'has_budget': False
+            })
+
+    # Sort by spent amount (highest first)
+    budget_data.sort(key=lambda x: x['spent'], reverse=True)
+
+    
+    #money flow
     flows = MoneyFlow.objects.filter(user=request.user)
     you_owe_list = flows.filter(flow_type='topay')
     owed_to_you_list = flows.filter(flow_type='toreceive')
-    
+
     you_owe_total = you_owe_list.aggregate(Sum('amount'))['amount__sum'] or 0
     owed_to_you_total = owed_to_you_list.aggregate(Sum('amount'))['amount__sum'] or 0
     net_flow = owed_to_you_total - you_owe_total
 
     context = {
+        'now': now,
+        'current_month': month,
+        'current_year': year,
         'budget_data': budget_data,
         'total_budget': total_budget,
         'total_spent': total_spent,
         'remaining_total': total_budget - total_spent,
-        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else 0,
+        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else (100 if total_spent > 0 else 0),
         'you_owe_list': you_owe_list,
         'owed_to_you_list': owed_to_you_list,
         'you_owe_total': you_owe_total,
         'owed_to_you_total': owed_to_you_total,
         'net_flow': net_flow,
+        'total_income': total_income,
+        'recommended_limit': recommended_budget_limit,
+        'allocation_warning': total_budget > recommended_budget_limit,
     }
 
     return render(request, 'myapp/budget.html', context)
+
+@login_required
+@require_POST
+def edit_budget(request):
+    budget_id = request.POST.get('budget_id')
+    new_amount = request.POST.get('amount')
+    budget_item = get_object_or_404(Budget, id=budget_id, user=request.user)
+    
+    if new_amount is not None:
+        new_amount = float(new_amount)   
+
+        if new_amount <= 0:              
+            messages.error(
+                request,
+                "Budget must be greater than zero."
+            )
+            return redirect(
+                f'/budget/?month={budget_item.month}&year={budget_item.year}'
+            )
+
+        budget_item.amount = new_amount  
+        budget_item.save()
+        messages.success(
+            request,
+            f"Updated {budget_item.category}!"
+        )
+
+    return redirect(f'/budget/?month={budget_item.month}&year={budget_item.year}')
+
+#delete money flow
+@login_required
+@require_POST
+def delete_money_flow(request):
+    """Delete a money flow entry"""
+    try:
+        data = json.loads(request.body)
+        flow_id = data.get('flow_id')
+        
+        flow = MoneyFlow.objects.get(id=flow_id, user=request.user)
+        flow.delete()
+        
+        # Recalculate totals
+        flows = MoneyFlow.objects.filter(user=request.user)
+        you_owe_total = flows.filter(flow_type='topay').aggregate(Sum('amount'))['amount__sum'] or 0
+        owed_to_you_total = flows.filter(flow_type='toreceive').aggregate(Sum('amount'))['amount__sum'] or 0
+        net_flow = owed_to_you_total - you_owe_total
+        
+        return JsonResponse({
+            'success': True,
+            'you_owe_total': float(you_owe_total),
+            'owed_to_you_total': float(owed_to_you_total),
+            'net_flow': float(net_flow)
+        })
+        
+    except MoneyFlow.DoesNotExist:
+        return JsonResponse({'error': 'Entry not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+@login_required
+@require_POST
+def delete_budget(request):
+    budget_id = request.POST.get('budget_id')
+    budget = get_object_or_404(Budget, id=budget_id, user=request.user)
+
+    #Checking if expenses exist for this category
+    has_expenses = Expense.objects.filter(
+        user=request.user,
+        category=budget.category,
+        date__month=budget.month,
+        date__year=budget.year
+    ).exists()
+
+    if has_expenses:
+        messages.error(
+            request,
+            f"Cannot delete '{budget.category}' because expenses exist."
+        )
+    else:
+        budget.delete()
+        messages.success(
+            request,
+            f"Deleted budget '{budget.category}'."
+        )
+
+    return redirect(f'/budget/?month={budget.month}&year={budget.year}')
+
+@login_required
+def profile(request):
+    user = request.user
+    
+
+    notification_settings, _ = Notification.objects.get_or_create(user=user,defaults={
+            'email_notifications': False,
+            'push_notifications': False,
+            'monthly_reports': False,
+            'budget_alerts': False,
+            'goal_reminders': False
+        })
+    privacy_settings, _ = PrivacySettings.objects.get_or_create(user=user,
+        defaults={
+            'analytics_tracking': False,
+            'crash_reporting': False,
+            'usage_data': False,
+            'spending_insights': True,
+            'two_factor_auth': False
+        })
+    
+    # Initialize forms
+    profile_form = ProfileForm(instance=user)
+    notification_form = NotificationForm(instance=notification_settings)
+    privacy_form = PrivacySettingsForm(instance=privacy_settings)
+    password_form = PasswordUpdateForm(user=user)
+
+    
+    context = {
+        'user': user,
+        'profile_form': profile_form,
+        'notification_form': notification_form,
+        'privacy_form': privacy_form,
+        'password_form': password_form,
+        'privacy_settings':privacy_settings,
+        'notification_settings':notification_settings
+
+    }
+    
+    return render(request, 'myapp/profile.html', context)
+
+@login_required
+@require_POST
+def update_profile(request):
+    try:
+        data = json.loads(request.body)
+        user = request.user
+
+        # Validate fields
+        name = data.get('name', '').strip()
+        email = data.get('email', '').strip()
+        phone = data.get('phone', '').strip()
+        
+        if not name or len(name) < 2:
+            return JsonResponse({
+                'success': False,
+                'message': 'Please enter a valid name. Name must be at least 2 characters long.'
+            }, status=400)
+        
+        if not email or '@' not in email:
+            return JsonResponse({
+                'success': False,
+                'message': 'Please enter a valid email address.'
+            }, status=400)
+        
+        # Check if email is already taken by another user
+        if User.objects.filter(email=email).exclude(id=user.id).exists():
+            return JsonResponse({
+                'success': False,
+                'message': 'This email is already in use.'
+            }, status=400)
+        
+        user.name = data.get('name')
+        user.email = data.get('email')
+        user.phone = data.get('phone')
+        user.save()
+        return JsonResponse({'message': 'Profile updated successfully!'})
+    except Exception as e:
+        return JsonResponse({'message': str(e)}, status=400)
+
+@login_required
+@require_POST
+def update_notifications(request):
+    """Handle AJAX notification settings update"""
+    try:
+        data = json.loads(request.body)
+        notification_settings, _ = Notification.objects.get_or_create(user=request.user)
+        
+        notification_settings.email_notifications = data.get('email_notifications', False)
+        notification_settings.push_notifications = data.get('push_notifications', False)
+        notification_settings.monthly_reports = data.get('monthly_reports', False)
+        notification_settings.budget_alerts = data.get('budget_alerts', False)
+        notification_settings.goal_reminders = data.get('goal_reminders', False)
+
+        notification_settings.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Notification preferences saved successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_POST
+def update_password(request):
+    """Handle AJAX password update"""
+    try:
+        data = json.loads(request.body)
+        user = request.user
+        
+        # Check current password
+        if not user.check_password(data.get('current_password')):
+            return JsonResponse({
+                'success': False,
+                'message': 'Current password is incorrect.'
+            }, status=400)
+        
+        # Check if new passwords match
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+        
+        if new_password != confirm_password:
+            return JsonResponse({
+                'success': False,
+                'message': 'New passwords do not match.'
+            }, status=400)
+        
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+        
+        # Keep user logged in after password change
+        update_session_auth_hash(request, user)
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Password updated successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_POST
+def update_privacy_settings(request):
+    """Handle AJAX privacy settings update"""
+    try:
+        data = json.loads(request.body)
+        privacy_settings, _ = PrivacySettings.objects.get_or_create(user=request.user)
+        
+        privacy_settings.analytics_tracking = data.get('analytics_tracking', False)
+        privacy_settings.crash_reporting = data.get('crash_reporting', False)
+        privacy_settings.usage_data = data.get('usage_data', False)
+        privacy_settings.spending_insights = data.get('spending_insights', False)
+        privacy_settings.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Privacy settings saved successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_POST
+def toggle_two_factor(request):
+    """Toggle two-factor authentication"""
+    try:
+        data = json.loads(request.body)
+        privacy_settings, _ = PrivacySettings.objects.get_or_create(user=request.user)
+        
+        privacy_settings.two_factor_auth = data.get('enabled', False)
+        privacy_settings.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Two-factor authentication {"enabled" if privacy_settings.two_factor_auth else "disabled"}.'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_POST
+def delete_account(request):
+    """Handle account deletion"""
+    try:
+        user = request.user
+        user.delete()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Account deleted successfully.',
+            'redirect': '/signin/'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)

@@ -61,13 +61,13 @@ body{
 }
 .inumber{
     font-size:28px ;
-    font-weight:300;
+    font-weight:550;
     color:navy;
     margin-bottom: 5px;
 }
 .enumber{
     font-size:28px;
-    font-weight:300;
+    font-weight:550;
     color:rgb(194, 54, 61);
     margin-bottom: 5px;
 }

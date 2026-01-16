@@ -9,6 +9,7 @@
       <p class="subtitle">Track your spending and manage your monthly budget</p>
     </div>
 
+   
     <!-- Available to Spend Card -->
     <div class="card">
       <div class="card-header">
@@ -24,31 +25,44 @@
       </div>
 
       <div class="amount-display">
-        <div class="remaining-amount">$143.52</div>
+        <div class="remaining-amount">Rs. {{ remaining_total }}</div>
         <div class="spent-info">
-          <span>$2306.48 of $2450.00 spent</span>
-          <span class="percentage">94%</span>
+          <span>Rs. {{ total_spent}} of Rs. {{ total_budget }} spent</span>
+          <span class="percentage">{{ total_percent }}% </span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill" style="width: 94%"></div>
+          <div class="progress-fill {% if b.is_over %}over{% endif %}" style="width: {% if total_percent > 100 %}100{% else %}{{ total_percent }}{% endif %}%"></div>
         </div>
       </div>
 
       <div class="stats-row">
         <div class="stat-item">
           <div class="stat-label">Total Budget</div>
-          <div class="stat-value">$2450.00</div>
+          <div class="stat-value">Rs. {{ total_budget }}</div>
         </div>
         <div class="stat-item">
           <div class="stat-label">Total Spent</div>
-          <div class="stat-value">$2306.48</div>
+          <div class="stat-value">Rs. {{ total_spent }}</div>
         </div>
         <div class="stat-item">
-          <div class="stat-label">Categories</div>
-          <div class="stat-value stat-accent">5</div>
+          <div class="stat-label">Recommended Limit (70%)</div>
+          <div class="stat-value">Rs. {{ recommended_limit }}</div>
         </div>
       </div>
+      {% if allocation_warning %}
+      <div class="allocation-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        Your planned categories exceed 70% of your income. Consider reducing some limits to save more!
+      </div>
+      {% else %}
+      <div class="no-allocation-warning">
+        <i class="fas fa-check"></i>
+        Your budget allocations remain within 70% of your income, reflecting responsible financial planning.
+      </div>
+      {% endif %}
     </div>
+
+
 
     <!-- Budget Categories -->
     <div class="card">
@@ -64,10 +78,12 @@
       </div>
 
     <dialog class="budgetForms" id="addCategoryForm">
-<form method="POST" action="{% url 'budget' %}">
-
+    <form method="POST" action="{% url 'budget' %}">
     {% csrf_token %}
     <input type="hidden" name="form_type" value="add_category">
+    <input type="hidden" id="form-month" name="month" value="{{ request.GET.month|default:now.month }}">
+    <input type="hidden" id="form-year" name="year" value="{{ request.GET.year|default:now.year }}">
+
     
     <div class="form-info">
       <p class="first-text">Add Category</p><br>
@@ -110,128 +126,101 @@
     </div>
   </form>
 </dialog>
-      <div class="categories-list">
-        <!-- Rent Category -->
-        <div class="category-item">
-          <div class="category-header">
-            <div class="category-info">
-              <div class="category-icon">🏠</div>
-              <div>
-                <div class="category-name">Rent</div>
-                <div class="category-spent">$1200.00 of $1200.00</div>
-              </div>
+
+    <div class="categories-list">
+  {% for b in budget_data %}
+    <div class="category-item {% if b.is_over %}over-budget{% endif %}">
+      
+      <div class="category-header">
+        <div class="category-info">
+          <div class="category-icon">{{ b.icon }}</div>
+          <div>
+            <div class="category-name">
+              {{ b.category }}
+              {% if not b.has_budget %}
+                <span style="font-size: 0.75em; background: #ff6b6b; color: white; padding: 2px 8px; border-radius: 12px; margin-left: 8px;">No Budget</span>
+              {% endif %}
             </div>
-            <div class="category-right">
-              <div>
-                <div class="category-remaining positive">$0.00</div>
-                <div class="category-status">Remaining</div>
-              </div>
-              <button class="edit-btn">⚙️ Edit</button>
+            <div class="category-spent">
+              Rs. {{ b.spent }} {% if b.has_budget %} of Rs. {{ b.amount }} {% endif %}
             </div>
-          </div>
-          <div class="category-progress">
-            <div class="category-progress-bar full" style="width: 100%"></div>
-            <span class="usage-label">100% used</span>
           </div>
         </div>
 
-        <!-- Groceries Category -->
-        <div class="category-item">
-          <div class="category-header">
-            <div class="category-info">
-              <div class="category-icon">🛒</div>
-              <div>
-                <div class="category-name">Groceries</div>
-                <div class="category-spent">$285.50 of $400.00</div>
-              </div>
+        <div class="category-right">
+          <div>
+            <div class="category-remaining {% if b.is_over %}negative{% else %}positive{% endif %}">
+              {% if b.has_budget %}
+                Rs. {{ b.remaining }}
+              {% else %}
+                <span style="font-size: 0.85em;">Set Budget</span>
+              {% endif %}
             </div>
-            <div class="category-right">
-              <div>
-                <div class="category-remaining positive">$114.50</div>
-                <div class="category-status">Remaining</div>
-              </div>
-              <button class="edit-btn">⚙️ Edit</button>
-            </div>
-          </div>
-          <div class="category-progress">
-            <div class="category-progress-bar" style="width: 71%"></div>
-            <span class="usage-label">71% used</span>
-          </div>
-        </div>
-
-        <!-- Transportation Category -->
-        <div class="category-item">
-          <div class="category-header">
-            <div class="category-info">
-              <div class="category-icon">🚗</div>
-              <div>
-                <div class="category-name">Transportation</div>
-                <div class="category-spent">$145.00 of $200.00</div>
-              </div>
-            </div>
-            <div class="category-right">
-              <div>
-                <div class="category-remaining positive">$55.00</div>
-                <div class="category-status">Remaining</div>
-              </div>
-              <button class="edit-btn">⚙️ Edit</button>
+            <div class="category-status">
+              {% if not b.has_budget %}
+                Unbudgeted
+              {% elif b.is_over %}
+                Over budget
+              {% else %}
+                Remaining
+              {% endif %}
             </div>
           </div>
-          <div class="category-progress">
-            <div class="category-progress-bar" style="width: 73%"></div>
-            <span class="usage-label">73% used</span>
-          </div>
-        </div>
-
-        <!-- Entertainment Category (Over Budget) -->
-        <div class="category-item over-budget">
-          <div class="category-header">
-            <div class="category-info">
-              <div class="category-icon">🎬</div>
-              <div>
-                <div class="category-name">Entertainment</div>
-                <div class="category-spent">$175.98 of $150.00</div>
-              </div>
-            </div>
-            <div class="category-right">
-              <div>
-                <div class="category-remaining negative">-$25.98</div>
-                <div class="category-status error">Over budget</div>
-              </div>
-              <button class="edit-btn">⚙️ Edit</button>
-            </div>
-          </div>
-          <div class="category-progress">
-            <div class="category-progress-bar over" style="width: 100%"></div>
-            <span class="usage-label error">117% used</span>
-          </div>
+          {% if b.has_budget %}
+            <button class="edit-btn" data-id="{{ b.id }}" data-category="{{ b.category }}" data-amount="{{ b.amount }}">⚙️ Edit</button>
+            <form method="POST" action="{% url 'delete_budget' %}" onsubmit="return confirm('Delete this budget?');" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="budget_id" value="{{ b.id }}">
+            <button type="submit" class="delete-btn">🗑️Delete</button>
+            </form>
+          {% else %}
+            <button class="edit-btn set-budget-btn" data-category="{{ b.category }}">➕ Set Budget</button>
+          {% endif %}
         </div>
       </div>
-    </div>
 
-    <dialog class="budgetForms" id="editForm">
-    <form  method="dialog" >
-      <div class="form-info">
-          <p class="first-text">Edit Budget</p><br>
-          <p class="second-text">Update the monthly budget for category</p>
-        </div><hr>
+      <div class="category-progress">
+        <div class="category-progress-bar">    
+          <div class="category-progress-fill {% if b.is_over %}over{% endif %}" style="width: {% if b.percent > 100 %}100{% else %}{{ b.percent }}{% endif %}%" >
+          </div>
+        </div>
+        <span class="usage-label">
+          {% if b.has_budget %}
+          {{ b.percent }}% used
+          {% else %}
+          Rs. {{ b.spent }} spent (no budget)
+          {% endif %}</span>
+      </div>
+
+    </div>
+  {% empty %}
+    <p style="text-align:center; opacity:0.6;">
+      No expenses recorded for this month yet.
+    </p>
+   {% endfor %}
+</div>
+
+   <dialog id="editForm" class="budgetForms">
+    <form method="POST" action="{% url 'edit_budget' %}">
+        {% csrf_token %}
+        <input type="hidden" name="budget_id" id="edit-budget-id">
+        
+        <div class="form-info">
+            <p class="first-text" id="edit-category-label">Edit Budget</p>
+        </div>
+
         <div class="budget-form">
-          <label for="budget-amount"> Monthly Budget Amount </label><br>
-          <input type="number" id="budget-amount" placeholder="0.00">
+            <label> Monthly Limit:</label>
+            <input type="number" name="amount" id="edit-amount-input" step="0.01" required>
         </div>
-        <div class="budget-form" id="budget-calc">
-          <span>
-            Current Spent:    $20000<br>
-            New Budget:       $1200<br>
-            New Remaining:    $0.00<br>
-          </span>
-        </div>
-        <div class="budgetform-actions"> 
-          <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel </button>
-          <button type="submit" class="submit-button">Save Changes </button>
+
+        <div class="budgetform-actions">
+            <button type="button" class="cancel-button" onclick="this.closest('dialog').close()">Cancel</button>
+            <button type="submit" class="submit-button">Save Changes</button>
         </div>
     </form>
-  </dialog>
+</dialog>
+</div>
 
     <!-- Money Flow Tracker -->
     <div class="card">
@@ -245,6 +234,7 @@
           Add Party
         </button>
       </div>
+
 <dialog class="budgetForms" id="addPartyForm">
 <form method="POST" action="{% url 'budget' %}">
     {% csrf_token %}
@@ -280,70 +270,58 @@
     </div>
   </form>
 </dialog>
-    
 
+    
+    
       <div class="money-flow-content">
+        <div class="money-flow-center">
         <!-- You Owe -->
         <div class="flow-column">
           <div class="flow-header">
             <div class="flow-icon error-icon">⚠️</div>
             <span class="flow-title">You Owe</span>
-            <span class="flow-total error">$165.50</span>
+            <span class="flow-total error" id="you-owe-total">Rs. {{ you_owe_total }}</span>
           </div>
           
-          <div class="flow-list">
-            <div class="flow-item">
+          <div class="flow-list" id="you-owe-list">
+            {% for item in you_owe_list %}
+            <div class="flow-item" data-flow-id="{{ item.id }}">
               <div class="person-icon">👤</div>
-              <span class="person-name">Sarah Johnson</span>
-              <span class="person-amount error">$45.00</span>
-              <button class="remove-btn" aria-label="Remove">×</button>
+              <span class="person-name">{{ item.person_name }}</span>
+              <span class="person-amount error"> Rs. {{ item.amount }}</span>
+              <button class="remove-btn" data-flow-id="{{ item.id }}" aria-label="Remove">×</button>
             </div>
-            <div class="flow-item">
-              <div class="person-icon">👤</div>
-              <span class="person-name">Mike Chen</span>
-              <span class="person-amount error">$120.50</span>
-              <button class="remove-btn" aria-label="Remove">×</button>
-            </div>
+            {% endfor %}
           </div>
         </div>
+
 
         <!-- Owed to You -->
         <div class="flow-column">
           <div class="flow-header">
             <div class="flow-icon success-icon">✓</div>
             <span class="flow-title">Owed to You</span>
-            <span class="flow-total success">$200.25</span>
+            <span class="flow-total success" id="owed-to-you-total">Rs. {{ owed_to_you_total }}</span>
           </div>
           
-          <div class="flow-list">
-            <div class="flow-item">
+          <div class="flow-list" id="owed-to-you-list">
+            {% for item in owed_to_you_list %}
+            <div class="flow-item" data-flow-id="{{ item.id }}">
               <div class="person-icon">👤</div>
-              <span class="person-name">Emma Davis</span>
-              <span class="person-amount success">$75.00</span>
-              <button class="remove-btn" aria-label="Remove">×</button>
+              <span class="person-name">{{ item.person_name }}</span>
+              <span class="person-amount success"> Rs. {{ item.amount }}</span>
+              <button class="remove-btn" data-flow-id="{{ item.id }}" aria-label="Remove">×</button>
             </div>
-            <div class="flow-item">
-              <div class="person-icon">👤</div>
-              <span class="person-name">Alex Rodriguez</span>
-              <span class="person-amount success">$30.00</span>
-              <button class="remove-btn" aria-label="Remove">×</button>
-            </div>
-            <div class="flow-item">
-              <div class="person-icon">👤</div>
-              <span class="person-name">Tom Wilson</span>
-              <span class="person-amount success">$95.25</span>
-              <button class="remove-btn" aria-label="Remove">×</button>
-            </div>
+            {% endfor %} 
           </div>
         </div>
       </div>
-
+      
       <div class="net-flow">
         <span class="net-flow-icon">💵</span>
         <span class="net-flow-label">Net Money Flow</span>
-        <span class="net-flow-amount success">+$34.75</span>
+        <span class="net-flow-amount success" id="net-flow-amount">Rs. {{ net_flow }}</span>
       </div>
-    </div>
   </div>
   {% endblock %}
 
@@ -356,9 +334,8 @@
 const months=[
 'January','February','March','April','May','June','July','August','September','October','November','December'];
 
-const today=new Date();
-let currentMonth= today.getMonth();
-let currentYear= today.getFullYear();
+let currentMonth = {{ current_month|default:now.month }} - 1;
+let currentYear = {{ current_year|default:now.year }};
 
 function updateDisplay(){
   document.querySelector(".current-month").textContent=`${months[currentMonth]}  ${currentYear}`;
@@ -376,7 +353,10 @@ function updateMonth(sign){
     currentMonth=11;
     currentYear--;
   }
+ 
+  window.location.href = `/budget/?month=${currentMonth+1}&year=${currentYear}`;
   updateDisplay();
+
 }
 updateDisplay();
 
@@ -393,15 +373,51 @@ updateDisplay();
   const addPartyForm=document.querySelector("#addPartyForm");
   const dialog=document.querySelectorAll("dialog");
 
+  
+  const editIdInput = document.querySelector("#edit-budget-id");
+  const editAmountInput = document.querySelector("#edit-amount-input");
+  const editCategoryLabel = document.querySelector("#edit-category-label");
+
+editBtn.forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (btn.classList.contains('set-budget-btn')) {
+        const category = btn.getAttribute("data-category");
+        document.getElementById("form-month").value = currentMonth;
+        document.getElementById("form-year").value = currentYear;
+        
+        // Pre-select the category in the add form
+        const categorySelect = addCategoryForm.querySelector('select[name="category"]');
+        for (let option of categorySelect.options) {
+          if (option.value === category) {
+            option.selected = true;
+            break;
+          }
+        }
+        
+        addCategoryForm.showModal();
+        return;
+      }
+
+        const budgetId = btn.getAttribute("data-id");
+        const category = btn.getAttribute("data-category");
+        const amount = btn.getAttribute("data-amount");
+
+        
+        editIdInput.value = budgetId;
+        editAmountInput.value = amount;
+        editCategoryLabel.innerText = "New limit for " + category;
+
+      
+        editForm.showModal();
+    });
+});
+  if(categoryAdd){
   categoryAdd.addEventListener("click",()=>{
+    document.getElementById("form-month").value = currentMonth;
+    document.getElementById("form-year").value = currentYear;
     addCategoryForm.showModal();
   });
-
-  editBtn.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      editForm.showModal();
-    });
-  });
+  }
 
   partyAdd.addEventListener("click",()=>{
     addPartyForm.showModal();
@@ -414,15 +430,42 @@ updateDisplay();
   });
   });
 
-  document.querySelector(".money-flow-content").addEventListener("click", (e) => {
+  document.querySelector(".money-flow-content").addEventListener("click", async (e) => {
   if (e.target.classList.contains("remove-btn")) {
     const flowItem = e.target.closest(".flow-item");
-    if (confirm("Remove this entry?")) {
-  flowItem.remove();
-  }
-  }
-});
+    const flowId = e.target.getAttribute("data-flow-id");
+      
+      if (confirm("Remove this entry?")) {
+        try {
+          const response = await fetch("/delete_money_flow/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ flow_id: flowId })
+          });
 
+          const data = await response.json();
+          
+          if (data.success) {
+            // Remove from DOM
+            flowItem.remove();
+            
+            // Update totals
+            document.getElementById("you-owe-total").textContent = `Rs. ${data.you_owe_total}`;
+            document.getElementById("owed-to-you-total").textContent = `Rs. ${data.owed_to_you_total}`;
+            document.getElementById("net-flow-amount").textContent = `Rs. ${data.net_flow}`;
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Failed to delete entry");
+        }
+      }
+    }
+  });
 });
 
 
