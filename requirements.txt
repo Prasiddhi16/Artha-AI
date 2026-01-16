@@ -7,7 +7,15 @@ cffi==2.0.0
 click==8.3.1
 cryptography==46.0.3
 distro==1.9.0
+<<<<<<< HEAD
 Django==6.0
+=======
+<<<<<<< HEAD
+Django==6.0
+=======
+Django==5.2.10
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 django-cors-headers==4.9.0
 Flask==3.1.2
 groq==1.0.0
@@ -29,3 +37,11 @@ typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzdata==2025.3
 Werkzeug==3.1.4
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+python-dotenv==1.0.1
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba

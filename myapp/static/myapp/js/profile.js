@@ -1,4 +1,8 @@
+<<<<<<< HEAD
  function ProfileDialogs() {
+=======
+       function ProfileDialogs() {
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
        const overlay=document.querySelector(".overlay");
        const profile=document.querySelector(".profile-button");
        const settings=document.querySelector(".settings-button");
@@ -10,7 +14,10 @@
        if (!overlay || !profile || !settings) return;
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
        //open dialogs
         profile.onclick = (e) => {
             e.stopPropagation();
@@ -30,8 +37,11 @@
         overlay.onclick = (e) => {
             if(e.target===overlay){
             overlay.style.display="none";
+<<<<<<< HEAD
             pdialog.style.display = "none";
             sdialog.style.display = "none";
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             }
         };
 
@@ -77,6 +87,7 @@
         switchTab("security-tab");
         switchSection("security-section");
         }};
+<<<<<<< HEAD
 
 
 const csrftoken = document.querySelector('meta[name="csrf-token"]').content;
@@ -274,3 +285,6 @@ const savePrivacyBtn = document.getElementById('save-privacy');
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', ProfileDialogs);
+=======
+    }
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba

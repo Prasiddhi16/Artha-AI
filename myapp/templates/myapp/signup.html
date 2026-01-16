@@ -4,11 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
   <title>Finance Tracker – Sign Up</title>
+=======
+<<<<<<< HEAD
+  <title>Finance Tracker – Sign Up</title>
+=======
+  <title>Sign Up – Artha AI</title>
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   <link rel="stylesheet" href="{% static 'myapp/css/signup.css' %}">
 </head>
 <body>
 <div class="container" id="signupPage">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   
   <!-- Left Side / Features -->
   <div class="left">
@@ -68,6 +80,159 @@
     </p>
   </div>
 </div>
+<<<<<<< HEAD
+=======
+=======
+
+  <!-- Left Side -->
+  <div class="left">
+    <div class="logo-box">
+      <div class="logo">
+         <img src="blob:https://web.whatsapp.com/ac3f9a28-f200-4a9c-aff0-70101667794e" alt="Artha AI Logo">
+      </div>
+      <h1>Artha AI</h1>
+    </div>
+   <ul class="features">
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>स्मार्ट बजेट व्यवस्थापन</h3>
+        <p>आफ्ना खर्चहरू सजिलै योजना र नियन्त्रण गर्नुहोस्।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>एआई आधारित वित्तीय विश्लेषण</h3>
+        <p>खर्च र आम्दानीका ढाँचाहरू बुझ्न बुद्धिमान विश्लेषण प्राप्त गर्नुहोस्।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>कर स्क्यानर</h3>
+        <p>आम्दानी र खर्चका विवरणहरू स्क्यान गरी करसम्बन्धी जानकारी पहिचान गर्दछ।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>लक्ष्य तथा उपलब्धि ट्र्याकिङ</h3>
+        <p>आफ्ना वित्तीय लक्ष्यहरू सेट गरी प्रगतिलाई चरणबद्ध रूपमा ट्र्याक गर्नुहोस्।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>स्मार्ट सूचना प्रणाली</h3>
+        <p>बजेट सीमा, खर्च चेतावनी र महत्वपूर्ण अपडेटहरू समयमै प्राप्त गर्नुहोस्।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>एआई वित्तीय सहायक</h3>
+        <p>च्याटबोटमार्फत तुरुन्तै वित्तीय सहायता र मार्गदर्शन प्राप्त गर्नुहोस्।</p>
+      </div>
+    </li>
+
+    <li>
+      <span class="icon">➜</span>
+      <div>
+        <h3>सुरक्षित तथा निजी</h3>
+        <p>तपाईंको डेटा पूर्ण रूपमा सुरक्षित र एन्क्रिप्टेड रहन्छ।</p>
+      </div>
+    </li>
+  </ul>
+</div>
+
+  <!-- Right Side / Signup Card -->
+  <div class="right">
+    <div class="card signup-box">
+      <h2>Create an account</h2>
+
+
+      <!-- Signup Form -->
+      <form method="POST" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        <label for="name">Full Name</label>
+        <input type="text" name="name" id="name" placeholder="Full Name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="Email address" required>
+
+       
+
+        
+       <div class="password-wrapper">
+        
+        <label for="password">Password</label>
+  <input type="password" name="password" id="password" placeholder="Password" autocomplete="new-password" required>
+
+  <span class="toggle-password" onclick="togglePassword('password')">👁</span>
+</div>
+
+<div class="password-wrapper">
+  
+        <label for="confirm_password">Confirm Password</label>
+  <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+  <span class="toggle-password" onclick="togglePassword('confirm_password')">👁</span>
+</div>
+
+        <button type="submit" class="btn">Sign Up</button>
+      </form>
+      {% if messages %}
+  <div class="form-messages">
+    {% for message in messages %}
+      <p class="message {{ message.tags }}">{{ message }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
+
+   
+      <p class="bottom-text">
+        Already have an account? <a href="{% url 'signin' %}">Log In</a>
+      </p>
+
+      <!-- Divider -->
+      <div class="divider">or</div>
+
+      <!-- Google Signup -->
+      <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+        Sign up with Google
+      </a>
+
+    </div>
+  </div>
+</div>
+<script>
+function togglePassword(id) {
+  const field = document.getElementById(id);
+  field.type = field.type === "password" ? "text" : "password";
+}
+</script>
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+  const password = document.getElementById("password").value;
+  const confirm = document.getElementById("confirm_password").value;
+
+  if (password !== confirm) {
+    e.preventDefault();
+    alert("Password and Confirm Password must be the same.");
+  }
+});
+</script>
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
 </body>
 </html>

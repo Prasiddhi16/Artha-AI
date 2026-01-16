@@ -61,13 +61,21 @@ body{
 }
 .inumber{
     font-size:28px ;
+<<<<<<< HEAD
     font-weight:550;
+=======
+    font-weight:300;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     color:navy;
     margin-bottom: 5px;
 }
 .enumber{
     font-size:28px;
+<<<<<<< HEAD
     font-weight:550;
+=======
+    font-weight:300;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     color:rgb(194, 54, 61);
     margin-bottom: 5px;
 }

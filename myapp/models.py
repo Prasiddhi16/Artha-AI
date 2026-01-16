@@ -17,6 +17,10 @@ class Transaction(models.Model):
 
 
 # ---------------- User Manager ----------------
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 class MyUserManager(BaseUserManager):
     def create_user(self, email, name, password=None):
         if not email:
@@ -40,15 +44,76 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
+<<<<<<< HEAD
     phone = models.CharField(max_length=15, blank=True, null=True)  # make optional
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+=======
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+=======
+
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.db import models
+
+class MyUserManager(BaseUserManager):
+    def create_user(self, email, password=None, name=None, **extra_fields):
+        if not email:
+            raise ValueError("Email is required")
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name or "", **extra_fields)
+
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()   # 🔥 VERY IMPORTANT
+
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    AUTH_PROVIDERS = (
+        ('email', 'Email'),
+        ('google', 'Google'),
+    )
+
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=255, blank=True)
+
+    auth_provider = models.CharField(
+        max_length=20,
+        choices=AUTH_PROVIDERS,
+        default='email'
+    )
+
+    is_email_verified = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
+<<<<<<< HEAD
     REQUIRED_FIELDS = ['name']
+=======
+<<<<<<< HEAD
+    REQUIRED_FIELDS = ['username']
+=======
+    REQUIRED_FIELDS = ['name']
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
     def __str__(self):
         return self.email
@@ -118,8 +183,13 @@ class PasswordResetOTP(models.Model):
 class Budget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=100)
+<<<<<<< HEAD
     icon = models.CharField(max_length=10, default='💰') 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+=======
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    icon = models.CharField(max_length=50, blank=True, null=True)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     month = models.IntegerField()  # 1-12
     year = models.IntegerField()   # 2026
 
@@ -145,6 +215,7 @@ class MoneyFlow(models.Model):
     def __str__(self):
         return f"{self.person_name} - {self.flow_type}: {self.amount}"
 
+<<<<<<< HEAD
 # profile models
 class Notification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_settings')
@@ -168,3 +239,20 @@ class PrivacySettings(models.Model):
     def __str__(self):
         return f"{self.user.username}'s privacy settings"
 
+=======
+
+<<<<<<< HEAD
+=======
+class EmailOTP(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    attempts = models.IntegerField(default=0)
+
+    def is_expired(self):
+        return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba

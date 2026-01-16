@@ -23,7 +23,10 @@ body {
   margin-bottom: 32px;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 .header h2 {
   font-size: 28px;
   font-weight: 550;
@@ -35,6 +38,7 @@ body {
   color: #6e6e73;
 }
 
+<<<<<<< HEAD
 
 .allocation-warning {
     margin-top: 15px;
@@ -64,6 +68,8 @@ body {
 
 
 
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 /* Card Styles */
 .card {
   background: white;
@@ -128,7 +134,11 @@ body {
 }
 
 .remaining-amount {
+<<<<<<< HEAD
   font-size: 32px;
+=======
+  font-size: 40px;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   font-weight: 700;
   color: #10b981;
   margin-bottom: 12px;
@@ -162,9 +172,12 @@ body {
   border-radius: 4px;
   transition: width 0.3s ease;
 }
+<<<<<<< HEAD
 .progress-fill.over {
   background: #ef4444;
 }
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
 /* Stats Row */
 .stats-row {
@@ -426,6 +439,7 @@ select:focus {
   background: #e5e5e7;
 }
 
+<<<<<<< HEAD
 .delete-btn {
   background: #f5f5f7;
   border: none;
@@ -441,6 +455,8 @@ select:focus {
 }
 
 
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 /* Category Progress */
 .category-progress {
   position: relative;
@@ -452,12 +468,17 @@ select:focus {
 .category-progress-bar {
   flex: 1;
   height: 8px;
+<<<<<<< HEAD
   background: #e5e5e7;
+=======
+  background: #10b981;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   border-radius: 4px;
   position: relative;
   overflow: hidden;
 }
 
+<<<<<<< HEAD
 .category-progress-fill {
   height: 100%;
   background: #10b981;
@@ -470,6 +491,24 @@ select:focus {
 }
 
 .category-progress-fill.over {
+=======
+.category-progress-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #e5e5e7;
+  z-index: -1;
+}
+
+.category-progress-bar.full {
+  background: #10b981;
+}
+
+.category-progress-bar.over {
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   background: #ef4444;
 }
 
@@ -486,6 +525,7 @@ select:focus {
 
 /* Money Flow */
 .money-flow-content {
+<<<<<<< HEAD
  
   
   gap: 24px;
@@ -501,6 +541,15 @@ select:focus {
 
 .flow-column {
   flex:1;
+=======
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.flow-column {
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -622,7 +671,10 @@ select:focus {
   background: #f0f9ff;
   border-radius: 8px;
   border: 1px solid #bfdbfe;
+<<<<<<< HEAD
   width:100%;
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 
 .net-flow-icon {

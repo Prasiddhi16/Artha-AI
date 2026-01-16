@@ -8,15 +8,38 @@
   <link rel="stylesheet" href="{% static 'myapp/css/signup.css' %}">
 </head>
 <body>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 <div class="container" id="loginPage">
   <!-- Left Side -->
   <div class="left">
     <div class="logo-box">
+<<<<<<< HEAD
       <div class="logo">💲</div>
+=======
+<<<<<<< HEAD
+      <div class="logo">💲</div>
+=======
+      <div class="logo">
+      <img src="{% static 'myapp/images/artha_ai_logo.png' %}" alt="Artha AI Logo">
+
+
+      </div>
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
       <h1>Artha AI</h1>
       <p class="subtitle">Take control of your financial future</p>
     </div>
     <ul class="features">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
       <li>
         <span class="icon">➜</span>
         <div>
@@ -32,6 +55,70 @@
         </div>
       </li>
     </ul>
+<<<<<<< HEAD
+=======
+=======
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>Smart Budget Management</h3>
+      <p>Plan and control your expenses easily and efficiently.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>AI-Powered Financial Analysis</h3>
+      <p>Gain intelligent insights to understand spending and income patterns.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>Tax Scanner</h3>
+      <p>Scans income and expense records to identify tax-related information.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>Goal and Achievement Tracking</h3>
+      <p>Set financial goals and track progress step by step.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>Smart Notification System</h3>
+      <p>Receive timely budget limits, expense alerts, and important updates.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>AI Financial Assistant</h3>
+      <p>Get instant financial support and guidance through an intelligent chatbot.</p>
+    </div>
+  </li>
+
+  <li>
+    <span class="icon">➜</span>
+    <div>
+      <h3>Secure and Private</h3>
+      <p>Your data remains fully protected and securely encrypted.</p>
+    </div>
+  </li>
+
+</ul>
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   </div>
 
   <!-- Right Side / Login Form -->
@@ -39,6 +126,19 @@
     <div class="card">
       <h2>Welcome back</h2>
       <p class="subtitle">Enter your credentials</p>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+        {% if messages %}
+    <div class="form-messages">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
       <form method="POST" action="{% url 'signin' %}">
         {% csrf_token %}
@@ -47,7 +147,19 @@
         <input type="email" name="email" id="email" placeholder="john.doe@example.com" required>
 
         <label for="password">Password</label>
+<<<<<<< HEAD
         <input type="password" name="password" id="password" placeholder="Enter your password" required>
+=======
+<<<<<<< HEAD
+        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+=======
+
+       <div class="password-wrapper">
+     <input type="password" name="password" id="password" placeholder="Password" autocomplete="new-password" required>
+      <span class="toggle-password" onclick="togglePassword()">👁</span>
+         </div>
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
         <div class="remember">
           <label>
@@ -63,6 +175,10 @@
         Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
       </p>
     </div>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
   </div>
 </div>
 
@@ -70,5 +186,24 @@
 <script>
   // Simple JS could go here if needed later
 </script>
+<<<<<<< HEAD
+=======
+=======
+   
+
+  </div>
+</div>
+
+
+<script>
+function togglePassword() {
+  const passwordField = document.getElementById("password");
+  passwordField.type =
+    passwordField.type === "password" ? "text" : "password";
+}
+</script>
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 </body>
 </html>

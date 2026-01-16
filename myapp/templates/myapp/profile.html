@@ -2,8 +2,13 @@
 
     <div class="main-content">
     <div class="introduction">
+<<<<<<< HEAD
         <div class="nameDisplay">{{ user.name }}</div>
         <div class="emailDisplay">{{ user.email }}</div>
+=======
+        <div class="nameDisplay">Demo User</div>
+        <div class="emailDisplay">demo.user@gmail.com</div>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     </div>
     <br>
     <hr />
@@ -33,8 +38,12 @@
 
     <div class="overlay">
     <div class="dialog"  id="profile-dialog">
+<<<<<<< HEAD
     <form method="POST"  class="profile-form">
         {% csrf_token %}
+=======
+    <form class="profile-form">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         <div>
            <p class="head-text">Profile Settings</p> <br>
            <p class="sub-text">Manage your account settings and preferences</p>
@@ -56,7 +65,11 @@
         <br>
         <hr>
         <br>
+<<<<<<< HEAD
         <div class="personal_details">
+=======
+
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         <div id="picture">
             <div id="circle"></div> 
             <span id="center">
@@ -65,14 +78,27 @@
             </span>
         </div>
         <br>
+<<<<<<< HEAD
         <br>
         <div id="usernames">
             <label for="name">Name</label> <br>
             <input type="text" name="name" id="name" value="{{ user.name }}" placeholder="Enter your name here">
+=======
+        <div id="usernames">
+            <span>
+            <label for="first-name">First Name</label><br>
+            <input type="text" class="name" id="first-name" placeholder="eg demo">
+            </span>
+            <span>
+            <label for="last-name">Last Name</label><br>
+            <input type="text" class="name" id="last-name" placeholder="eg user">
+            </span>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         </div>
         <br>
         <div id="emails">
             <label for="email">Email</label><br>
+<<<<<<< HEAD
             <input type="text" name="email" id="email" value="{{ user.email }}" placeholder="Enter your email here">
         </div>
         <br>
@@ -86,6 +112,20 @@
         </div>
         </div>
     </div>
+=======
+            <input type="text" id="email" placeholder="eg user@gmail.com">
+        </div>
+        <br>
+        <div id="numbers">
+            <label for="number">Number</label><br>
+            <input type="number" id="number" placeholder="+977 9866756556">
+        </div>
+        <br>
+        <div>
+            <button class="save"><i class="fa-solid fa-print"></i> Save Changes</button>
+        </div>
+        </div>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
         <div class="psection" id="notification-section">
         <p class="first-text">Notification Preferences</p><br>
@@ -97,7 +137,11 @@
             <div class="line">
             <label for="email-notif">Email Notifications</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="email-notif" {% if notification_settings.email_notifications %}checked{% endif %}>
+=======
+            <input type="checkbox" id="email-notif">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -108,7 +152,11 @@
             <div class="line">
             <label for="push-notif">Push Notifications</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="push-notif" {% if notification_settings.push_notifications %}checked{% endif %}>
+=======
+            <input type="checkbox" id="push-notif">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -119,7 +167,11 @@
             <div class="line">
             <label for="monthly-report">Monthly Reports</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="monthly-report" {% if notification_settings.monthly_reports %}checked{% endif %}>
+=======
+            <input type="checkbox" id="monthly-report">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -130,7 +182,11 @@
             <div class="line">
             <label for="budget-alert">Budget Alerts</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="budget-alert" {% if notification_settings.budget_alerts %}checked{% endif %}>
+=======
+            <input type="checkbox" id="budget-alert">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -141,7 +197,11 @@
             <div class="line">
             <label for="goal-reminder">Goal Reminders</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="goal-reminder" {% if notification_settings.goal_reminders %}checked{% endif %}>
+=======
+            <input type="checkbox" id="goal-reminder">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -149,7 +209,11 @@
         </div>
         <br>
         <div>
+<<<<<<< HEAD
             <button type="button" id="save-notifications" class="save"><i class="fa-solid fa-print"></i> Save Preferences</button>
+=======
+            <button class="save"><i class="fa-solid fa-print"></i> Save Preferences</button>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         </div>
         </div>
 
@@ -161,16 +225,25 @@
             <br>
             <div class="password-list">
             <label for="current-password"> Current Password</label><br>
+<<<<<<< HEAD
             <input type="password" id="current-password" placeholder="Enter your current password here.">
+=======
+            <input type="password" id="current-password">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             </div>
             <br>
             <div class="password-list">
             <label for="new-password">New Password</label><br>
+<<<<<<< HEAD
             <input type="password" id="new-password" placeholder="Create new password">
+=======
+            <input type="password" id="new-password">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             </div>
             <br>
             <div class="password-list">
             <label for="confirm-password">Confirm New Password</label><br>
+<<<<<<< HEAD
             <input type="password" id="confirm-password" placeholder="Confirm new password">
             </div>
             <br>
@@ -178,16 +251,31 @@
              <button type="button" id="save-password" class="save"><i class="fa-solid fa-print"></i>Update Password</button>   
             </div>
             <a href="{% url 'forgot_password' %}"> Forgot password? </a>
+=======
+            <input type="password" id="confirm-password">
+            </div>
+            <br>
+            <div>
+             <button class="save"><i class="fa-solid fa-print"></i>Update Password</button>   
+            </div>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <br>
             <hr>
             <div class="authentication-list">
                 <p class="first-text">Two-Factor Authentication</p><br>
                 <br>
                 <label for="authentication">Enable two-factor authentication</label>
+<<<<<<< HEAD
                 <input type="checkbox" id="authentication" {% if privacy_settings.two_factor_auth %}checked{% endif %}>
                 <p class="sub-info">Add an extra layer of security to your account</p>
                 <br>
                 <button type="button" class="delete" id="delete_account">Delete Account</button> 
+=======
+                <input type="checkbox" id="authentication">
+                <p class="sub-info">Add an extra layer of security to your account</p>
+                <br>
+                <button class="delete">Delete Account</button> 
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
                 <p class="sub-info" id="alignment">This action cannot be undone</p> 
             </div>
         </div>    
@@ -195,8 +283,12 @@
     </div>
 
     <div class="dialog" id="settings-dialog">
+<<<<<<< HEAD
         <form method="POST" class="settings-form">
         {% csrf_token %}
+=======
+    <form class="settings-form">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         <section>
            <p class="head-text">Settings</p><br>
            <p class="sub-text">Customize your finance tracker experience</p><br>
@@ -212,7 +304,11 @@
             <div class="line">
             <label for="analytics-track">Analytics Tracking</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="analytics-track" {% if privacy_settings.analytics_tracking %}checked{% endif %}>
+=======
+            <input type="checkbox" id="analytics-track">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -223,7 +319,11 @@
             <div class="line">
             <label for="crash-reporting">Crash Reporting</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="crash-reporting" {% if privacy_settings.crash_reporting %}checked{% endif %}>
+=======
+            <input type="checkbox" id="crash-reporting">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -234,7 +334,11 @@
             <div class="line">
             <label for="usage-data">Share Usage Data</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="usage-data" {% if privacy_settings.usage_data %}checked{% endif %}>
+=======
+            <input type="checkbox" id="usage-data">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
@@ -245,22 +349,38 @@
             <div class="line">
             <label for="spending-insights">Spending insights</label>
             <label class="switch">
+<<<<<<< HEAD
             <input type="checkbox" id="spending-insights" {% if privacy_settings.spending_insights %}checked{% endif %}>
+=======
+            <input type="checkbox" id="spending-insights">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <span class="toggle"></span>
             </label>
             </div>
             <p class="sub-info">Show personalized spending tips and insights</p>
             <br>
+<<<<<<< HEAD
             <button type="button" class="save" id="save-privacy"><i class="fa-solid fa-print"></i> Save Privacy Settings</button>
             </div>
         </div>
         <br>
         <div class="privacy-section" >
+=======
+            <button class="save"><i class="fa-solid fa-print"></i> Save Privacy Settings</button>
+            </div>
+        </div>
+        <br>
+        <div class="privacy-section" id="authentication-list">
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <p class="first-text">Data Management</p><br>
             <p class="second-text">Export or delete your data</p><br>
             <br>
             <button class="export"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
+<<<<<<< HEAD
             <button type="button" class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
+=======
+            <button class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             <p class="sub-info" id="align">Clearing data will reset all settings to default</p> 
         </div>
     </form>
@@ -271,6 +391,7 @@
 
     <script src="{% static 'myapp/js/profile.js' %}"></script>
 
+<<<<<<< HEAD
     <!-- DEBUG SCRIPT - Add this temporarily -->
 <script>
 console.log('=== TEMPLATE DEBUG ===');
@@ -295,5 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
    
 

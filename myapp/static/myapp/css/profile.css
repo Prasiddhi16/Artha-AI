@@ -36,10 +36,13 @@ padding:10px;
      backdrop-filter: blur(2px);
     justify-content:center;
     align-items:center;
+<<<<<<< HEAD
     pointer-events: none; /*allows clicks to pass through*/
 }
 .overlay.active{
     pointer-events: auto;/* Block clicks when active*/
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 
 .dialog{
@@ -52,9 +55,12 @@ padding:10px;
     width:40vw;
     height:80vh;
     overflow-y: auto;
+<<<<<<< HEAD
     pointer-events: auto; /* Always allow clicks on dialog */
     position: relative;
     z-index: 1001; /* Higher than overlay */
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
    
 }
 
@@ -118,14 +124,18 @@ padding:10px;
 .line{
     display:flex;
     justify-content:space-between;
+<<<<<<< HEAD
     align-items: center;
     margin-bottom: 8px;
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 .switch{
     width:32px;
     height:17px;
     display:inline-block; 
     justify-self: right;
+<<<<<<< HEAD
     
 }
 .switch input{
@@ -137,29 +147,49 @@ padding:10px;
 .toggle{
     position:absolute;
     cursor:pointer;
+=======
+}
+.switch input{
+   display:none;
+}
+.toggle{
+    position:relative;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     display:inline-block;
     width:32px;
     height:17px;
     border:1px solid black;
     border-radius:32px;
     background-color:rgb(148, 183, 236);
+<<<<<<< HEAD
     transition: background-color 0.2s ease;
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 .toggle:before{
     content:"";
     display:inline-block;
+<<<<<<< HEAD
     position:absolute;
     left:0;
+=======
+    position:relative;
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     width:15px;
     height:13px;
     border-radius:50%;
     border:1px solid black;
     background-color: aliceblue;
+<<<<<<< HEAD
     transition: transform 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
   
 
+=======
+  
+}
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 .switch input:checked+.toggle{
     background-color:navy;
 }
@@ -200,14 +230,24 @@ padding:10px;
     position:relative;
     top:16px;
 }
+<<<<<<< HEAD
 
+=======
+#usernames{
+   display:flex;
+   justify-content: space-between;
+}
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 .name{
    flex:1;
 }
 label{
     font-size:17px;
     font-weight:bold;
+<<<<<<< HEAD
     margin-bottom:10px;
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 input{
     font-size:15px;
@@ -216,7 +256,10 @@ input{
     height:fit-content;
     padding:5px;
     margin:5px;
+<<<<<<< HEAD
     width:100%;
+=======
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 }
 .save{
     width:100%;

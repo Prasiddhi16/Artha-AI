@@ -31,6 +31,68 @@ body {
     padding: 0px;
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+.form-messages {
+  margin-top: 15px;
+  text-align: center;
+  color: green;
+}
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #d0d7de;
+  padding: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #ddd;
+}
+
+.divider span {
+  margin: 0 10px;
+  color: #555;
+}
+
+.google-btn img {
+  width: 20px;
+}
+.form-messages {
+  margin-top: 15px;
+  text-align: center;
+}
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 .logo-box {
     margin-bottom: 30px;
 }
@@ -97,6 +159,25 @@ h1 {
     box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+>>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
+>>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 h2 {
     margin-bottom: 5px;
 }

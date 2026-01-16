@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/verify_email.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1 class="logo">Artha AI</h1>
+
+        <h2>Email Verification</h2>
+        <p class="subtitle">
+            We’ve sent a 6-digit code to your email.  
+            Please enter it below to verify your account.
+        </p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <input
+                type="text"
+                name="otp"
+                maxlength="6"
+                placeholder="Enter OTP"
+                required
+            >
+
+            <button type="submit">Verify OTP</button>
+        </form>
+
+        
+    </div>
+</div>
+
+</body>
+</html>
