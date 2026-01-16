@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.utils import timezone
 from datetime import date
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -15,47 +18,6 @@ class Transaction(models.Model):
         return f"{self.category} - {self.amount}"
 
 
-
-# ---------------- User Manager ----------------
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
-class MyUserManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
-        if not email:
-            raise ValueError("Users must have an email address")
-        if not name:
-            raise ValueError("Users must have a name")
-        email = self.normalize_email(email)
-        user = self.model(email=email, name=name)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, name, password):
-        user = self.create_user(email, name, password)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
-
-# ---------------- User Model ----------------
-class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
-<<<<<<< HEAD
-    phone = models.CharField(max_length=15, blank=True, null=True)  # make optional
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-=======
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-=======
-
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.db import models
-
 class MyUserManager(BaseUserManager):
     def create_user(self, email, password=None, name=None, **extra_fields):
         if not email:
@@ -67,7 +29,7 @@ class MyUserManager(BaseUserManager):
         if password:
             user.set_password(password)
         else:
-            user.set_unusable_password()   # 🔥 VERY IMPORTANT
+            user.set_unusable_password()   
 
         user.save(using=self._db)
         return user
@@ -92,28 +54,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         choices=AUTH_PROVIDERS,
         default='email'
     )
+    phone = models.CharField(max_length=15, blank=True, null=True)
+
 
     is_email_verified = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-<<<<<<< HEAD
+
     REQUIRED_FIELDS = ['name']
-=======
-<<<<<<< HEAD
-    REQUIRED_FIELDS = ['username']
-=======
-    REQUIRED_FIELDS = ['name']
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 
     def __str__(self):
         return self.email
@@ -183,13 +140,10 @@ class PasswordResetOTP(models.Model):
 class Budget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=100)
-<<<<<<< HEAD
-    icon = models.CharField(max_length=10, default='💰') 
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-=======
+
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     icon = models.CharField(max_length=50, blank=True, null=True)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
     month = models.IntegerField()  # 1-12
     year = models.IntegerField()   # 2026
 
@@ -215,8 +169,10 @@ class MoneyFlow(models.Model):
     def __str__(self):
         return f"{self.person_name} - {self.flow_type}: {self.amount}"
 
-<<<<<<< HEAD
+
 # profile models
+
+
 class Notification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_settings')
     email_notifications = models.BooleanField(default=False)
@@ -239,10 +195,6 @@ class PrivacySettings(models.Model):
     def __str__(self):
         return f"{self.user.username}'s privacy settings"
 
-=======
-
-<<<<<<< HEAD
-=======
 class EmailOTP(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -254,5 +206,3 @@ class EmailOTP(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba

@@ -43,14 +43,11 @@ from datetime import date, timedelta, datetime
 import calendar
 from django.db import models
 import numpy as np
-<<<<<<< HEAD
 from .forms import BudgetForm, MoneyFlowForm
 from .models import Budget, MoneyFlow, Expense
 from .forms import ProfileForm, NotificationForm, PrivacySettingsForm, PasswordUpdateForm
 from .models import Notification, PrivacySettings
 from django.contrib.auth import update_session_auth_hash
-=======
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
 # ---------------- Static Pages ----------------
 
@@ -62,10 +59,7 @@ def chatbot(request): return render(request, 'myapp/chatbot.html')
 
 
 # ---------------- Signup ----------------
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 def signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -73,10 +67,6 @@ def signup(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-<<<<<<< HEAD
-
-=======
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
             messages.success(request, "Account created successfully! You can now sign in.")
             return redirect('signin')
         else:
@@ -84,9 +74,8 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'myapp/signup.html', {'form': form})
-<<<<<<< HEAD
-=======
-=======
+
+
 import random
 from django.shortcuts import render, redirect
 
@@ -210,8 +199,7 @@ def set_password(request):
 
     return render(request, "myapp/set_password.html")
 
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 
 # ---------------- Signin ----------------
 def signin(request):
@@ -982,10 +970,7 @@ def help_view(request): return render(request, 'myapp/help.html')
 def profile(request): return render(request, 'myapp/profile.html')
 def settings_view(request): return render(request, 'myapp/settings.html')
 def chatbot(request): return render(request, 'myapp/chatbot.html')
-<<<<<<< HEAD
-=======
 def utilities(request):return render(request,'myapp/utilities.html')
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 
 @csrf_exempt
 def chatbot_api(request):
@@ -1205,10 +1190,7 @@ def delete_transactionhome(request):
         })
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
-<<<<<<< HEAD
     
-=======
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
@@ -1284,7 +1266,6 @@ def reset_password(request):
             messages.success(request, "Password updated successfully! You can now sign in.")
             return redirect("signin")
     return render(request, "myapp/reset_password.html")
-<<<<<<< HEAD
 
 
 #budget
@@ -1295,16 +1276,6 @@ def budget_view(request):
     year = request.GET.get('year', now.year)
 
 
-=======
-from datetime import datetime
-from django.db.models import Sum
-from .models import Budget, MoneyFlow, Expense
-@login_required
-def budget_view(request):
-    now = datetime.now()
-    month = request.GET.get('month')
-    year = request.GET.get('year')
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     try:
         month = int(month)
     except (TypeError, ValueError):
@@ -1315,7 +1286,6 @@ def budget_view(request):
     except (TypeError, ValueError):
         year = now.year
 
-<<<<<<< HEAD
     #  post logic
     if request.method == "POST":
         form_type = request.POST.get('form_type')
@@ -1422,100 +1392,24 @@ def budget_view(request):
     you_owe_list = flows.filter(flow_type='topay')
     owed_to_you_list = flows.filter(flow_type='toreceive')
 
-=======
-
-    # --- NEW: ADD SAVING LOGIC HERE ---
-    if request.method == "POST":
-        form_type = request.POST.get('form_type')
-
-        if form_type == 'add_category':
-            category_name = request.POST.get('category')
-            amount = request.POST.get('amount')
-            icon = request.POST.get('icon', '💰')
-
-            # Create the budget record
-            Budget.objects.create(
-                user=request.user,
-                category=category_name,
-                amount=amount,
-                icon=icon,
-                month=month,
-                year=year
-            )
-        
-        elif form_type == 'add_party':
-            person_name = request.POST.get('person_name')
-            amount = request.POST.get('amount')
-            flow_type = request.POST.get('flow_type')
-
-            MoneyFlow.objects.create(
-                user=request.user,
-                person_name=person_name,
-                amount=amount,
-                flow_type=flow_type
-            )
-        
-        return redirect('budget') # Refresh page to show new data
-
-    # --- EXISTING DISPLAY LOGIC ---
-    budgets = Budget.objects.filter(user=request.user, month=month, year=year)
-    budget_data = []
-    total_budget = 0
-    total_spent = 0
-
-    for b in budgets:
-        spent = Expense.objects.filter(
-            user=request.user,
-            category=b.category,
-            date__month=month,
-            date__year=year
-        ).aggregate(Sum('amount'))['amount__sum'] or 0
-        
-        remaining = b.amount - spent
-        percent = (spent / b.amount * 100) if b.amount > 0 else 0
-        
-        budget_data.append({
-            'obj': b,
-            'spent': spent,
-            'remaining': remaining,
-            'percent': round(percent, 1),
-            'is_over': spent > b.amount
-        })
-        
-        total_budget += b.amount
-        total_spent += spent
-
-    flows = MoneyFlow.objects.filter(user=request.user)
-    you_owe_list = flows.filter(flow_type='topay')
-    owed_to_you_list = flows.filter(flow_type='toreceive')
-    
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     you_owe_total = you_owe_list.aggregate(Sum('amount'))['amount__sum'] or 0
     owed_to_you_total = owed_to_you_list.aggregate(Sum('amount'))['amount__sum'] or 0
     net_flow = owed_to_you_total - you_owe_total
 
     context = {
-<<<<<<< HEAD
         'now': now,
         'current_month': month,
         'current_year': year,
-=======
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         'budget_data': budget_data,
         'total_budget': total_budget,
         'total_spent': total_spent,
         'remaining_total': total_budget - total_spent,
-<<<<<<< HEAD
         'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else (100 if total_spent > 0 else 0),
-=======
-        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else 0,
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
         'you_owe_list': you_owe_list,
         'owed_to_you_list': owed_to_you_list,
         'you_owe_total': you_owe_total,
         'owed_to_you_total': owed_to_you_total,
         'net_flow': net_flow,
-<<<<<<< HEAD
         'total_income': total_income,
         'recommended_limit': recommended_budget_limit,
         'allocation_warning': total_budget > recommended_budget_limit,
@@ -1820,8 +1714,3 @@ def delete_account(request):
             'success': False,
             'message': str(e)
         }, status=400)
-=======
-    }
-
-    return render(request, 'myapp/budget.html', context)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba

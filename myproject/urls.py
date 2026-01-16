@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 """
 URL configuration for myproject project.
 
@@ -21,47 +18,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-<<<<<<< HEAD
-=======
-=======
-from django.contrib import admin
-from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.urls')),
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
 ]
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+    # Google OAuth URLs    
+path('auth/', include('social_django.urls', namespace='social')),
 
-
-
-[
-
-
-    path("admin/", admin.site.urls),
-    path("", include("myapp.urls")),   # ✅ REQUIRED
-]
-<<<<<<< HEAD
-=======
-=======
-
-    # Google OAuth URLs
-    path('auth/', include('social_django.urls', namespace='social')),
-]
 
 # Static / Media (safe for development)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
