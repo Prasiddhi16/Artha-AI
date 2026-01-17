@@ -11,7 +11,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = 'django-insecure-78(tzg5ghtga(nqa47=q6&z5vg@60=01x6b15qbz#z(ff-h!%+'
 SECRET_KEY = 'put key of homepage here'
 
 
