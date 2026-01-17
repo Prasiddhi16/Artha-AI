@@ -4,75 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Finance Tracker – Sign Up</title>
-
-  
-
+  <title>Sign Up – Artha AI</title>
   <link rel="stylesheet" href="{% static 'myapp/css/signup.css' %}">
 </head>
 <body>
 <div class="container" id="signupPage">
-  
-  <!-- Left Side / Features -->
-  <div class="left">
-    <div class="logo-box">
-      <div class="logo">💲</div>
-      <h1>Artha AI</h1>
-    </div>
-    <ul class="features">
-      <li>
-        <span class="icon">➜</span>
-        <div>
-          <h3>Smart Budgeting</h3>
-          <p>Plan your expenses effortlessly.</p>
-        </div>
-      </li>
-      <li>
-        <span class="icon">➜</span>
-        <div>
-          <h3>Secure & Private</h3>
-          <p>Your data is encrypted.</p>
-        </div>
-      </li>
-    </ul>
-  </div>
-
-  <!-- Right Side / Sign Up Form -->
-  <div class="right-only card signup-box">
-    <div class="signup-header">
-      <h3>Create an account</h3>
-    </div>
-
-    <form method="POST" action="{% url 'signup' %}">
-      {% csrf_token %}
-
-      <label for="name">Full Name</label>
-      <input type="text" name="name" id="name" placeholder="Your full name" required>
-
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" placeholder="email@example.com" required>
-
-      <label for="password">Password</label>
-      <input type="password" name="password" id="password" placeholder="Enter password" required>
-
-      <label for="confirm_password">Confirm Password</label>
-      <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm password" required>
-
-      <div class="terms">
-        <input type="checkbox" id="termsCheck" name="termsCheck" required>
-        <label for="termsCheck">I agree to Terms & Conditions</label>
-      </div>
-
-      <button type="submit" class="btn">Create Account</button>
-    </form>
-
-    <p class="bottom-text">
-      Already have an account? <a href="{% url 'signin' %}">Sign In</a>
-    </p>
-  </div>
-</div>
-
 
   <!-- Left Side -->
   <div class="left">
