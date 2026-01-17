@@ -118,7 +118,7 @@
     </p>
   </div>
 
-  <span class="badge {% if rec.achievable %}success{% else %}danger{% endif %}">
+  <span class="badgegoal {% if rec.achievable %}success{% else %}danger{% endif %}">
     {{ rec.achievable|yesno:"Achievable,Action Needed" }}
   </span>
 </div>
@@ -132,7 +132,7 @@
       <h3>{{ missed_deadline_goal.title }} Deadline Passed</h3>
       <p>Consider extending the deadline or increasing contributions</p>
     </div>
-    <span class="badge danger">Action Needed</span>
+    <span class="badgegoal danger">Action Needed</span>
   </div>
   {% endif %}
 
@@ -226,6 +226,9 @@
     <div class="dialogtopic">Contribution Ladder</div>
     <div class="dialogexplain">
         Contribution amount over time
+    </div>
+    <div id="no-ladder-data" class="no-data" style="display:none;">
+      <i class="fas fa-info-circle"></i> No contributions yet
     </div>
 
     <canvas id="ladderChart" height="120"></canvas>
@@ -403,21 +406,37 @@ const ctx = document.getElementById("ladderChart").getContext("2d");
 
 // Open ladder modal
 document.querySelectorAll(".ladder-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-     e.preventDefault();
-        e.stopPropagation();
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-      const goalId = btn.dataset.goalId;
-
-    //  HARD STOP if this is not a real ladder button
+    const goalId = btn.dataset.goalId;
     if (!goalId) return;
 
+    const noData = document.getElementById("no-ladder-data");
+    const canvas = document.getElementById("ladderChart");
+
+    ladderDialog.style.display = "block";
 
     fetch(`{% url 'goal_contributions_ajax' %}?goal_id=${goalId}`)
       .then(res => res.json())
       .then(data => {
-        
-        if (ladderChart) ladderChart.destroy();
+        // Destroy previous chart
+        if (ladderChart) {
+          ladderChart.destroy();
+          ladderChart = null;
+        }
+
+        // No contributions
+        if (data.empty || !data.amounts || data.amounts.length === 0) {
+          canvas.style.display = "none";
+          noData.style.display = "block";
+          return;
+        }
+
+        // Has contributions
+        noData.style.display = "none";
+        canvas.style.display = "block";
 
         ladderChart = new Chart(ctx, {
           type: "line",
@@ -426,7 +445,7 @@ document.querySelectorAll(".ladder-btn").forEach(btn => {
             datasets: [{
               label: "Contribution Amount",
               data: data.amounts,
-              stepped: true,        
+              stepped: true,
               borderWidth: 3,
               borderColor: data.color,
               fill: false,
@@ -434,30 +453,25 @@ document.querySelectorAll(".ladder-btn").forEach(btn => {
             }]
           },
           options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const idx = context.dataIndex;
-            const indiv = data.individuals[idx];  // individual contribution
-            return ` Contribution Amount  ₹${indiv.toFixed(2)}`;        // tooltip shows individual
-          }
-        }
-      }
-    },
-            scales: {
-              x: {
-                title: { display: true, text: "Date" }
-              },
-              y: {
-                title: { display: true, text: "Amount (₹)" }
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `₹${data.individuals[context.dataIndex].toFixed(2)}`;
+                  }
+                }
               }
+            },
+            scales: {
+              x: { title: { display: true, text: "Date" } },
+              y: { title: { display: true, text: "Amount (₹)" } }
             }
           }
         });
-      });
+      })
+      .catch(err => console.error(err));
   });
 });
 

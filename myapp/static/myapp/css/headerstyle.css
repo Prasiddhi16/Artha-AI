@@ -22,6 +22,7 @@ body
     border-right: #f5f3f4;
     padding:20px 30px;/*internal spacing*/
     width:80vw;
+
 }
 .logo
 {
@@ -45,6 +46,54 @@ body
 }
 .icons li a:hover {
   color:#009B77;
+}
+.notif-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.35); /* dim background */
+  display: none;
+  z-index: 4000;
+}
+.notif-box {
+  position: absolute;
+  top: 70px;
+  right: 30px;
+  background: #fff;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.notif-overlay ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.notif-overlay li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.notif-wrapper {
+  position: relative; /* makes this the positioning context */
+  display: inline-block;
+}
+
+.badge {
+  position: absolute;
+  top: -8px;   /* move upward */
+  right: -8px; /* move to the right corner */
+  background: rgb(96, 169, 87);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 9px;
+  line-height: 1;
 }
 
 

@@ -101,7 +101,7 @@
                 <div class="trans-details">
                     <div class="trans-name">
                         {{ t.description|default:t.category }}
-                        <span class="badge gray">{{ t.category }}</span>
+                        <span class="badgerev gray">{{ t.category }}</span>
                     </div>
                     <div class="trans-date">{{ t.date }}</div>
                 </div>
@@ -131,7 +131,7 @@
             <div class="card insight-blue">
                 <div class="card-header">
                     <span class="card-title">Monthly Spending Forecast</span>
-                    <span class="badge purple">Prediction</span>
+                    <span class="badgerev purple">Prediction</span>
                 </div>
                 <p class="card-text">Based on your current spending pattern, you're projected to spend <strong>₹{{ ai.monthly_forecast.projected_total }}</strong> this month. This is ₹{{ ai.monthly_forecast.avg_daily }} per day on average.</p>
             </div>
@@ -139,7 +139,7 @@
             <div class="card insight-green-1">
                 <div class="card-header">
                     <span class="card-title">Spending Trend: {{ ai.spending_trend.trend }}</span>
-                    <span class="badge green">Trend</span>
+                    <span class="badgerev green">Trend</span>
                 </div>
                 <p class="card-text">Your spending has {{ ai.spending_trend.trend|lower }} by <strong>{{ ai.spending_trend.percentage }}%</strong> compared to your earlier transactions. Keep tracking your goals!</p>
             </div>
@@ -147,7 +147,7 @@
             <div class="card insight-orange">
                 <div class="card-header">
                     <span class="card-title">Top Spending: {{ ai.top_category.name }}</span>
-                    <span class="badge orange">Category</span>
+                    <span class="badgerev orange">Category</span>
                 </div>
                 <p class="card-text">{{ ai.top_category.name }} accounts for <strong>₹{{ ai.top_category.amount }} ({{ ai.top_category.percentage }}%)</strong> of your total expenses. Consider if this aligns with your priorities.</p>
             </div>
@@ -155,7 +155,7 @@
             <div class="card insight-green-2">
                 <div class="card-header">
                     <span class="card-title">Savings Rate Analysis</span>
-                    <span class="badge teal">Savings</span>
+                    <span class="badgerev teal">Savings</span>
                 </div>
                 <p class="card-text">You're currently saving <strong>{{ ai.savings_rate }}%</strong> of your income. Financial experts recommend saving at least 20% of your income for long-term health.</p>
             </div>
@@ -286,7 +286,7 @@
                     <div class="trans-details">
                         <div class="trans-name">
                             ${t.description}
-                            <span class="badge gray">${t.category}</span>
+                            <span class="badgerev gray">${t.category}</span>
                         </div>
                         <div class="trans-date">${t.date}</div>
                     </div>

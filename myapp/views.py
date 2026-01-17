@@ -32,6 +32,7 @@ from myapp.services.ai_insights import generate_ai_insights
 from .models import Transaction
 from datetime import timedelta
 from datetime import date
+from .utils import create_notification
 from .services.financial_analysis import (
     get_user_financial_snapshot,
     get_missed_deadline_goal
@@ -302,6 +303,11 @@ def reset_password(request):
 
 
 # ---------------- Home / Dashboard ----------------
+from myapp.utils import create_notification
+from django.contrib.auth import get_user_model
+
+user = get_user_model().objects.first()
+create_notification(user, "Test notification from shell!")
 @login_required(login_url='signin')
 def home(request):
     user = request.user
@@ -326,19 +332,43 @@ def home(request):
                     description=category, date=date_val
                 )
                 messages.success(request, f"Expense of Rs. {amount} added successfully!")
+
+                # ----------------- NOTIFICATIONS -----------------
+                # 1️⃣ High Spending Alert (per transaction)
+                high_limit = getattr(user, 'high_spending_limit', 5000)  # default 5000
+                if amount >= high_limit:
+                    msg = f"⚠️ High Spending Alert: You spent ₹{amount} on {category}!"
+                    create_notification(user, msg)
+
+                # 2️⃣ Category Budget Alert
+                category_budget = getattr(user, 'category_budgets', {}).get(category, 0)
+                if category_budget > 0:
+                    category_total = Expense.objects.filter(
+                        user=user, category=category
+                    ).aggregate(Sum('amount'))['amount__sum'] or 0
+
+                    if category_total >= category_budget:
+                        msg = f"⚠️ Budget Alert: You exceeded your {category} budget of ₹{category_budget}!"
+                        create_notification(user, msg)
+
             elif transaction_type == "income":
                 Income.objects.create(
                     user=user, amount=amount, category=category,
                     description=category, date=date_val
                 )
                 messages.success(request, f"Income of Rs. {amount} added successfully!")
+
+                # Optional: Income alert if large
+                if amount >= 20000:  # large income threshold
+                    msg = f"💰 Income Alert: You received ₹{amount}!"
+                    create_notification(user, msg)
+
             return redirect('home')
         except Exception as e:
             messages.error(request, f"Error: {e}")
             return redirect('home')
 
     # 2. DASHBOARD TOTALS
-    # We fetch fresh querysets here to ensure clean data
     all_expenses = Expense.objects.filter(user=user)
     all_incomes = Income.objects.filter(user=user)
 
@@ -346,8 +376,7 @@ def home(request):
     total_expense = all_expenses.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
     balance = total_income - total_expense
 
-    # 3. GROUPED DATA FOR PIE CHART (FIXES MULTIPLE FOOD ENTRIES)
-    # .order_by() is empty to stop date-sorting from breaking the group
+    # 3. GROUPED DATA FOR PIE CHART
     category_data = all_expenses.values('category').annotate(
         total=Sum('amount')
     ).order_by('-total')
@@ -358,7 +387,7 @@ def home(request):
     largest_expense = all_expenses.aggregate(Max('amount'))['amount__max'] or 0
     net_change = total_income - total_expense
 
-    # 5. RECENT TRANSACTIONS (FOR THE TABLE)
+    # 5. RECENT TRANSACTIONS
     recent_incomes = list(all_incomes.order_by('-date')[:10])
     recent_expenses = list(all_expenses.order_by('-date')[:10])
 
@@ -370,6 +399,13 @@ def home(request):
         key=lambda x: x.date,
         reverse=True
     )[:10]
+     
+    # ----------------- OPTIONAL: Auto-Saving Notification -----------------
+    financials = get_user_financial_snapshot(user)
+    auto_saving = round(financials.get("expense", 0) * 0.10, 2)
+    if auto_saving >= 1000:  # threshold for notification
+        msg = f"💡 Suggested Auto-Save: You could save ₹{auto_saving} this month!"
+        create_notification(user, msg)
 
     context = {
         'total_income': total_income,
@@ -384,6 +420,7 @@ def home(request):
     }
 
     return render(request, 'myapp/home.html', context)
+
 # ---------------- Goals ----------------
 @login_required(login_url='signin')
 def goals(request):
@@ -699,6 +736,11 @@ def goal_contributions_ajax(request):
         .filter(goal=goal, user=request.user)
         .order_by("date")
     )
+    if not contributions.exists():
+        return JsonResponse({
+            "empty": True,
+            "goal_title": goal.title
+        })
 
     labels = []
     cumulative_amounts = []
@@ -1714,3 +1756,4 @@ def delete_account(request):
             'success': False,
             'message': str(e)
         }, status=400)
+    
