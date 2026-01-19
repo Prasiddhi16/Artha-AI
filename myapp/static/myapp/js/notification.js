@@ -1,104 +1,131 @@
-console.log("🔔 Notification JS loaded");
-
 document.addEventListener("DOMContentLoaded", function () {
-    // --- DOM elements ---
     const notifContainer = document.getElementById("notif-container");
     const notifContent = document.getElementById("notif-content");
     const notifList = document.getElementById("notif-list");
     const notifCount = document.getElementById("notif-count");
     const openBtn = document.getElementById("openNotifications");
+    const markAllReadBtn = document.getElementById("markAllReadBtn");
+    const clearNotifBtn = document.getElementById("clearNotifBtn");
 
-    // Array to store notifications
     let notifications = [];
 
-    // --- Toggle notification overlay ---
-    if (openBtn && notifContainer) {
-        openBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            notifContainer.style.display =
-                notifContainer.style.display === "block" ? "none" : "block";
-        });
+    // ---------- CSRF ----------
+    function getCSRFToken() {
+        return document
+            .querySelector("meta[name='csrf-token']")
+            ?.getAttribute("content");
     }
 
-    // --- Click outside closes overlay ---
-    if (notifContainer) {
-        notifContainer.addEventListener("click", (e) => {
-            if (e.target === notifContainer) {
-                notifContainer.style.display = "none";
-            }
-        });
-    }
-
-    // --- Prevent closing when clicking inside box ---
-    if (notifContent) {
-        notifContent.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
-    }
-
-    // --- Function to update notification list and badge ---
+    // ---------- UI ----------
     function updateNotifications() {
-        // Update badge
-        if (notifCount) {
-            notifCount.textContent = notifications.length;
-            notifCount.style.display = notifications.length ? "inline-block" : "none";
+        const unreadCount = notifications.filter(n => !n.is_read).length;
+
+        notifCount.textContent = unreadCount;
+        notifCount.style.display = unreadCount ? "inline-block" : "none";
+
+        notifList.innerHTML = "";
+
+        notifications.forEach(n => {
+            const li = document.createElement("li");
+            li.textContent = n.message;
+
+            if (!n.is_read) li.style.fontWeight = "bold";
+
+            if (n.notification_type === "warning") li.style.color = "orange";
+            if (n.notification_type === "error") li.style.color = "red";
+            if (n.notification_type === "success") li.style.color = "green";
+            if (n.notification_type === "info") li.style.color = "blue";
+
+            notifList.appendChild(li);
+        });
+
+        // disable buttons when useless
+        markAllReadBtn.disabled = unreadCount === 0;
+        clearNotifBtn.disabled = notifications.length === 0;
+    }
+
+    // ---------- Fetch ----------
+    async function fetchNotifications() {
+        try {
+            const res = await fetch("/api/notifications/");
+            if (!res.ok) throw new Error("Fetch failed");
+            const data = await res.json();
+            notifications = data.notifications || [];
+            updateNotifications();
+        } catch (err) {
+            console.error("Notification fetch error:", err);
         }
+    }
 
-        // Update list
-        if (notifList) {
-            notifList.innerHTML = "";
-            notifications.slice().reverse().forEach((notif) => {
-                const li = document.createElement("li");
-                li.textContent = notif.message;
-
-                // Style based on type
-                if (notif.type === "warning") li.style.color = "orange";
-                if (notif.type === "error") li.style.color = "red";
-                if (notif.type === "success") li.style.color = "green";
-
-                notifList.appendChild(li);
+    // ---------- Actions ----------
+    async function markAllRead() {
+        try {
+            const res = await fetch("/api/notifications/read/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "Content-Type": "application/json",
+                },
             });
+
+            if (!res.ok) throw new Error("Mark read failed");
+
+            notifications.forEach(n => n.is_read = true);
+            updateNotifications();
+        } catch (err) {
+            console.error(err);
         }
     }
 
-    // --- Demo notification (for testing) ---
-    setTimeout(() => {
-        notifications.push({ message: "Welcome to Artha AI!", type: "success" });
-        updateNotifications();
-    }, 2000);
+    async function clearNotifications() {
+        try {
+            const res = await fetch("/api/notifications/clear/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(),
+                    "Content-Type": "application/json",
+                },
+            });
 
-    // --- WebSocket for real-time notifications ---
-    function connectWebSocket() {
-        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-        const wsPath = `${wsScheme}://${window.location.host}/ws/notifications/`;
-        const socket = new WebSocket(wsPath);
+            if (!res.ok) throw new Error("Clear failed");
 
-        socket.onopen = function () {
-            console.log("✅ WebSocket connected:", wsPath);
-        };
-
-        socket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            if (data.message) {
-                notifications.push({
-                    message: data.message,
-                    type: data.type || "info",
-                });
-                updateNotifications();
-            }
-        };
-
-        socket.onclose = function () {
-            console.log("⚠️ WebSocket closed. Reconnecting in 3s...");
-            setTimeout(connectWebSocket, 3000);
-        };
-
-        socket.onerror = function (e) {
-            console.error("WebSocket error:", e);
-            socket.close();
-        };
+            notifications = [];
+            updateNotifications();
+        } catch (err) {
+            console.error(err);
+        }
     }
 
-    connectWebSocket();
+    // ---------- Events ----------
+    openBtn?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpening = notifContainer.style.display !== "block";
+        notifContainer.style.display = isOpening ? "block" : "none";
+
+        if (isOpening) await fetchNotifications();
+    });
+
+    markAllReadBtn?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        markAllRead();
+    });
+
+    clearNotifBtn?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearNotifications();
+    });
+
+    notifContainer?.addEventListener("click", e => {
+        if (e.target === notifContainer) notifContainer.style.display = "none";
+    });
+
+    notifContent?.addEventListener("click", e => e.stopPropagation());
+
+    // ---------- Polling ----------
+    setInterval(fetchNotifications, 15000);
+    fetchNotifications();
 });
