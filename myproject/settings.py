@@ -30,18 +30,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',  # Added for frontend connection
     'social_django',  
-    'channels',
     'myapp', 
    
 
 
-] 
-ASGI_APPLICATION = "myproject.asgi.application"
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
+]
 
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',

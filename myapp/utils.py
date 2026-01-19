@@ -18,23 +18,15 @@ def send_otp(email, otp):
         recipient_list=[email],
     )
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 from .models import NotificationEvent
 
 def create_notification(user, message, notification_type="info"):
-    notif = NotificationEvent.objects.create(
+    """
+    Creates a DB-backed notification.
+    Overlay will fetch this via AJAX.
+    """
+    return NotificationEvent.objects.create(
         user=user,
         message=message,
         notification_type=notification_type
     )
-
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        f"notification_{user.id}",
-        {
-            "type": "send_notification",
-            "message": message,
-        }
-    )
-    return notif

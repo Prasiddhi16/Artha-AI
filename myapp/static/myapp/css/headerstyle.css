@@ -69,6 +69,40 @@ body
   padding: 15px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.notif-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.notif-actions button {
+    background: none;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    color: #007bff;
+}
+
+.notif-actions button:hover {
+    text-decoration: underline;
+}
+
+#clearNotifBtn {
+    color: #dc3545;
+}
+
+.notif-actions button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 
 .notif-overlay ul {
     list-style: none;

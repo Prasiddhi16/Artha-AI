@@ -1,21 +1,4 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Artha AI</title>
-
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Your app CSS -->
-    <link rel="stylesheet" href="{% static 'myapp/css/headerstyle.css' %}">
-
-    <!-- Optional: favicon -->
-    <link rel="icon" type="image/png" href="{% static 'myapp/images/favicon.png' %}">
-</head>
-<body>
-
 <header>
     <nav class="top">
         <div class="logo">
@@ -42,18 +25,23 @@
 <!-- Notification overlay -->
 <div class="notif-overlay" id="notif-container" style="display:none">
     <div class="notif-box" id="notif-content">
-        <h4>Notifications</h4>
+
+        <div class="notif-header">
+            <h4>Notifications</h4>
+            <div class="notif-actions">
+                <button id="markAllReadBtn">Mark all read</button>
+                <button id="clearNotifBtn">Clear</button>
+            </div>
+        </div>
+
         <ul id="notif-list"></ul>
     </div>
 </div>
-
-<!-- User overlay -->
 <div class="user-overlay" id="user-container">
     <div id="user-content"></div>
 </div>
 
+
+
 <!-- JS at bottom for proper DOM load -->
 <script src="{% static 'myapp/js/notification.js' %}" defer></script>
-
-</body>
-</html>
