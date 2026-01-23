@@ -65,15 +65,12 @@ urlpatterns = [
     path('scan-receipt/', views.scan_receipt, name='scan_receipt'),
     path('filter-transactions/', views.filter_transactions, name='filter_transactions'),
     path('set-password/', views.set_password, name='set_password'),
-<<<<<<< HEAD
     
     
 
-=======
     path("api/notifications/", views.get_notifications, name="get_notifications"),
     path("api/notifications/read/", views.mark_notifications_read, name="mark_notifications_read"),
      path("api/notifications/clear/", views.clear_notifications),
->>>>>>> 3df60b77840a890107d2de0505736166b8f57c0d
 ]
 
 

@@ -2006,8 +2006,6 @@ def delete_account(request):
             'message': str(e)
         }, status=400)
     
-<<<<<<< HEAD
-
 @login_required
 def export_settings(request):
     user = request.user
@@ -2102,7 +2100,6 @@ def upload_profile_picture(request):
         "success": True,
         "image_url": request.user.profile_image.url
     })
-=======
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import NotificationEvent
@@ -2155,5 +2152,3 @@ User = get_user_model()
 user = User.objects.first()
 
 NotificationEvent.objects.create(user=user, message="Test notification", notification_type="info")
-
->>>>>>> 3df60b77840a890107d2de0505736166b8f57c0d
