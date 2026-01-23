@@ -18,3 +18,15 @@ def send_otp(email, otp):
         recipient_list=[email],
     )
 
+from .models import NotificationEvent
+
+def create_notification(user, message, notification_type="info"):
+    """
+    Creates a DB-backed notification.
+    Overlay will fetch this via AJAX.
+    """
+    return NotificationEvent.objects.create(
+        user=user,
+        message=message,
+        notification_type=notification_type
+    )

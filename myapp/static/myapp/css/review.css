@@ -73,12 +73,12 @@ body {
 .card-text { color: #64748b; line-height: 1.5; font-size: 0.95rem; }
 
 /* Badges */
-.badge { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
-.badge.purple { background-color: #f3e8ff; color: #7e22ce; }
-.badge.green { background-color: #dcfce7; color: #15803d; }
-.badge.orange { background-color: #ffedd5; color: #c2410c; }
-.badge.teal { background-color: #ccfbf1; color: #0f766e; }
-.badge.gray { background-color: #f1f5f9; color: #475569; }
+.badgerev { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+.badgerev.purple { background-color: #f3e8ff; color: #7e22ce; }
+.badgerev.green { background-color: #dcfce7; color: #15803d; }
+.badgerev.orange { background-color: #ffedd5; color: #c2410c; }
+.badgerev.teal { background-color: #ccfbf1; color: #0f766e; }
+.badgerev.gray { background-color: #f1f5f9; color: #475569; }
 
 /* progress bars */
 .progress-bar-container { 

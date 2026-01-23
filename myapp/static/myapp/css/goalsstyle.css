@@ -479,22 +479,30 @@ background-color: white;
   color: #555;
 }
 
-.badge {
-  margin-left: auto;
+.badgegoal {
+  margin-left: auto; /* works if parent is flex */
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
+  font-weight: 600;
+}
+.no-data {
+  text-align: center;
+  padding: 30px;
+  font-size: 1.1rem;
+  color: #777;
 }
 
-.badge.success {
+.badgegoal.success {
   background: #d7f5e7;
   color: #1b8f5a;
 }
 
-.badge.danger {
+.badgegoal.danger {
   background: #ffd6d6;
   color: #b71c1c;
 }
+
 
 .saving-capacity {
   display: flex;

@@ -218,5 +218,21 @@ class EmailOTP(models.Model):
     def is_expired(self):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
 
+<<<<<<< HEAD
     def __str__(self):
         return f"{self.user.email} | {self.purpose}"
+=======
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+class NotificationEvent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
+    message = models.CharField(max_length=255)
+    notification_type = models.CharField(max_length=50, default="info")
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.message}"
+>>>>>>> 3df60b77840a890107d2de0505736166b8f57c0d

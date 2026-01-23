@@ -1,9 +1,12 @@
+{% load static %}
 <header>
     <nav class="top">
         <div class="logo">
-           <p>Artha AI</p>
+            <p>Artha AI</p>
         </div>
+
         <ul class="icons">
+<<<<<<< HEAD
             <li><a href="#"><i class="fas fa-bell"></i></a></li>
              <li><a href="#"><div id="openuser" class="circle" data-initials="{{ user.first_name|slice:':1' }}{{ user.last_name|slice:':1' }}">
            {% if user.profile_image %}
@@ -13,13 +16,44 @@
                     <span id="initials"></span>
                 {% endif %}   
             </div> </a> </li>   
+=======
+            <!-- Notifications -->
+            <li>
+                <a href="#" id="openNotifications" class="notif-wrapper">
+                    <i class="fas fa-bell"></i>
+                    <span id="notif-count" class="badge">0</span>
+                </a>
+            </li>
+
+            <!-- User -->
+            <li>
+                <a href="#"><i class="fas fa-user" id="openuser"></i></a>
+            </li>
+>>>>>>> 3df60b77840a890107d2de0505736166b8f57c0d
         </ul>
     </nav>
-     
-    <div class="user-overlay" id="user-container">
-        <div id="user-content">
-         </div>
-     </div>
 </header>
-        
-        
+
+<!-- Notification overlay -->
+<div class="notif-overlay" id="notif-container" style="display:none">
+    <div class="notif-box" id="notif-content">
+
+        <div class="notif-header">
+            <h4>Notifications</h4>
+            <div class="notif-actions">
+                <button id="markAllReadBtn">Mark all read</button>
+                <button id="clearNotifBtn">Clear</button>
+            </div>
+        </div>
+
+        <ul id="notif-list"></ul>
+    </div>
+</div>
+<div class="user-overlay" id="user-container">
+    <div id="user-content"></div>
+</div>
+
+
+
+<!-- JS at bottom for proper DOM load -->
+<script src="{% static 'myapp/js/notification.js' %}" defer></script>

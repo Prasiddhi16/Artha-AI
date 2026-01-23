@@ -32,6 +32,8 @@ from myapp.services.ai_insights import generate_ai_insights
 from .models import Transaction
 from datetime import timedelta
 from datetime import date
+from .models import NotificationEvent
+from .utils import create_notification
 from .services.financial_analysis import (
     get_user_financial_snapshot,
     get_missed_deadline_goal
@@ -349,43 +351,123 @@ def reset_password(request):
 
 
 # ---------------- Home / Dashboard ----------------
+from myapp.utils import create_notification
+from django.contrib.auth import get_user_model
+
 @login_required(login_url='signin')
 def home(request):
     user = request.user
 
-    # 1. HANDLE ADD TRANSACTION
+    # Initialize variables
+    amount = None
+    transaction_type = None
+    category = None
+    date_val = timezone.now().date()
+
+    # ---------------- POST: Add Transaction ----------------
     if request.method == "POST":
+        amount = request.POST.get("amount")
+        transaction_type = request.POST.get("transaction_type", "").capitalize()
+        category = request.POST.get("category")
+        date_str = request.POST.get("date")
+
+        date_val = timezone.now().date()
+        if date_str:
+            try:
+                date_val = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                pass
+
         try:
-            amount = request.POST.get("amount")
-            transaction_type = request.POST.get("transaction_type")
-            category = request.POST.get("category")
-            date_val = request.POST.get("date") or timezone.now().date()
-
-            if not amount:
-                messages.error(request, "Amount is required.")
-                return redirect('home')
-
             amount = Decimal(amount)
-
-            if transaction_type == "expense":
-                Expense.objects.create(
-                    user=user, amount=amount, category=category,
-                    description=category, date=date_val
-                )
-                messages.success(request, f"Expense of Rs. {amount} added successfully!")
-            elif transaction_type == "income":
-                Income.objects.create(
-                    user=user, amount=amount, category=category,
-                    description=category, date=date_val
-                )
-                messages.success(request, f"Income of Rs. {amount} added successfully!")
-            return redirect('home')
-        except Exception as e:
-            messages.error(request, f"Error: {e}")
+        except:
+            messages.error(request, "Invalid amount")
             return redirect('home')
 
-    # 2. DASHBOARD TOTALS
-    # We fetch fresh querysets here to ensure clean data
+        # Save Transaction first
+        if transaction_type == "Expense":
+            trans = Expense.objects.create(
+                user=user,
+                amount=amount,
+                category=category,
+                date=date_val
+            )
+        elif transaction_type == "Income":
+            trans = Income.objects.create(
+                user=user,
+                amount=amount,
+                category=category,
+                date=date_val
+            )
+            # After saving the transaction
+            create_notification(user, "DEBUG: Transaction POST reached", "info")
+
+
+        # ---------------- Notifications ----------------
+        # High Spending
+        high_limit = getattr(user, 'high_spending_limit', 5000)
+        if transaction_type == "Expense" and amount >= high_limit:
+            create_notification(
+                user=user,
+                message=f"⚠️ High Spending Alert: You spent ₹{amount} on {category}",
+                notification_type="warning"
+            )
+
+        # Category Budget
+        if transaction_type == "Expense":
+            category_budget = (
+                Budget.objects.filter(
+                    user=user,
+                    category=category,
+                    month=date_val.month,
+                    year=date_val.year
+                ).aggregate(Sum('amount'))['amount__sum'] or 0
+            )
+            category_total = Expense.objects.filter(
+                user=user,
+                category=category,
+                date__month=date_val.month,
+                date__year=date_val.year
+            ).aggregate(Sum('amount'))['amount__sum'] or 0
+            if category_budget > 0 and category_total >= category_budget:
+                create_notification(
+                    user=user,
+                    message=f"📊 Budget Alert: {category} budget exceeded (₹{category_budget})",
+                    notification_type="warning"
+                )
+
+        # Large Income
+        if transaction_type == "Income" and amount >= 20000:
+            create_notification(
+                user=user,
+                message=f"💰 Large Income Alert: ₹{amount} received",
+                notification_type="success"
+            )
+
+        # Low Balance
+        total_income = Income.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        total_expense = Expense.objects.filter(user=user).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+        balance = total_income - total_expense
+        low_balance_limit = getattr(user, 'low_balance_limit', 1000)
+
+        if balance <= low_balance_limit:
+            if not NotificationEvent.objects.filter(
+                user=user,
+                message__icontains="Low Balance",
+                created_at__date=timezone.now().date()
+            ).exists():
+                create_notification(
+                    user=user,
+                    message=f"⚠️ Low Balance Alert: Your current balance is ₹{balance}",
+                    notification_type="warning"
+                )
+
+        # Done
+        return redirect('home')
+
+
+
+    # ---------------- DASHBOARD DATA ----------------
     all_expenses = Expense.objects.filter(user=user)
     all_incomes = Income.objects.filter(user=user)
 
@@ -393,19 +475,32 @@ def home(request):
     total_expense = all_expenses.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
     balance = total_income - total_expense
 
-    # 3. GROUPED DATA FOR PIE CHART (FIXES MULTIPLE FOOD ENTRIES)
-    # .order_by() is empty to stop date-sorting from breaking the group
+    # Low Balance Alert
+    low_balance_limit = getattr(user, 'low_balance_limit', 1000)
+    if balance <= low_balance_limit:
+        if not NotificationEvent.objects.filter(
+            user=user,
+            message__icontains="Low Balance",
+            created_at__date=timezone.now().date()
+        ).exists():
+            create_notification(
+                user,
+                f"⚠️ Low Balance Alert: Your current balance is ₹{balance}",
+                "warning"
+            )
+
+    # Category Pie Chart
     category_data = all_expenses.values('category').annotate(
         total=Sum('amount')
     ).order_by('-total')
 
-    # 4. QUICK STATS
+    # Quick Stats
     total_count = all_expenses.count() + all_incomes.count()
     avg_transaction = all_expenses.aggregate(Avg('amount'))['amount__avg'] or 0
     largest_expense = all_expenses.aggregate(Max('amount'))['amount__max'] or 0
     net_change = total_income - total_expense
 
-    # 5. RECENT TRANSACTIONS (FOR THE TABLE)
+    # Recent Transactions
     recent_incomes = list(all_incomes.order_by('-date')[:10])
     recent_expenses = list(all_expenses.order_by('-date')[:10])
 
@@ -417,6 +512,21 @@ def home(request):
         key=lambda x: x.date,
         reverse=True
     )[:10]
+
+   # Optional: Auto-Saving Notification
+    financials = get_user_financial_snapshot(user)
+    auto_saving = round(financials.get("expense", 0) * 0.10, 2)
+
+    if auto_saving >= 1000:
+        msg = f"💡 Smart Tip: You could save ₹{auto_saving} this month"
+
+        # Only create the notification if it doesn't already exist
+        if not NotificationEvent.objects.filter(user=user, message=msg, is_read=False).exists():
+            NotificationEvent.objects.create(
+                user=user,
+                message=msg,
+                notification_type="info"
+            )
 
     context = {
         'total_income': total_income,
@@ -431,6 +541,8 @@ def home(request):
     }
 
     return render(request, 'myapp/home.html', context)
+
+
 # ---------------- Goals ----------------
 @login_required(login_url='signin')
 def goals(request):
@@ -554,6 +666,7 @@ def add_contribution(request, goal_id):
                 )
                 return redirect('goals')
 
+
           
             remaining = goal.target_amount - current_total
             if contribution.amount > remaining:
@@ -580,6 +693,7 @@ def add_contribution(request, goal_id):
         'myapp/goal_detail.html',
         {'goal': goal, 'form': form}
     )
+
 
 
 
@@ -746,6 +860,11 @@ def goal_contributions_ajax(request):
         .filter(goal=goal, user=request.user)
         .order_by("date")
     )
+    if not contributions.exists():
+        return JsonResponse({
+            "empty": True,
+            "goal_title": goal.title
+        })
 
     labels = []
     cumulative_amounts = []
@@ -1155,6 +1274,12 @@ def scan_receipt(request):
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+    # ----------------- RECEIPT NOTIFICATION -----------------
+    create_notification(
+        request.user,
+        f"🧾 Receipt added: {data['category']} ₹{data['amount']}",
+        "info"
+    )
 # transaction deletion
 
 @login_required
@@ -1881,6 +2006,7 @@ def delete_account(request):
             'message': str(e)
         }, status=400)
     
+<<<<<<< HEAD
 
 @login_required
 def export_settings(request):
@@ -1976,3 +2102,58 @@ def upload_profile_picture(request):
         "success": True,
         "image_url": request.user.profile_image.url
     })
+=======
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import NotificationEvent
+
+@login_required
+def get_notifications(request):
+    # Fetch latest 10 notifications for the logged-in user
+    notifications = NotificationEvent.objects.filter(user=request.user).order_by('-created_at')[:10]
+
+    data = [
+        {
+            "id": n.id,
+            "message": n.message,
+            "type": n.notification_type,
+            "is_read": n.is_read,
+            "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        for n in notifications
+    ]
+    return JsonResponse({"notifications": data})
+
+
+@login_required
+def mark_notifications_read(request):
+    if request.method == "POST":
+        NotificationEvent.objects.filter(user=request.user, is_read=False).update(is_read=True)
+        return JsonResponse({"status": "ok"})
+    return JsonResponse({"status": "failed"}, status=400)
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import NotificationEvent
+
+
+@login_required
+def clear_notifications(request):
+    if request.method == "POST":
+        NotificationEvent.objects.filter(
+            user=request.user
+        ).delete()
+
+        return JsonResponse({"status": "ok"})
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
+
+from myapp.models import NotificationEvent
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+user = User.objects.first()
+
+NotificationEvent.objects.create(user=user, message="Test notification", notification_type="info")
+
+>>>>>>> 3df60b77840a890107d2de0505736166b8f57c0d
