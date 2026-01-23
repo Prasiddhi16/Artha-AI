@@ -71,9 +71,9 @@
             <button class="nav-btn" onclick="updateMonth(1)" aria-label="Next month">&#8250;</button>
             </div>
             <button class="loadMonthly">Load Pie Chart</button>
-            
+            <div class="pie-chart-container chart-container">
             <canvas class="pieChart"></canvas>
-
+            </div>
     </div>
     <div class="box">
         <p class="headtext">Income vs Expenses</p>
@@ -85,7 +85,9 @@
                 <input type="date" class="endDate">
         </div>
             <button class="loadWeekly">Load Bar Graph</button>
-        <canvas class="barGraph"></canvas>
+            <div class="bar-chart-container chart-container">
+            <canvas class="barGraph"></canvas>
+            </div>
     </div>
     </div>
 
@@ -93,14 +95,16 @@
         <div class="box">
         <p class="headtext">Income vs Expenses</p>
         <p class="foottext">Daily Comparison</p>
-        <div class="date_selector">
+            <div class="date_selector">
                 <label for="startDate">From:</label>
                 <input type="date" class="startDate">
                 <label for="endDate">To:</label>
                 <input type="date" class="endDate">
             </div>
             <button class="loadWeekly">Load Bar Graph</button>
+            <div class="bar-chart-container chart-container">
             <canvas class="barGraph"></canvas>
+            </div>
         </div>
 
         <div class="box">
@@ -123,7 +127,9 @@
             <button class="nav-btn" onclick="updateLineMonth(1)" aria-label="Next month">&#8250;</button>
         </div>
         <button class="loadLine">Load Line Graph</button>
+        <div id="line-chart-container" class="chart-container">
         <canvas id="lineGraph"></canvas>
+        </div>
         </div>
 
         <div class="box">
@@ -161,7 +167,9 @@
                 <button class="nav-btn" onclick="updateMonth(1)" aria-label="Next month">&#8250;</button>
                 </div>
                 <button class="loadMonthly">Load Pie Chart</button>
+                <div class="pie-chart-container chart-container">
                 <canvas class="pieChart"></canvas>
+                </div>
         </div>
         <div class="box">
         <p class="headtext">Top Spending Categories</p>
@@ -211,15 +219,77 @@
         switchContent("categories");
     });
 
+    //show message when empty
+    function showEmptyState(containerSelector, icon = '📊', title = 'No Data Available', message = '') {
+    const containers = containerSelector.startsWith('.') 
+        ? document.querySelectorAll(containerSelector)
+        : [document.getElementById(containerSelector)].filter(Boolean);
+
+    containers.forEach(container => {
+    if (!container) return;
+
+    const existingMsg = container.querySelector('.empty-message');
+    if (existingMsg) existingMsg.remove();
+
+    container.classList.add('has-message');
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'empty-message';
+    messageDiv.innerHTML = `
+        <div class="empty-icon">${icon}</div>
+        <div class="empty-title">${title}</div>
+        <div class="empty-text">${message}</div>
+    `;
+
+    container.appendChild(messageDiv);
+    });
+    }
+
+    function hideEmptyState(containerSelector) {
+    const containers = containerSelector.startsWith('.') 
+        ? document.querySelectorAll(containerSelector)
+        : [document.getElementById(containerSelector)].filter(Boolean);
+
+    containers.forEach(container => {
+    if (!container) return;
+
+    const message = container.querySelector('.empty-message');
+    if (message) message.remove();
+    container.classList.remove('has-message');
+    });
+}
+
+    //default dates function
+    function setDefaultDates() {
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 6);
+    
+    const todayStr = today.toISOString().split('T')[0];
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+    
+    document.querySelectorAll('.startDate').forEach(input => {
+        input.value = sevenDaysAgoStr;
+    });
+    document.querySelectorAll('.endDate').forEach(input => {
+        input.value = todayStr;
+    });
+    }
+
+    // Call for default dates on page load
+    setDefaultDates();
+
+
     //bargraph
     let barGraphs=[];
 
     function loadBarGraph(start=null,end=null){
 
         if (start && end && new Date(start) > new Date(end)) {
-        alert("Invalid Date: Start date cannot be after the end date.");
-        return; // Stop execution,current chart stays on canvas
-    }
+       showEmptyState('.bar-chart-container', '⚠️', 'Invalid Date Range', 'Start date cannot be after the end date.');
+        return;
+        }
+
         let url='/api/weekly_summary/';
         if(start && end){
             url+=`?start=${start}&end=${end}`;
@@ -230,20 +300,20 @@
         .then(result => {
 
             if (!result.data || result.data.length === 0) {
-            alert("No data available for the selected date range.");
-            return; // Current chart remains visible
+            showEmptyState('.bar-chart-container', '📊', 'No Data Available', 'No data available for the selected date range.');
+                return;
             }
         
+        // Hide empty state before rendering chart
+            hideEmptyState('.bar-chart-container');
+        
         const data=result.data;
-
         //X-axis
         const labels=[...new Set(data.map(d=>d.date))].sort((a, b) => new Date(a) - new Date(b));
-
         //income per date
         const income=labels.map(date =>
             data.find(d=>d.date===date && d.type==='income')?.total || 0
         );
-
         //expense per date
         const expense=labels.map(date=>
         data.find(d => d.date===date && d.type==='expense')?.total || 0
@@ -268,6 +338,7 @@
             },
             options:{
                 responsive:true,
+                maintainAspectRatio: false,
                 plugins:{
                     legend:{position:'bottom'}
                 }
@@ -291,13 +362,15 @@
         if(start && end){
             loadBarGraph(start, end);
         } else {
-            alert('Please select both start and end dates');
+            showEmptyState('.bar-chart-container', '⚠️', 'Missing Dates', 'Please select both start and end dates.');
         }
     });
     });
     
-
-    loadBarGraph(); //default
+    //load bar graph with default dates on page load
+    const todayDate = new Date().toISOString().split('T')[0];
+    const sevenDaysAgo = new Date(Date.now() - 6*24*60*60*1000).toISOString().split('T')[0];
+    loadBarGraph(sevenDaysAgo,todayDate);//default
 
     // Syncs any date input with its counterparts across tabs
         document.addEventListener('input', (e) => {
@@ -351,14 +424,15 @@
         .then(result =>{
 
             if (!result.data || result.data.length === 0) {
-            alert(`No data available for ${months[m- 1]} ${y}`);
-            return; // Exit, old pie chart stays on canvas
+             showEmptyState('.pie-chart-container', '◔', 'No Expenses', `No data available for ${months[m - 1]} ${y}.`);
+                return;
             }
 
+        // Hide empty state before rendering chart
+            hideEmptyState('.pie-chart-container');
+
         const data=result.data;
-
         const totalMonthExpense = data.reduce((sum, item) => sum + Number(item.total), 0);
-
         // Update the Progress Bars dynamically
         const listContainer = document.getElementById('top-spending-list');
 
@@ -405,26 +479,22 @@
                 labels:labels,
             datasets:[
             {data:values,
-            backgroundColor:[
-<<<<<<< HEAD
-            "rgb(0,0,128)", 
-            
-  "#860404f1", // Burgundy
-  "#094b03", // Teal
-  "#eff306b7", // Gold
-  "rgba(8, 234, 250, 0.98)", // Deep Purple
-  "#af3f03", // Bronze
-  "#8f8e8cea", // Silver
-  "#521b0c"  // Terracotta
-=======
-            '#00172d', '#002a4a', '#003f67', '#005684', '#006da1',
-                '#0085bd', '#009eda', '#40b8f2', '#80d1f7', '#c0e8fb'
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+           backgroundColor:[
+            "rgb(1, 1, 105)", 
+            "#028dac", 
+      "#745702", 
+  "#03110D", 
+  "#390517", 
+  "#A38560",
+  "#521b0c", 
+  "#8f8e8cea", 
+      
             ]
             }]
             },
             options:{
                 responsive:true,
+                maintainAspectRatio: false,
                 plugins:{
                     legend:{position:'bottom'}
                 }
@@ -470,71 +540,126 @@
     }
 
     function loadLineGraph(){
-        const category=document.querySelector('#categorySelector select').value;
-        url=`/api/category_trend/?month=${lineMonth+1}`+`&year=${lineYear}`+`&category=${encodeURIComponent(category)}`;
+    const category=document.querySelector('#categorySelector select').value;
+    url=`/api/category_trend/?month=${lineMonth+1}`+`&year=${lineYear}`+`&category=${encodeURIComponent(category)}`;
 
-       fetch(url)
-       .then(res=>res.json())
-       .then(result=>{
+   fetch(url)
+   .then(res=>res.json())
+   .then(result=>{
 
-        if (!result.days || result.values.every(v => v === 0)) {
-            alert(`No data found for "${category}" in ${months[lineMonth]} ${lineYear}`);
-            return;
-        }
-
-        const days=result.days;
-        const values=result.values;
-        const predicted=result.predicted;
-
-        if(!result.category) return;
+    if (!result.days || result.values.every(v => v === 0)) {
+        showEmptyState('line-chart-container', '📈', 'No Trend Data', `No data found for "${category}" in ${months[lineMonth]} ${lineYear}.`);
+        return;
+    }
     
-        if(lineGraph) lineGraph.destroy();
+    // Hide empty state before rendering chart
+    hideEmptyState('line-chart-container');
 
-        lineGraph=new Chart(document.getElementById('lineGraph'),{
-            type:'line',
-            data:{
-                labels:days,
-                datasets:[{
-                            label: `${category} actual`,
-                            data: values,
-                            tension: 0.4,
-                            fill: false,
-                            borderWidth: 2,
-                            backgroundColor:'rgb(0,0,128)',
-                            borderColor:'rgb(0,0,128)'
-                },
-                {
-                          label: `${category} predicted`,
-                          data:predicted,
-                          borderColor: 'rgba(255, 99, 132, 0.8)',
-                          borderDash: [5,5],  // dashed line for prediction
-                          fill: false,
-                          tension: 0.4
-                }
-                ]
-            },
-            options:{
-                responsive:true,
-                plugins:{
-                    legend:{position:'bottom'}
-                },
-                scales:{
-                y:{beginAtZero : true}
-                }
-            }
-        });
-       });
-       
+    const days = result.days;
+    const actualValues = result.values;
+    const predictedValues = result.predicted;
+    const predictionInfo = result.prediction_info;
+
+    if(!result.category) return;
+
+    const parentBox = document.getElementById('line-chart-container').closest('.box');
+    const existingWarning = parentBox.querySelector('.prediction-warning');
+    if (existingWarning) existingWarning.remove();
+
+    if (predictionInfo && predictionInfo.method === 'insufficient_data') {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'prediction-warning';
+        warningDiv.style.cssText = 'background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 12px 16px; border-radius: 8px; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px; font-size: 14px;';
+        warningDiv.innerHTML = `
+            <i class="fas fa-info-circle" style="font-size: 18px;"></i>
+            <span>Predictions require at least 2 days of expense data. Currently ${predictionInfo.data_points} day(s) recorded. Add more expenses to see trend predictions!</span>
+        `;
+        //Insert before the chart container, not inside it
+        const chartContainer = document.getElementById('line-chart-container');
+        chartContainer.parentNode.insertBefore(warningDiv, chartContainer);
+    } 
+    // Show success message when predictions are available
+    else if (predictionInfo && predictionInfo.method === 'weighted_linear_regression') {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'prediction-warning';
+        const accuracyColor = predictionInfo.accuracy === 'good' ? '#10b981' : 
+                             predictionInfo.accuracy === 'moderate' ? '#f59e0b' : '#ef4444';
+        infoDiv.style.cssText = `background: #f0f9ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 12px 16px; border-radius: 8px; margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px; font-size: 14px;`;
+        infoDiv.innerHTML = `
+            <i class="fas fa-chart-line" style="font-size: 18px;"></i>
+            <span>Predictions based on ${predictionInfo.data_points} data points • Accuracy: <strong style="color: ${accuracyColor};">${predictionInfo.accuracy.toUpperCase()}</strong> (R²: ${predictionInfo.r_squared})</span>
+        `;
+        //Insert before the chart container
+        const chartContainer = document.getElementById('line-chart-container');
+        chartContainer.parentNode.insertBefore(infoDiv, chartContainer);
     }
 
-    //change
-    document.querySelector('.loadLine').addEventListener("click",loadLineGraph);
-    
+    if(lineGraph) lineGraph.destroy();
 
-    //default
-    lineMonthLabel();
-    loadLineGraph();
+    lineGraph=new Chart(document.getElementById('lineGraph'),{
+        type:'line',
+        data:{
+            labels:days,
+            datasets:[
+                {
+                    label: `${category} actual`,
+                    data: actualValues,
+                    tension: 0.4,
+                    fill: false,
+                    borderWidth: 2,
+                    backgroundColor:'rgb(0,0,128)',
+                    borderColor:'rgb(0,0,128)'
+                },
+                {
+                    label: `${category} predicted`,
+                    data: predictedValues,
+                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                    borderDash: [5,5],
+                    fill: false,
+                    tension: 0.4,
+                    spanGaps: true  
+                }
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio: false,
+            plugins:{
+                legend:{position:'bottom'},
+                tooltip: {
+                    callbacks: {
+                        afterLabel: function(context) {
+                            
+                            const datasetIndex = context.datasetIndex;
+                            const dataIndex = context.dataIndex;
+                            
+                            // If predicted dataset has a value
+                            if (datasetIndex === 1 && predictedValues[dataIndex] !== null && predictedValues[dataIndex] !== undefined) {
+                                if (predictionInfo && predictionInfo.accuracy) {
+                                    return `Accuracy: ${predictionInfo.accuracy} (R²: ${predictionInfo.r_squared})`;
+                                }
+                                return 'Based on linear trend';
+                            }
+                            return '';
+                        }
+                    }
+                }
+            },
+            scales:{
+                y:{beginAtZero : true}
+            }
+        }
+    });
+   });
+   
+}
 
+//change
+document.querySelector('.loadLine').addEventListener("click",loadLineGraph);
 
-    </script>
-    {% endblock %}
+//default
+lineMonthLabel();
+loadLineGraph();
+</script>
+
+{% endblock %}

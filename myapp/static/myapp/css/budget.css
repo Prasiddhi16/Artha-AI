@@ -61,6 +61,24 @@ body {
 
 }
 
+.no-budget-message {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+}
+
+.no-budget-message i{
+  font-size: 18px;
+  color: #ffc107;
+}
+
 
 
 /* Card Styles */

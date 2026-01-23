@@ -2,6 +2,14 @@
 {% load static %}
 {% block title %} Budget Page {% endblock %}
 {% block content %}
+  <!-- Hidden Django Messages for JavaScript -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="django-message" data-type="{{ message.tags }}" style="display: none;">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
 
   <div class="container">
     <div class="header">
@@ -25,13 +33,13 @@
       </div>
 
       <div class="amount-display">
-        <div class="remaining-amount">Rs. {{ remaining_total }}</div>
+        <div class="remaining-amount" style="color: {% if is_overspending %}#ef4444{% else %}#10b981{% endif %}">Rs. {{ remaining_total }}</div>
         <div class="spent-info">
           <span>Rs. {{ total_spent}} of Rs. {{ total_budget }} spent</span>
           <span class="percentage">{{ total_percent }}% </span>
         </div>
         <div class="progress-bar">
-          <div class="progress-fill {% if b.is_over %}over{% endif %}" style="width: {% if total_percent > 100 %}100{% else %}{{ total_percent }}{% endif %}%"></div>
+          <div class="progress-fill {% if total_spent >  total_budget %}over{% endif %}" style="width: {% if total_percent > 100 %}100{% else %}{{ total_percent }}{% endif %}%"></div>
         </div>
       </div>
 
@@ -49,7 +57,12 @@
           <div class="stat-value">Rs. {{ recommended_limit }}</div>
         </div>
       </div>
-      {% if allocation_warning %}
+       {% if not has_any_budget %}
+      <div class="no-budget-message">
+    <i class="fas fa-info-circle"></i>
+    You have not yet allocated budgets for your spending. Set budgets to track your expenses effectively!
+    </div>
+      {% elif allocation_warning %}
       <div class="allocation-warning">
         <i class="fas fa-exclamation-triangle"></i>
         Your planned categories exceed 70% of your income. Consider reducing some limits to save more!
@@ -60,6 +73,15 @@
         Your budget allocations remain within 70% of your income, reflecting responsible financial planning.
       </div>
       {% endif %}
+
+      {% if is_overspending %}
+    <div class="allocation-warning">
+    <i class="fas fa-exclamation-triangle"></i>
+    You have overspent your budget! You've spent Rs. {{ total_spent }} but your budget is only Rs. {{ total_budget }}.
+    </div>
+      {% endif %}
+
+
     </div>
 
 
@@ -329,6 +351,7 @@
 {% endblock %}
 
 {% block extra_js %}
+
 <script>
 const months=[
 'January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -381,7 +404,7 @@ editBtn.forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains('set-budget-btn')) {
         const category = btn.getAttribute("data-category");
-        document.getElementById("form-month").value = currentMonth;
+        document.getElementById("form-month").value = currentMonth+1;
         document.getElementById("form-year").value = currentYear;
         
         // Pre-select the category in the add form
@@ -412,7 +435,7 @@ editBtn.forEach(btn => {
 });
   if(categoryAdd){
   categoryAdd.addEventListener("click",()=>{
-    document.getElementById("form-month").value = currentMonth;
+    document.getElementById("form-month").value = currentMonth+1;
     document.getElementById("form-year").value = currentYear;
     addCategoryForm.showModal();
   });
@@ -422,6 +445,20 @@ editBtn.forEach(btn => {
     addPartyForm.showModal();
   });
 
+  //Check for Django messages and show as alerts
+  const messages = document.querySelectorAll('.django-message');
+  messages.forEach(msg => {
+    const text = msg.textContent.trim();
+    const type = msg.dataset.type;
+    
+    if (type === 'error') {
+      alert('❌ ' + text);
+    } else if (type === 'success') {
+      alert('✅ ' + text);
+    } else {
+      alert(text);
+    }
+  });
   dialog.forEach(dialog=>{
   dialog.addEventListener("click",(e)=>{
     if( e.target===dialog){

@@ -29,12 +29,14 @@ body{
     flex: 1;
     box-sizing: border-box;
     background-color: white;
-    border: 1px solid rgb(23, 3, 3);
+    border: 1px solid #eef2f6;
     padding: 20px;
     margin: 20px 20px 20px 0;
     border-radius: 15px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: box-shadow 0.2s;
+}
+.box:hover{
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .headbox {
@@ -61,21 +63,13 @@ body{
 }
 .inumber{
     font-size:28px ;
-<<<<<<< HEAD
     font-weight:550;
-=======
-    font-weight:300;
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     color:navy;
     margin-bottom: 5px;
 }
 .enumber{
     font-size:28px;
-<<<<<<< HEAD
     font-weight:550;
-=======
-    font-weight:300;
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
     color:rgb(194, 54, 61);
     margin-bottom: 5px;
 }
@@ -123,8 +117,7 @@ body{
 .incomebox{
     flex:1;
     box-sizing:border-box;
-    background-color:rgb(235, 203, 203);
-    border:1px solid rgb(168, 168, 168);
+    border: 1px solid #e5e5e7;
     padding:20px;
     margin:20px 20px 20px 0px;
     border-radius: 15px;  
@@ -132,16 +125,22 @@ body{
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     background-color: rgb(204, 226, 226);
 }
+.incomebox:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 .expensebox{
      flex:1;
     box-sizing:border-box;
     background-color:rgb(235, 203, 203);
-    border:1px solid rgb(168, 168, 168);
+   border: 1px solid #e5e5e7;
     padding:20px;
     margin:20px 20px 20px 0px;
     border-radius: 15px;  
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.expensebox:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 .inumber2{
     font-size:18px ;
@@ -152,15 +151,6 @@ body{
     font-size:18px;
     font-weight:300;
     color:rgb(194, 54, 61);
-}
-
-.box {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    margin-bottom: 25px;
-    border: 1px solid #eef2f6;
 }
 
 
@@ -234,48 +224,20 @@ input[type="date"] {
 .loadMonthly:hover, .loadWeekly:hover, .loadLine:hover {
     opacity: 0.9;
 }
-
-canvas {
-    max-height: 400px;
-    width: 100% !important;
-}
  
 .category-item {
     margin-bottom: 10px;
     padding: 10px;
-    border-radius: 8px;
-     background-color: #f9f9f9;
+    background-color: #f9f9f9;
+    border: 1px solid #e5e5e7;
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s
 }
- .pie-chart {
-            width: 260px;
-            height: 260px;
-            margin: auto;
-            border-radius: 50%;
-            background: conic-gradient(
-                #1e3a8a 0 76%,
-                #60a5fa 76% 84%,
-                #93c5fd 84% 88%,
-                #bfdbfe 88% 92%,
-                #dbeafe 92% 100%
-            );  
-        }
-        .legend {
-            margin-top: 15px;
-            font-size: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
-        }
+.category-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+ 
 
 .progressbar{
     width:100%;
@@ -288,4 +250,51 @@ canvas {
     height:100%;
     background-color: #04a06c;
     border-radius:8px;
+}
+.chart-container {
+    flex:1;
+    position: relative;
+    height: 400px; 
+    min-height: 300px;
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.chart-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
+.empty-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #95a5a6;
+    z-index: 10;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #384344;
+}
+
+.empty-text {
+    font-size: 14px;
+    color: #748a8b;
+}
+
+.chart-container.has-message canvas {
+    opacity: 0.05;
 }

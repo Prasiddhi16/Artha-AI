@@ -46,12 +46,12 @@ urlpatterns = [
     path('profile/privacy/', views.update_privacy_settings, name='update_privacy_settings'),
     path('profile/two-factor/', views.toggle_two_factor, name='toggle_two_factor'),
     path('profile/delete/', views.delete_account, name='delete_account'),
-    path('ajax/add_contribution/', views.add_contribution_ajax, name='add_contribution_ajax'),
-    path('delete_goal/', views.delete_goal, name='delete_goal'),
-    path("goals/contributions/",views.goal_contributions_ajax,name="goal_contributions_ajax"),
-    path("scan-receipt/", views.scan_receipt, name="scan_receipt"),
-    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
+    path('request-email-change/', views.request_email_change, name="request_email_change"),
+    path('export-settings/', views.export_settings, name='export_settings'),
+    path('clear-data/', views.clear_all_data, name='clear_all_data'),
+    path('upload-profile-picture/', views.upload_profile_picture, name='upload_profile_picture'),
 
+    
     # APIs / AJAX
     path('api/weekly_summary/', views.weekly_summary_api, name='weekly_summary_api'),
     path('api/monthly_category/', views.monthly_category_api, name='monthly_category_api'),
@@ -65,6 +65,8 @@ urlpatterns = [
     path('scan-receipt/', views.scan_receipt, name='scan_receipt'),
     path('filter-transactions/', views.filter_transactions, name='filter_transactions'),
     path('set-password/', views.set_password, name='set_password'),
+    
+    
 
 ]
 

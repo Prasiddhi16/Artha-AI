@@ -57,13 +57,24 @@
         <hr>
         <br>
         <div class="personal_details">
+        <form id="profile-pic-form" enctype="multipart/form-data">
+        {% csrf_token %}
+         <input type="file" id="profile-image-input" name="profile_image" accept="image/*" style="display: none;">
         <div id="picture">
-            <div id="circle"></div> 
-            <span id="center">
-            <button id="change-picture"><i class="fa-solid fa-camera"></i>  Change Photo</button>
-            <p class="sub-info"> JPG or PNG(MAX 800*400px) </p>
-            </span>
+            <div id="circle" data-initials="{{ user.first_name|slice:':1' }}{{ user.last_name|slice:':1' }}">
+           {% if user.profile_image %}
+                    <img id="profile-circle-img" src="{{ user.profile_image.url }}" class="circle-img" style="display: block;">
+                {% else %}
+                    <img id="profile-circle-img" src="" class="circle-img" style="display: none;">
+                    <span id="initials"></span>
+                {% endif %}   
+            </div> 
+            <div id="center">
+            <button type="button" id="change-picture"><i class="fa-solid fa-camera"></i>  Upload Photo</button>
+            <p class="sub-info"> JPG or PNG</p>
+            </div>
         </div>
+         </form>
         <br>
         <br>
         <div id="usernames">
@@ -73,8 +84,19 @@
         <br>
         <div id="emails">
             <label for="email">Email</label><br>
-            <input type="text" name="email" id="email" value="{{ user.email }}" placeholder="Enter your email here">
+            <input type="email" name="email" id="email" value="{{ user.email }}" readonly class="readonly-field">
+             <button type="button" id="change-email-btn" class="change-btn">
+            Change Email</button>
         </div>
+        <br>
+        <div id="change-email-modal" style="display:none;">
+        <label for="new-email">New Email</label><br>
+        <input type="email" id="new-email" placeholder="Enter new email">
+        <button type="button" id="send-otp-btn">
+          Send OTP
+       </button>
+        </div>
+
         <br>
         <div id="numbers">
             <label for="phone">Phone Number</label><br>
@@ -85,6 +107,7 @@
             <button type="button" id="save-profile" class="save"><i class="fa-solid fa-print"></i> Save Changes</button>
         </div>
         </div>
+
     </div>
 
         <div class="psection" id="notification-section">
@@ -259,8 +282,8 @@
             <p class="first-text">Data Management</p><br>
             <p class="second-text">Export or delete your data</p><br>
             <br>
-            <button class="export"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
-            <button type="button" class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
+            <button type="button" class="export" id="export-settings"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
+            <button type="button" class="delete" id="clear-data"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
             <p class="sub-info" id="align">Clearing data will reset all settings to default</p> 
         </div>
     </form>
