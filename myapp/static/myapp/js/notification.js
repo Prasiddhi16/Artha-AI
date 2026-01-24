@@ -17,32 +17,41 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ---------- UI ----------
-    function updateNotifications() {
-        const unreadCount = notifications.filter(n => !n.is_read).length;
+   function updateNotifications() {
+    const unreadCount = notifications.filter(n => !n.is_read).length;
 
-        notifCount.textContent = unreadCount;
-        notifCount.style.display = unreadCount ? "inline-block" : "none";
+    notifCount.textContent = unreadCount;
+    notifCount.style.display = unreadCount ? "inline-block" : "none";
 
-        notifList.innerHTML = "";
+    notifList.innerHTML = "";
 
-        notifications.forEach(n => {
-            const li = document.createElement("li");
-            li.textContent = n.message;
+    notifications.forEach(n => {
+        const li = document.createElement("li");
 
-            if (!n.is_read) li.style.fontWeight = "bold";
+        // Apply type-specific class
+        if (n.notification_type === "warning") li.classList.add("notif-warning");
+        if (n.notification_type === "error") li.classList.add("notif-error");
+        if (n.notification_type === "success") li.classList.add("notif-success");
+        if (n.notification_type === "info") li.classList.add("notif-info");
 
-            if (n.notification_type === "warning") li.style.color = "orange";
-            if (n.notification_type === "error") li.style.color = "red";
-            if (n.notification_type === "success") li.style.color = "green";
-            if (n.notification_type === "info") li.style.color = "blue";
+        // Message span
+        const msgSpan = document.createElement("span");
+        msgSpan.textContent = n.message;
+        if (!n.is_read) msgSpan.style.fontWeight = "bold";
 
-            notifList.appendChild(li);
-        });
+        // Relative time span
+        const dateSpan = document.createElement("span");
+        dateSpan.classList.add("notif-date");
+        dateSpan.textContent = timeAgo(n.client_created_at);
 
-        // disable buttons when useless
-        markAllReadBtn.disabled = unreadCount === 0;
-        clearNotifBtn.disabled = notifications.length === 0;
-    }
+        li.appendChild(msgSpan);
+        li.appendChild(dateSpan);
+        notifList.appendChild(li);
+    });
+
+    markAllReadBtn.disabled = unreadCount === 0;
+    clearNotifBtn.disabled = notifications.length === 0;
+}
 
     // ---------- Fetch ----------
     async function fetchNotifications() {
@@ -50,7 +59,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const res = await fetch("/api/notifications/");
             if (!res.ok) throw new Error("Fetch failed");
             const data = await res.json();
-            notifications = data.notifications || [];
+             notifications = (data.notifications || []).map(n => ({
+            ...n,
+            client_created_at: new Date() 
+        }));
+
             updateNotifications();
         } catch (err) {
             console.error("Notification fetch error:", err);
@@ -76,6 +89,26 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error(err);
         }
     }
+    function timeAgo(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+    if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
+
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+
+    interval = Math.floor(seconds / 86400);
+    if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+
+    interval = Math.floor(seconds / 3600);
+    if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+
+    interval = Math.floor(seconds / 60);
+    if (interval >= 1) return interval + " minute" + (interval > 1 ? "s" : "") + " ago";
+
+    return "just now";
+}
 
     async function clearNotifications() {
         try {
@@ -129,3 +162,4 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(fetchNotifications, 15000);
     fetchNotifications();
 });
+

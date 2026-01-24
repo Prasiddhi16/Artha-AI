@@ -352,8 +352,6 @@ def home(request):
                 category=category,
                 date=date_val
             )
-            # After saving the transaction
-            create_notification(user, "DEBUG: Transaction POST reached", "info")
 
 
         # ---------------- Notifications ----------------
@@ -610,6 +608,7 @@ def add_contribution(request, goal_id):
             current_total = goal.contributions.aggregate(
                 Sum('amount')
             )['amount__sum'] or Decimal('0.00')
+            
 
             
             if current_total >= goal.target_amount:
@@ -628,6 +627,18 @@ def add_contribution(request, goal_id):
             contribution.user = request.user
             contribution.goal = goal
             contribution.save()
+            contribution.save()
+
+        new_total = goal.contributions.aggregate(
+            Sum('amount')
+        )['amount__sum'] or Decimal('0.00')
+
+        if new_total >= goal.target_amount:
+            create_notification(
+                user=request.user,
+                message=f"🎉 You have completed the goal '{goal.title}'!",
+                notification_type="success"
+            )
 
             messages.success(
                 request,
@@ -720,6 +731,25 @@ def add_contribution_ajax(request):
             date=date,
             note=note
         )
+
+        contribution = GoalContribution.objects.create(
+    user=request.user,
+    goal=goal,
+    amount=amount,
+    date=date,
+    note=note
+)
+
+# Recalculate after saving
+        total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
+
+        if total >= goal.target_amount:
+            create_notification(
+                user=request.user,
+                message=f"🎉 You have completed the goal '{goal.title}'!",
+                notification_type="success"
+            )
+
 
         # Recalculate this goal's totals
         total = goal.contributions.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.00')
@@ -1150,7 +1180,7 @@ def scan_receipt(request):
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-    # ----------------- RECEIPT NOTIFICATION -----------------
+    # ----------------- RECEIPT NOTIFICATION ----------------
     create_notification(
         request.user,
         f"🧾 Receipt added: {data['category']} ₹{data['amount']}",
@@ -1885,11 +1915,4 @@ def clear_notifications(request):
 
     return JsonResponse({"error": "Invalid method"}, status=405)
 
-from myapp.models import NotificationEvent
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-user = User.objects.first()
-
-NotificationEvent.objects.create(user=user, message="Test notification", notification_type="info")
 
