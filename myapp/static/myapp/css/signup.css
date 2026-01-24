@@ -31,10 +31,6 @@ body {
     padding: 0px;
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 .password-wrapper {
   position: relative;
 }
@@ -91,8 +87,7 @@ body {
   text-align: center;
 }
 
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 .logo-box {
     margin-bottom: 30px;
 }
@@ -159,10 +154,7 @@ h1 {
     box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
+
 .password-wrapper {
   position: relative;
 }
@@ -176,8 +168,7 @@ h1 {
   user-select: none;
 }
 
->>>>>>> 8146b54 (Initial commit of AI-Artha1 Django project)
->>>>>>> ca6b7c55dbc386a851d5016eb536c9b23cd699ba
+
 h2 {
     margin-bottom: 5px;
 }

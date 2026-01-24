@@ -1,6 +1,9 @@
 {% load static %}
 <header>
+<<<<<<< HEAD
     
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
     <nav class="top">
         <div class="logo">
             <p>Artha AI</p>
@@ -16,9 +19,22 @@
             </li>
 
             <!-- User -->
+<<<<<<< HEAD
             <li>
                 <a href="#"><i class="fas fa-user" id="openuser"></i></a>
             </li>
+=======
+             <li><a href="#"><div id="openuser" class="circle" data-initials="{{ user.first_name|slice:':1' }}{{ user.last_name|slice:':1' }}">
+           {% if user.profile_image %}
+                    <img id="profile-circle-img" src="{{ user.profile_image.url }}" class="circle-img" style="display: block;">
+                {% else %}
+                    <img id="profile-circle-img" src="" class="circle-img" style="display: none;">
+                    <span id="initials"></span>
+                {% endif %}   
+            </div> </a> </li>   
+
+    
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         </ul>
     </nav>
 </header>
@@ -35,6 +51,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <ul id="notif-list">
             <li class="notif-success">
   <span>💰 Large Income Alert: ₹20000 received</span>
@@ -42,6 +59,9 @@
 </li>
 
         </ul>
+=======
+        <ul id="notif-list"></ul>
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
     </div>
 </div>
 <div class="user-overlay" id="user-container">

@@ -37,9 +37,12 @@ padding:10px;
     justify-content:center;
     align-items:center;
     pointer-events: none; /*allows clicks to pass through*/
+<<<<<<< HEAD
 }
 .overlay.active{
     pointer-events: auto;/* Block clicks when active*/
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 }
 
 .dialog{
@@ -177,8 +180,31 @@ padding:10px;
     border-radius:50%;
     margin:1px;
     padding:1px;
-    display:inline-block;
+    background-color: navy; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    font-size: 36px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
 }
+#circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#initials {
+    position: absolute;
+    color: white;
+}
+#profile-image-input {
+    display: none;
+}
+
 #change-picture{
     display:inline-block;
     height:fit-content;
@@ -260,3 +286,4 @@ text-align:center;
     padding:7px;
     margin:7px; 
 }
+

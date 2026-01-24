@@ -29,7 +29,7 @@ class MyUserManager(BaseUserManager):
         if password:
             user.set_password(password)
         else:
-            user.set_unusable_password()   
+            user.set_unusable_password()
 
         user.save(using=self._db)
         return user
@@ -37,8 +37,16 @@ class MyUserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, password, **extra_fields)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_email_verified', True)
 
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
 
 class User(AbstractBaseUser, PermissionsMixin):
     AUTH_PROVIDERS = (
@@ -55,14 +63,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         default='email'
     )
     phone = models.CharField(max_length=15, blank=True, null=True)
-
-
+    profile_image=models.ImageField(upload_to="profile_pics/", null=True, blank=True)
     is_email_verified = models.BooleanField(default=False)
-
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
-
     date_joined = models.DateTimeField(default=timezone.now)
 
     objects = MyUserManager()
@@ -136,16 +140,17 @@ class PasswordResetOTP(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
+    
 # ---------------- Budget Model ----------------
 class Budget(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.CharField(max_length=100)
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     icon = models.CharField(max_length=50, blank=True, null=True)
 
-    month = models.IntegerField()  # 1-12
-    year = models.IntegerField()   # 2026
+    month = models.IntegerField(null=True,blank=True)  # 1-12
+    year = models.IntegerField(null=True, blank=True)   # 2026
 
     class Meta:
         unique_together = ('user', 'category', 'month', 'year')
@@ -174,7 +179,7 @@ class MoneyFlow(models.Model):
 
 
 class Notification(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='notification_settings')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notification_settings')
     email_notifications = models.BooleanField(default=False)
     push_notifications = models.BooleanField(default=False)
     monthly_reports = models.BooleanField(default=False)
@@ -185,21 +190,26 @@ class Notification(models.Model):
         return f"{self.user.username}'s notifications"
 
 class PrivacySettings(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='privacy_settings')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='privacy_settings')
     analytics_tracking = models.BooleanField(default=False)
     crash_reporting = models.BooleanField(default=False)
     usage_data = models.BooleanField(default=False)
-    spending_insights = models.BooleanField(default=True)
+    spending_insights = models.BooleanField(default=False)
     two_factor_auth = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.user.username}'s privacy settings"
 
 class EmailOTP(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
+    PURPOSE_CHOICES = (
+        ("signup", "Signup"),
+        ('change_email', 'Change Email'),
     )
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='email_otps',  null=True,
+        blank=True)
+    email = models.EmailField( null=True, blank=True)
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES,  null=True, blank=True  )
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
     attempts = models.IntegerField(default=0)
@@ -207,6 +217,8 @@ class EmailOTP(models.Model):
     def is_expired(self):
         return timezone.now() > self.created_at + timezone.timedelta(minutes=5)
 
+    def __str__(self):
+        return f"{self.user.email} | {self.purpose}"
 from django.db import models
 from django.contrib.auth import get_user_model
 

@@ -51,6 +51,10 @@ from .forms import ProfileForm, NotificationForm, PrivacySettingsForm, PasswordU
 from .models import Notification, PrivacySettings
 from django.contrib.auth import update_session_auth_hash
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 # ---------------- Static Pages ----------------
 
 def review(request): return render(request, 'myapp/review.html')
@@ -61,6 +65,7 @@ def chatbot(request): return render(request, 'myapp/chatbot.html')
 
 
 # ---------------- Signup ----------------
+<<<<<<< HEAD
 
 def signup(request):
     if request.method == "POST":
@@ -78,6 +83,8 @@ def signup(request):
     return render(request, 'myapp/signup.html', {'form': form})
 
 
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 import random
 from django.shortcuts import render, redirect
 
@@ -105,7 +112,11 @@ def signup(request):
             messages.error(request, "Email already exists")
             return redirect("signup")
 
+<<<<<<< HEAD
         # ✅ CORRECT user creation
+=======
+        #user creation
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         user = User.objects.create_user(
             email=email,
             name=name,
@@ -113,11 +124,23 @@ def signup(request):
         )
 
         user.is_active = False  # block login until verified
+<<<<<<< HEAD
+=======
+        user.is_email_verified = False
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         user.save()
 
         # OTP
         otp = str(random.randint(100000, 999999))
+<<<<<<< HEAD
         EmailOTP.objects.create(user=user, otp=otp)
+=======
+        EmailOTP.objects.create(user=user, otp=otp, purpose="signup")
+
+        # SAVE USER ID IN SESSION
+        request.session['otp_user_id'] = user.id
+        request.session['otp_purpose'] = "signup"
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
         send_mail(
     "Email Verification – Artha AI",
@@ -149,6 +172,7 @@ Artha AI Team
     return render(request, "myapp/signup.html")
 
 
+<<<<<<< HEAD
 def verify_email(request):
     if request.method == "POST":
         otp = request.POST.get("otp")
@@ -168,6 +192,85 @@ def verify_email(request):
 
     return render(request, "myapp/verify_email.html")
 
+=======
+import json
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+def verify_email(request):
+    if request.method == "POST":
+
+        if request.content_type == "application/json":
+            data = json.loads(request.body)
+            otp_input = data.get("otp")
+            is_ajax = True
+        else:
+            otp_input = request.POST.get("otp")
+            is_ajax = False
+
+        user_id = request.session.get("otp_user_id")
+        purpose = request.session.get("otp_purpose")
+
+        if not user_id or not purpose:
+            msg = "Session expired. Please try again."
+            if is_ajax:
+                return JsonResponse({"success": False, "message": msg})
+            messages.error(request, msg)
+            return redirect("signup")
+
+        otp_obj = EmailOTP.objects.filter(
+            user_id=user_id,
+            otp=otp_input,
+            purpose=purpose
+        ).first()
+
+        if not otp_obj:
+            msg = "Invalid OTP"
+            if is_ajax:
+                return JsonResponse({"success": False, "message": msg})
+            messages.error(request, msg)
+            return redirect("verify_email")
+
+        if otp_obj.is_expired():
+            otp_obj.delete()
+            msg = "OTP expired"
+            if is_ajax:
+                return JsonResponse({"success": False, "message": msg})
+            messages.error(request, msg)
+            return redirect("verify_email")
+
+        
+        user = otp_obj.user
+
+        if purpose == "signup":
+            user.is_active = True
+            user.is_email_verified = True
+
+        elif purpose == "change_email":
+            user.email = request.session.get("new_email")
+            user.is_email_verified = True
+
+        user.save()
+        otp_obj.delete()
+        request.session.flush()
+
+        msg = "Email verified successfully!"
+
+        if is_ajax:
+            return JsonResponse({
+                "success": True,
+                "message": msg,
+                "new_email": user.email
+            })
+
+        messages.success(request, msg)
+        return redirect("signin")
+
+    return render(request, "myapp/verify_email.html")
+
+
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
@@ -352,6 +455,8 @@ def home(request):
                 category=category,
                 date=date_val
             )
+            # After saving the transaction
+            create_notification(user, "DEBUG: Transaction POST reached", "info")
 
 
         # ---------------- Notifications ----------------
@@ -924,7 +1029,7 @@ def review(request):
 
 
 
-@login_required(login_url='sigin')
+@login_required(login_url='signin')
 def analytics(request):
     user=request.user
     today=date.today()
@@ -941,10 +1046,32 @@ def analytics(request):
 
     #for monthly history
     monthly_history=[]
-    recent_months=Expense.objects.filter(user=user).annotate(
+    
+    # Get months with expenses
+    expense_months = Expense.objects.filter(user=user).annotate(
         m=ExtractMonth('date'),
         y=ExtractYear('date')
-    ).values('m','y').distinct().order_by('-y','-m')[:6]
+    ).values('m','y').distinct()
+    
+    # Get months with income
+    income_months = Income.objects.filter(user=user).annotate(
+        m=ExtractMonth('date'),
+        y=ExtractYear('date')
+    ).values('m','y').distinct()
+    
+    # Combine and deduplicate months
+    all_months = {}
+    for item in expense_months:
+        key = (item['y'], item['m'])
+        all_months[key] = {'y': item['y'], 'm': item['m']}
+    
+    for item in income_months:
+        key = (item['y'], item['m'])
+        if key not in all_months:
+            all_months[key] = {'y': item['y'], 'm': item['m']}
+    
+    # Sort by year and month, get recent 6
+    recent_months = sorted(all_months.values(), key=lambda x: (x['y'], x['m']), reverse=True)[:6]
 
     for item in recent_months:
         m_inc=Income.objects.filter(user=user,date__year=item['y'], date__month=item['m']).aggregate(Sum('amount'))['amount__sum'] or 0
@@ -959,6 +1086,7 @@ def analytics(request):
             'expense': m_exp,
             'count': m_count
         })
+    
     
     category_summary=(
         Expense.objects.filter(user=user, date__year=today.year, date__month=today.month)
@@ -1082,31 +1210,85 @@ def category_trend_api(request):
             for d in range(1, days_in_month+1)
         ]
 
-        values=[0]*days_in_month
+        actual_values=[0.0]*days_in_month
 
         for entry in qs:
             index=days.index(entry['date'].isoformat())
-            values[index]=entry['total']
+            actual_values[index] = float(entry['total'])
+
+        is_current_month = (year == today.year and month == today.month)
+        current_day_index = min(today.day - 1, days_in_month - 1) if is_current_month else days_in_month - 1
 
         days_nums=np.arange(1,days_in_month+1)
-        values_array=np.array(values)
-
-        #min two values needed
-        if len(values_array[values_array>0])>=2:
-            m,b=np.polyfit(days_nums.astype(float),values_array.astype(float), 1)
-            predicted_values=[max(0,float(m*x+b)) for x in days_nums]
         
+        #Create predicted values array
+        predicted_values = [None] * days_in_month
+
+        # Only predict if we have at least 2 non-zero values up to current day
+        values_for_prediction = actual_values[:current_day_index + 1] if is_current_month else actual_values
+        days_for_prediction = days_nums[:current_day_index + 1] if is_current_month else days_nums
+        
+        non_zero_indices = [i for i, v in enumerate(values_for_prediction) if float(v) > 0]
+        non_zero_count = len(non_zero_indices)
+       
+        prediction_info = {}
+        
+        if non_zero_count >= 2:
+            weights = np.ones(len(values_for_prediction))
+            for i in non_zero_indices:
+                # Recent days get higher weights (exponential weighting)
+                weights[i] = np.exp((i - len(values_for_prediction)) / 10) + 1
+            
+            # Weighted polynomial fit (degree 1 = linear)
+            try:
+                days_array = days_for_prediction.astype(float)
+                values_array = np.array(values_for_prediction, dtype=float)
+                
+                m, b = np.polyfit(days_array, values_array, 1, w=weights)
+                
+              
+                predicted_all = m * days_for_prediction + b
+                residuals = values_array - predicted_all
+                ss_res = np.sum(residuals**2)
+                ss_tot = np.sum((values_array - np.mean(values_array))**2)
+                r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+                
+                
+                if is_current_month:
+                    #start from tomorrow
+                    for i in range(current_day_index + 1, days_in_month):
+                        predicted_values[i] = max(0, float(m * (i + 1) + b))
+                else:
+                    
+                    for i in range(days_in_month):
+                        predicted_values[i] = max(0, float(m * (i + 1) + b))
+                
+                
+                prediction_info = {
+                    "method": "weighted_linear_regression",
+                    "r_squared": round(float(r_squared), 3),
+                    "accuracy": "good" if r_squared > 0.7 else "moderate" if r_squared > 0.4 else "low",
+                    "data_points": non_zero_count
+                }
+            except Exception as e:
+                prediction_info = {"error": str(e)}
         else:
-            predicted_values=values
+            prediction_info = {
+                "method": "insufficient_data",
+                "data_points": non_zero_count,
+                "message": "Need at least 2 days of expense data for prediction"
+            }
 
         return JsonResponse({
             "year":year,
             "month":month,
             "category":category,
             "days":days,
-            "values":values,
-            "predicted":predicted_values
-            })
+            "values":actual_values,
+            "predicted":predicted_values,
+            "current_day": current_day_index +  1 if is_current_month else None,
+            "prediction_info": prediction_info  
+        })
     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -1346,86 +1528,15 @@ def delete_transactionhome(request):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
     
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
-from .models import PasswordResetOTP
-import random
-from django.utils import timezone
-
-User = get_user_model()
-
-# ---------------- Helper function ----------------
-def generate_otp():
-    return str(random.randint(100000, 999999))
-
-def send_otp_email(email, otp):
-    # Replace with your email backend logic
-    print(f"Sending OTP {otp} to {email}")  # DEBUG only
-    # send_mail('Your OTP', f'Your OTP is {otp}', 'from@example.com', [email])
-
-# ---------------- Forgot Password ----------------
-def forgot_password(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        user = User.objects.filter(email=email).first()
-        if user:
-            otp = generate_otp()
-            PasswordResetOTP.objects.create(user=user, otp=otp, created_at=timezone.now())
-            send_otp_email(email, otp)
-            request.session['reset_user'] = user.id
-            messages.success(request, "OTP sent to your email")
-            return redirect("verify_otp")
-        else:
-            messages.error(request, "No account found with this email")
-    return render(request, "myapp/forgot_password.html")
-from django.core.mail import send_mail
-
-def send_otp_email(email, otp):
-    subject = "Your OTP for Password Reset"
-    message = f"Hello!\n\nYour OTP is: {otp}\nIt is valid for 5 minutes."
-    from_email = None  # uses DEFAULT_FROM_EMAIL
-    recipient_list = [email]
-    send_mail(subject, message, from_email, recipient_list)
-
-
-# ---------------- Verify OTP ----------------
-def verify_otp(request):
-    if request.method == "POST":
-        otp = request.POST.get("otp")
-        user_id = request.session.get('reset_user')
-        otp_obj = PasswordResetOTP.objects.filter(user_id=user_id, otp=otp).last()
-
-        if otp_obj and (timezone.now() - otp_obj.created_at).total_seconds() < 300:  # 5 min expiry
-            messages.success(request, "OTP verified! Please reset your password")
-            return redirect("reset_password")
-        else:
-            messages.error(request, "Invalid or expired OTP")
-
-    return render(request, "myapp/verify_otp.html")
-
-
-# ---------------- Reset Password ----------------
-def reset_password(request):
-    if request.method == "POST":
-        new_password = request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
-        if new_password != confirm_password:
-            messages.error(request, "Passwords do not match")
-        else:
-            user_id = request.session.get('reset_user')
-            user = User.objects.get(id=user_id)
-            user.password = make_password(new_password)
-            user.save()
-            messages.success(request, "Password updated successfully! You can now sign in.")
-            return redirect("signin")
-    return render(request, "myapp/reset_password.html")
-
 
 #budget
 @login_required
 def budget_view(request):
+    # Clear any existing messages at the start of GET request
+    if request.method == "GET":
+        storage = messages.get_messages(request)
+        storage.used = True
+
     now = datetime.now()
     month = request.GET.get('month', now.month)
     year = request.GET.get('year', now.year)
@@ -1441,6 +1552,8 @@ def budget_view(request):
     except (TypeError, ValueError):
         year = now.year
 
+    months = ['January', 'February', 'March', 'April', 'May', 'June','July', 'August', 'September', 'October', 'November', 'December']
+    
     #  post logic
     if request.method == "POST":
         form_type = request.POST.get('form_type')
@@ -1450,15 +1563,66 @@ def budget_view(request):
 
 
         if form_type == 'add_category':
+            category = request.POST.get('category')
+            amount = request.POST.get('amount')
+            
+            # Check if budget already exists for this category
+            existing_budget = Budget.objects.filter(
+                user=request.user,
+                category=category,
+                month=month,
+                year=year
+            ).first()
+            
+            if existing_budget:
+                messages.error(
+                    request,
+                    f"Budget for '{category}' already exists for {months[month-1]} {year}. Please edit the existing budget instead."
+                )
+                return redirect(f'/budget/?month={month}&year={year}')
+            
+            # Check if amount is zero or negative
+            try:
+                amount_value = float(amount)
+                if amount_value <= 0:
+                    messages.error(
+                        request,
+                        "Budget amount must be greater than zero."
+                    )
+                    return redirect(f'/budget/?month={month}&year={year}')
+            except (TypeError, ValueError):
+                messages.error(
+                    request,
+                    "Invalid budget amount."
+                )
+                return redirect(f'/budget/?month={month}&year={year}')
+            
             form = BudgetForm(request.POST)
             if form.is_valid():
                 budget = form.save(commit=False)
                 budget.user = request.user
-                budget.month = month
-                budget.year = year
+                budget.month = None
+                budget.year = None
                 budget.save()
 
         elif form_type == 'add_party':
+            person_name = request.POST.get('person_name')
+            flow_type = request.POST.get('flow_type')
+            
+            # Check if party already exists
+            existing_party = MoneyFlow.objects.filter(
+                user=request.user,
+                person_name__iexact=person_name,
+                flow_type=flow_type
+            ).first()
+            
+            if existing_party:
+                messages.error(
+                    request,
+                    f"'{person_name}' already exists in your money flow. Please delete the existing entry to add new."
+                )
+                return redirect(f'/budget/?month={month}&year={year}')
+            
             flow_form = MoneyFlowForm(request.POST)
             if flow_form.is_valid():
                 flow = flow_form.save(commit=False)
@@ -1469,7 +1633,7 @@ def budget_view(request):
         return redirect(f'/budget/?month={month}&year={year}')
 
     # data display
-    total_income = Income.objects.filter(user=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_income = Income.objects.filter(user=request.user, date__month=month, date__year=year).aggregate(Sum('amount'))['amount__sum'] or 0
     recommended_budget_limit = float(total_income) * 0.7
     
     total_spent = Expense.objects.filter(
@@ -1480,7 +1644,7 @@ def budget_view(request):
 
 
     #budgets set
-    budgets = Budget.objects.filter(user=request.user, month=month,year=year)
+    budgets = Budget.objects.filter(user=request.user)
 
     #All categories with some expense this month
     all_expense_categories = Expense.objects.filter(
@@ -1490,7 +1654,9 @@ def budget_view(request):
     ).values_list('category', flat=True).distinct()
 
     # Collect all categories (from budgets + expenses)
-    all_categories = set(budgets.values_list('category', flat=True)) | set(all_expense_categories)
+    budget_categories = set(budgets.values_list('category', flat=True))
+    expense_categories_set = set(all_expense_categories)
+    all_categories = budget_categories | expense_categories_set
 
     budget_map = {b.category: b for b in budgets}
     budget_data = []
@@ -1534,7 +1700,7 @@ def budget_view(request):
                 'spent': spent,
                 'remaining': -spent,
                 'percent': 100,
-                'is_over': True,
+                'is_over': spent > 0,
                 'has_budget': False
             })
 
@@ -1550,6 +1716,9 @@ def budget_view(request):
     you_owe_total = you_owe_list.aggregate(Sum('amount'))['amount__sum'] or 0
     owed_to_you_total = owed_to_you_list.aggregate(Sum('amount'))['amount__sum'] or 0
     net_flow = owed_to_you_total - you_owe_total
+
+    #check if overspending
+    is_overspending = total_spent > total_budget and total_budget > 0
 
     context = {
         'now': now,
@@ -1568,6 +1737,8 @@ def budget_view(request):
         'total_income': total_income,
         'recommended_limit': recommended_budget_limit,
         'allocation_warning': total_budget > recommended_budget_limit,
+        'has_any_budget': total_budget > 0,
+        'is_overspending': is_overspending
     }
 
     return render(request, 'myapp/budget.html', context)
@@ -1578,9 +1749,19 @@ def edit_budget(request):
     budget_id = request.POST.get('budget_id')
     new_amount = request.POST.get('amount')
     budget_item = get_object_or_404(Budget, id=budget_id, user=request.user)
+
+    month = request.POST.get('month', datetime.now().month)
+    year = request.POST.get('year', datetime.now().year)
     
     if new_amount is not None:
-        new_amount = float(new_amount)   
+        try:
+            new_amount = float(new_amount)
+        except (TypeError, ValueError):
+            messages.error(
+                request,
+                "Invalid budget amount."
+            )
+            return redirect(f'/budget/?month={budget_item.month}&year={budget_item.year}')
 
         if new_amount <= 0:              
             messages.error(
@@ -1588,7 +1769,7 @@ def edit_budget(request):
                 "Budget must be greater than zero."
             )
             return redirect(
-                f'/budget/?month={budget_item.month}&year={budget_item.year}'
+                f'/budget/?month{month}&year={year}'
             )
 
         budget_item.amount = new_amount  
@@ -1598,7 +1779,7 @@ def edit_budget(request):
             f"Updated {budget_item.category}!"
         )
 
-    return redirect(f'/budget/?month={budget_item.month}&year={budget_item.year}')
+    return redirect(f'/budget/?month={month}&year={year}')
 
 #delete money flow
 @login_required
@@ -1635,6 +1816,8 @@ def delete_money_flow(request):
 def delete_budget(request):
     budget_id = request.POST.get('budget_id')
     budget = get_object_or_404(Budget, id=budget_id, user=request.user)
+    month = request.POST.get('month', datetime.now().month)
+    year = request.POST.get('year', datetime.now().year)
 
     #Checking if expenses exist for this category
     has_expenses = Expense.objects.filter(
@@ -1656,8 +1839,9 @@ def delete_budget(request):
             f"Deleted budget '{budget.category}'."
         )
 
-    return redirect(f'/budget/?month={budget.month}&year={budget.year}')
+    return redirect(f'/budget/?month={month}&year={year}')
 
+#profile
 @login_required
 def profile(request):
     user = request.user
@@ -1675,7 +1859,7 @@ def profile(request):
             'analytics_tracking': False,
             'crash_reporting': False,
             'usage_data': False,
-            'spending_insights': True,
+            'spending_insights': False,
             'two_factor_auth': False
         })
     
@@ -1853,6 +2037,46 @@ def toggle_two_factor(request):
 
 @login_required
 @require_POST
+def request_email_change(request):
+    data = json.loads(request.body)
+    new_email = data.get("new_email")
+
+    if not new_email:
+        return JsonResponse({"success": False, "message": "Email required"})
+
+    if User.objects.filter(email=new_email).exists():
+        return JsonResponse({"success": False, "message": "Email already in use"})
+
+    otp = str(random.randint(100000, 999999))
+
+    EmailOTP.objects.create(
+        user=request.user,
+        otp=otp,
+        purpose="change_email"
+    )
+
+    request.session['otp_user_id'] = request.user.id
+    request.session['otp_purpose'] = "change_email"
+    request.session['new_email'] = new_email
+
+    send_mail(
+        "Confirm email change – Artha AI",
+        f"""Your OTP is: {otp}
+    This OTP is valid for 5 minutes only. Please do not share this code with anyone.
+    If you did not request this verification, please ignore this email.        
+    Kind regards,
+    Artha AI Team
+    """,
+        None,
+        [new_email],
+        fail_silently=False
+    )
+    return JsonResponse({"success": True,
+                         "message": "OTP sent to new email"})
+
+
+@login_required
+@require_POST
 def delete_account(request):
     """Handle account deletion"""
     try:
@@ -1870,6 +2094,100 @@ def delete_account(request):
             'message': str(e)
         }, status=400)
     
+@login_required
+def export_settings(request):
+    user = request.user
+    notification_settings = Notification.objects.get(user=user)
+    privacy_settings = PrivacySettings.objects.get(user=user)
+    
+    settings_data = {
+        'user_info': {
+            'name': user.name,
+            'email': user.email,
+            'phone': user.phone,
+        },
+        'notifications': {
+            'email_notifications': notification_settings.email_notifications,
+            'push_notifications': notification_settings.push_notifications,
+            'monthly_reports': notification_settings.monthly_reports,
+            'budget_alerts': notification_settings.budget_alerts,
+            'goal_reminders': notification_settings.goal_reminders,
+        },
+        'privacy': {
+            'analytics_tracking': privacy_settings.analytics_tracking,
+            'crash_reporting': privacy_settings.crash_reporting,
+            'usage_data': privacy_settings.usage_data,
+            'spending_insights': privacy_settings.spending_insights,
+            'two_factor_auth': privacy_settings.two_factor_auth,
+        },
+        'exported_at': timezone.now().isoformat()
+    }
+    response = JsonResponse(settings_data)
+    response['Content-Disposition'] = f'attachment; filename="settings_{user.id}.json"'
+    return response
+
+@login_required
+@require_POST
+def clear_all_data(request):
+    try:
+        data = json.loads(request.body)
+        if data.get('confirm') != 'DELETE':
+            return JsonResponse({
+                'success': False,
+                'message': 'Please type DELETE to confirm'
+            }, status=400)
+        
+        user = request.user
+        
+        # Delete all user data
+        Expense.objects.filter(user=user).delete()
+        Income.objects.filter(user=user).delete()
+        Goal.objects.filter(user=user).delete()
+        Budget.objects.filter(user=user).delete()
+        MoneyFlow.objects.filter(user=user).delete()
+        
+        # Reset settings to default
+        notification_settings = Notification.objects.get(user=user)
+        notification_settings.email_notifications = False
+        notification_settings.push_notifications = False
+        notification_settings.monthly_reports = False
+        notification_settings.budget_alerts = False
+        notification_settings.goal_reminders = False
+        notification_settings.save()
+        
+        privacy_settings = PrivacySettings.objects.get(user=user)
+        privacy_settings.analytics_tracking = False
+        privacy_settings.crash_reporting = False
+        privacy_settings.usage_data = False
+        privacy_settings.spending_insights = False
+        privacy_settings.two_factor_auth = False
+        privacy_settings.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'All data cleared successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_POST
+def upload_profile_picture(request):
+    image = request.FILES.get("profile_image")
+
+    if not image:
+        return JsonResponse({"success": False, "message": "No image uploaded"})
+
+    request.user.profile_image = image
+    request.user.save()
+
+    return JsonResponse({
+        "success": True,
+        "image_url": request.user.profile_image.url
+    })
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import NotificationEvent
@@ -1914,5 +2232,4 @@ def clear_notifications(request):
         return JsonResponse({"status": "ok"})
 
     return JsonResponse({"error": "Invalid method"}, status=405)
-
 

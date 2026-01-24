@@ -1,4 +1,28 @@
+<<<<<<< HEAD
  function ProfileDialogs() {
+=======
+/*CSRF helper*/ 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+function ProfileDialogs() {
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
        const overlay=document.querySelector(".overlay");
        const profile=document.querySelector(".profile-button");
        const settings=document.querySelector(".settings-button");
@@ -78,9 +102,12 @@
         }};
 
 
+<<<<<<< HEAD
 const csrftoken = document.querySelector('meta[name="csrf-token"]').content;
 
 
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
   
   document.getElementById("save-profile")?.addEventListener("click", async () => {
     const phoneInput = document.getElementById("phone");
@@ -269,6 +296,145 @@ const savePrivacyBtn = document.getElementById('save-privacy');
             }
         });
     }
+<<<<<<< HEAD
+=======
+   
+    //profile picture
+const input = document.getElementById('profile-image-input');
+const uploadBtn = document.getElementById('change-picture');
+const circle = document.getElementById('circle');
+const initials = document.getElementById('initials');
+const img = document.getElementById('profile-circle-img');
+
+// Set initials from data attribute 
+if (initials && circle && circle.dataset.initials) {
+    initials.textContent = circle.dataset.initials.toUpperCase();
+}
+
+if (uploadBtn && input) {
+    uploadBtn.addEventListener('click', e => {
+        e.preventDefault();
+        input.click();
+    });
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        // check if img exists
+        if (img) {
+            img.src = URL.createObjectURL(file);
+            img.style.display = 'block';
+            if (initials) initials.style.display = 'none';
+        }
+
+        // Upload via AJAX
+        const formData = new FormData();
+        formData.append('profile_image', file);
+        
+        const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfInput) {
+            formData.append('csrfmiddlewaretoken', csrfInput.value);
+        }
+
+        fetch('/upload-profile-picture/', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Profile image updated!');
+            } else {
+                alert('Upload failed!');
+            }
+        })
+        .catch(error => {
+            console.error('Upload error:', error);
+            alert('Upload failed!');
+        });
+    });
+}
+
+//email modal
+const changeEmailBtn = document.getElementById('change-email-btn');
+    const emailModal = document.getElementById('change-email-modal');
+    
+    if (changeEmailBtn && emailModal) {
+        changeEmailBtn.addEventListener('click', () => {
+            emailModal.style.display = emailModal.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+//email
+   const sendOtpBtn = document.getElementById('send-otp-btn');
+    if (sendOtpBtn) {
+        console.log('Email OTP button found'); // Debug
+        
+        sendOtpBtn.addEventListener('click', async () => {
+            console.log('Send OTP clicked'); // Debug
+            
+            const newEmailInput = document.getElementById('new-email');
+            if (!newEmailInput) {
+                alert("Email input not found");
+                return;
+            }
+            
+            const newEmail = newEmailInput.value;
+            if (!newEmail) {
+                alert("Please enter a new email");
+                return;
+            }
+            
+            try {
+                const res = await fetch('/request-email-change/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ new_email: newEmail })
+                });
+                
+                const data = await res.json();
+                alert(data.message);
+                
+                if (data.success) {
+                    window.location.href = "/verify-email/";
+                }
+            } catch (error) {
+                console.error('Email change error:', error);
+                alert('An error occurred while requesting email change');
+            }
+        });
+    } else {
+        console.warn('Send OTP button not found');
+    }
+    //export settings
+    document.getElementById('export-settings')?.addEventListener('click', () => {
+    window.location.href = '/export-settings/';
+    });
+
+    //clear data
+    document.getElementById('clear-data')?.addEventListener('click', async () => {
+     const confirmation = prompt("Type DELETE to confirm:");
+    if (!confirmation) return;
+    const res = await fetch('/clear-data/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({ confirm: confirmation })
+    });
+    
+    const data = await res.json();
+    alert(data.message);
+    
+    if (data.success) {
+        window.location.reload();
+    }
+});
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 }
 
 // Initialize when page loads

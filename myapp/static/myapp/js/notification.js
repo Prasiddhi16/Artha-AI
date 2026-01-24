@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ---------- UI ----------
+<<<<<<< HEAD
    function updateNotifications() {
     const unreadCount = notifications.filter(n => !n.is_read).length;
 
@@ -52,6 +53,34 @@ document.addEventListener("DOMContentLoaded", function () {
     markAllReadBtn.disabled = unreadCount === 0;
     clearNotifBtn.disabled = notifications.length === 0;
 }
+=======
+    function updateNotifications() {
+        const unreadCount = notifications.filter(n => !n.is_read).length;
+
+        notifCount.textContent = unreadCount;
+        notifCount.style.display = unreadCount ? "inline-block" : "none";
+
+        notifList.innerHTML = "";
+
+        notifications.forEach(n => {
+            const li = document.createElement("li");
+            li.textContent = n.message;
+
+            if (!n.is_read) li.style.fontWeight = "bold";
+
+            if (n.notification_type === "warning") li.style.color = "orange";
+            if (n.notification_type === "error") li.style.color = "red";
+            if (n.notification_type === "success") li.style.color = "green";
+            if (n.notification_type === "info") li.style.color = "blue";
+
+            notifList.appendChild(li);
+        });
+
+        // disable buttons when useless
+        markAllReadBtn.disabled = unreadCount === 0;
+        clearNotifBtn.disabled = notifications.length === 0;
+    }
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
     // ---------- Fetch ----------
     async function fetchNotifications() {
@@ -59,11 +88,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const res = await fetch("/api/notifications/");
             if (!res.ok) throw new Error("Fetch failed");
             const data = await res.json();
+<<<<<<< HEAD
              notifications = (data.notifications || []).map(n => ({
             ...n,
             client_created_at: new Date() 
         }));
 
+=======
+            notifications = data.notifications || [];
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
             updateNotifications();
         } catch (err) {
             console.error("Notification fetch error:", err);
@@ -89,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error(err);
         }
     }
+<<<<<<< HEAD
     function timeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000);
 
@@ -109,6 +143,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     return "just now";
 }
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
     async function clearNotifications() {
         try {
@@ -162,4 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(fetchNotifications, 15000);
     fetchNotifications();
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e

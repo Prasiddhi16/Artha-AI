@@ -11,8 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = 'django-insecure-78(tzg5ghtga(nqa47=q6&z5vg@60=01x6b15qbz#z(ff-h!%+'
 SECRET_KEY = 'put key of homepage here'
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -58,9 +58,9 @@ SOCIAL_AUTH_PIPELINE = (
     'myapp.social_pipeline.redirect_to_set_password',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'put key of google auth here'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'put key of google auth here'
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'YOUR_GOOGLE_CLIENT_ID'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
 
 MIDDLEWARE = [
@@ -136,8 +136,9 @@ EMAIL_HOST = 'smtp.gmail.com'   # or your provider
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'email'
-EMAIL_HOST_PASSWORD = 'passb' # use app password, not real password
+
+EMAIL_HOST_USER = 'YOUR_EMAIL'
+EMAIL_HOST_PASSWORD = 'YOUR_EMAIL_PASSWORD'
 
 
 
@@ -154,3 +155,7 @@ LOGOUT_REDIRECT_URL = '/signin/'
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/set-password/'
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/signin/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
