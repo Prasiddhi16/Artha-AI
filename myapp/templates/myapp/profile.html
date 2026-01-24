@@ -57,12 +57,9 @@
         <hr>
         <br>
         <div class="personal_details">
-<<<<<<< HEAD
-=======
         <form id="profile-pic-form" enctype="multipart/form-data">
         {% csrf_token %}
          <input type="file" id="profile-image-input" name="profile_image" accept="image/*" style="display: none;">
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         <div id="picture">
             <div id="circle" data-initials="{{ user.first_name|slice:':1' }}{{ user.last_name|slice:':1' }}">
            {% if user.profile_image %}
@@ -80,7 +77,6 @@
          </form>
         <br>
         <br>
-        <br>
         <div id="usernames">
             <label for="name">Name</label> <br>
             <input type="text" name="name" id="name" value="{{ user.name }}" placeholder="Enter your name here">
@@ -88,13 +84,9 @@
         <br>
         <div id="emails">
             <label for="email">Email</label><br>
-<<<<<<< HEAD
-            <input type="text" name="email" id="email" value="{{ user.email }}" placeholder="Enter your email here">
-=======
             <input type="email" name="email" id="email" value="{{ user.email }}" readonly class="readonly-field">
              <button type="button" id="change-email-btn" class="change-btn">
             Change Email</button>
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         </div>
         <br>
         <div id="change-email-modal" style="display:none;">
@@ -115,7 +107,6 @@
             <button type="button" id="save-profile" class="save"><i class="fa-solid fa-print"></i> Save Changes</button>
         </div>
         </div>
-    </div>
 
     </div>
 
@@ -291,13 +282,8 @@
             <p class="first-text">Data Management</p><br>
             <p class="second-text">Export or delete your data</p><br>
             <br>
-<<<<<<< HEAD
-            <button class="export"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
-            <button type="button" class="delete"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
-=======
             <button type="button" class="export" id="export-settings"><i class="fa-solid fa-download"></i>Export all Settings</button> <br>
             <button type="button" class="delete" id="clear-data"><i class="fa-solid fa-trash"></i>Clear All App Data</button> <br>
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
             <p class="sub-info" id="align">Clearing data will reset all settings to default</p> 
         </div>
     </form>

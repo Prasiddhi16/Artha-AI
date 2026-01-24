@@ -258,8 +258,6 @@
     container.classList.remove('has-message');
     });
 }
-<<<<<<< HEAD
-=======
 
     //default dates function
     function setDefaultDates() {
@@ -282,7 +280,6 @@
     setDefaultDates();
 
 
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
     //bargraph
     let barGraphs=[];
 
@@ -370,15 +367,10 @@
     });
     });
     
-<<<<<<< HEAD
-
-    loadBarGraph(); //default
-=======
     //load bar graph with default dates on page load
     const todayDate = new Date().toISOString().split('T')[0];
     const sevenDaysAgo = new Date(Date.now() - 6*24*60*60*1000).toISOString().split('T')[0];
     loadBarGraph(sevenDaysAgo,todayDate);//default
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
     // Syncs any date input with its counterparts across tabs
         document.addEventListener('input', (e) => {
@@ -548,81 +540,6 @@
     }
 
     function loadLineGraph(){
-<<<<<<< HEAD
-        const category=document.querySelector('#categorySelector select').value;
-        url=`/api/category_trend/?month=${lineMonth+1}`+`&year=${lineYear}`+`&category=${encodeURIComponent(category)}`;
-
-       fetch(url)
-       .then(res=>res.json())
-       .then(result=>{
-
-        if (!result.days || result.values.every(v => v === 0)) {
-            showEmptyState('line-chart-container', '📈', 'No Trend Data', `No data found for "${category}" in ${months[lineMonth]} ${lineYear}.`);
-                return;
-            return;
-        }
-
-        // Hide empty state before rendering chart
-            hideEmptyState('line-chart-container');
-
-        const days=result.days;
-        const values=result.values;
-        const predicted=result.predicted;
-
-        if(!result.category) return;
-    
-        if(lineGraph) lineGraph.destroy();
-
-        lineGraph=new Chart(document.getElementById('lineGraph'),{
-            type:'line',
-            data:{
-                labels:days,
-                datasets:[{
-                            label: `${category} actual`,
-                            data: values,
-                            tension: 0.4,
-                            fill: false,
-                            borderWidth: 2,
-                            backgroundColor:'rgb(0,0,128)',
-                            borderColor:'rgb(0,0,128)'
-                },
-                {
-                          label: `${category} predicted`,
-                          data:predicted,
-                          borderColor: 'rgba(255, 99, 132, 0.8)',
-                          borderDash: [5,5],  // dashed line for prediction
-                          fill: false,
-                          tension: 0.4
-                }
-                ]
-            },
-            options:{
-                responsive:true,
-                maintainAspectRatio: false,
-                plugins:{
-                    legend:{position:'bottom'}
-                },
-                scales:{
-                y:{beginAtZero : true}
-                }
-            }
-        });
-       });
-       
-    }
-
-    //change
-    document.querySelector('.loadLine').addEventListener("click",loadLineGraph);
-    
-
-    //default
-    lineMonthLabel();
-    loadLineGraph();
-
-
-    </script>
-    {% endblock %}
-=======
     const category=document.querySelector('#categorySelector select').value;
     url=`/api/category_trend/?month=${lineMonth+1}`+`&year=${lineYear}`+`&category=${encodeURIComponent(category)}`;
 
@@ -746,4 +663,3 @@ loadLineGraph();
 </script>
 
 {% endblock %}
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e

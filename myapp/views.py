@@ -51,10 +51,6 @@ from .forms import ProfileForm, NotificationForm, PrivacySettingsForm, PasswordU
 from .models import Notification, PrivacySettings
 from django.contrib.auth import update_session_auth_hash
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 # ---------------- Static Pages ----------------
 
 def review(request): return render(request, 'myapp/review.html')
@@ -65,26 +61,6 @@ def chatbot(request): return render(request, 'myapp/chatbot.html')
 
 
 # ---------------- Signup ----------------
-<<<<<<< HEAD
-
-def signup(request):
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            messages.success(request, "Account created successfully! You can now sign in.")
-            return redirect('signin')
-        else:
-            messages.error(request, "Please fix the errors below")
-    else:
-        form = SignUpForm()
-    return render(request, 'myapp/signup.html', {'form': form})
-
-
-=======
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 import random
 from django.shortcuts import render, redirect
 
@@ -112,11 +88,7 @@ def signup(request):
             messages.error(request, "Email already exists")
             return redirect("signup")
 
-<<<<<<< HEAD
-        # ✅ CORRECT user creation
-=======
         #user creation
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         user = User.objects.create_user(
             email=email,
             name=name,
@@ -124,23 +96,16 @@ def signup(request):
         )
 
         user.is_active = False  # block login until verified
-<<<<<<< HEAD
-=======
         user.is_email_verified = False
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         user.save()
 
         # OTP
         otp = str(random.randint(100000, 999999))
-<<<<<<< HEAD
-        EmailOTP.objects.create(user=user, otp=otp)
-=======
         EmailOTP.objects.create(user=user, otp=otp, purpose="signup")
 
         # SAVE USER ID IN SESSION
         request.session['otp_user_id'] = user.id
         request.session['otp_purpose'] = "signup"
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
         send_mail(
     "Email Verification – Artha AI",
@@ -172,27 +137,6 @@ Artha AI Team
     return render(request, "myapp/signup.html")
 
 
-<<<<<<< HEAD
-def verify_email(request):
-    if request.method == "POST":
-        otp = request.POST.get("otp")
-
-        otp_obj = EmailOTP.objects.filter(otp=otp).first()
-
-        if otp_obj and not otp_obj.is_expired():
-            user = otp_obj.user
-            user.is_active = True
-            user.is_email_verified = True
-            user.save()
-            otp_obj.delete()
-            messages.success(request, "Email verified successfully!")
-            return redirect("signin")
-        else:
-            messages.error(request, "Invalid or expired OTP")
-
-    return render(request, "myapp/verify_email.html")
-
-=======
 import json
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -270,7 +214,6 @@ def verify_email(request):
     return render(request, "myapp/verify_email.html")
 
 
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
@@ -1674,8 +1617,8 @@ def budget_view(request):
 
         if budget:
             amount = budget.amount
-            remaining = amount - spent
-            percent = (spent / amount * 100) if amount > 0 else     (100 if spent > 0 else 0)
+            remaining = float(amount)-float(spent)
+            percent = (float(spent) / float(amount) * 100) if amount > 0 else     (100 if spent > 0 else 0)
 
             budget_data.append({
                 'id': budget.id,
@@ -1727,8 +1670,8 @@ def budget_view(request):
         'budget_data': budget_data,
         'total_budget': total_budget,
         'total_spent': total_spent,
-        'remaining_total': total_budget - total_spent,
-        'total_percent': round((total_spent / total_budget * 100), 1) if total_budget > 0 else (100 if total_spent > 0 else 0),
+        'remaining_total':float(total_budget) -float( total_spent),
+        'total_percent': round((float(total_spent) / float(total_budget) * 100), 1) if total_budget > 0 else (100 if total_spent > 0 else 0),
         'you_owe_list': you_owe_list,
         'owed_to_you_list': owed_to_you_list,
         'you_owe_total': you_owe_total,
@@ -2191,6 +2134,8 @@ def upload_profile_picture(request):
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import NotificationEvent
+from django.utils.timezone import localtime
+
 
 @login_required
 def get_notifications(request):
@@ -2203,7 +2148,7 @@ def get_notifications(request):
             "message": n.message,
             "type": n.notification_type,
             "is_read": n.is_read,
-            "created_at": n.created_at.strftime("%Y-%m-%d %H:%M:%S")
+           "created_at": localtime(n.created_at).isoformat()
         }
         for n in notifications
     ]

@@ -102,21 +102,16 @@ body
     opacity: 0.4;
     cursor: not-allowed;
 }
-<<<<<<< HEAD
 #notif-list li {
   border-left: 5px solid #ccc;
   background-color: #f9f9f9;
 }
-=======
-
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
 .notif-overlay ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
-<<<<<<< HEAD
 /* Base notification item */
 .notif-overlay li {
   padding: 10px;
@@ -163,12 +158,6 @@ body
   white-space: nowrap;
 }
 
-=======
-.notif-overlay li {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 .notif-wrapper {
   position: relative; /* makes this the positioning context */
   display: inline-block;
@@ -210,8 +199,6 @@ body
   z-index:3000;
   
 }
-<<<<<<< HEAD
-=======
 
 .circle{
     height:30px;
@@ -242,4 +229,3 @@ body
     color: white;
 }
 
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e

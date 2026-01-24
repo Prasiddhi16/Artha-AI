@@ -2,8 +2,6 @@
 {% load static %}
 {% block title %} Budget Page {% endblock %}
 {% block content %}
-<<<<<<< HEAD
-=======
   <!-- Hidden Django Messages for JavaScript -->
   {% if messages %}
     {% for message in messages %}
@@ -12,7 +10,6 @@
       </div>
     {% endfor %}
   {% endif %}
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 
   <div class="container">
     <div class="header">
@@ -36,21 +33,13 @@
       </div>
 
       <div class="amount-display">
-<<<<<<< HEAD
-        <div class="remaining-amount">Rs. {{ remaining_total }}</div>
-=======
         <div class="remaining-amount" style="color: {% if is_overspending %}#ef4444{% else %}#10b981{% endif %}">Rs. {{ remaining_total }}</div>
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         <div class="spent-info">
           <span>Rs. {{ total_spent}} of Rs. {{ total_budget }} spent</span>
           <span class="percentage">{{ total_percent }}% </span>
         </div>
         <div class="progress-bar">
-<<<<<<< HEAD
-          <div class="progress-fill {% if b.is_over %}over{% endif %}" style="width: {% if total_percent > 100 %}100{% else %}{{ total_percent }}{% endif %}%"></div>
-=======
           <div class="progress-fill {% if total_spent >  total_budget %}over{% endif %}" style="width: {% if total_percent > 100 %}100{% else %}{{ total_percent }}{% endif %}%"></div>
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         </div>
       </div>
 
@@ -68,16 +57,12 @@
           <div class="stat-value">Rs. {{ recommended_limit }}</div>
         </div>
       </div>
-<<<<<<< HEAD
-      {% if allocation_warning %}
-=======
        {% if not has_any_budget %}
       <div class="no-budget-message">
     <i class="fas fa-info-circle"></i>
     You have not yet allocated budgets for your spending. Set budgets to track your expenses effectively!
     </div>
       {% elif allocation_warning %}
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
       <div class="allocation-warning">
         <i class="fas fa-exclamation-triangle"></i>
         Your planned categories exceed 70% of your income. Consider reducing some limits to save more!
@@ -88,8 +73,6 @@
         Your budget allocations remain within 70% of your income, reflecting responsible financial planning.
       </div>
       {% endif %}
-<<<<<<< HEAD
-=======
 
       {% if is_overspending %}
     <div class="allocation-warning">
@@ -99,7 +82,6 @@
       {% endif %}
 
 
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
     </div>
 
 
@@ -369,10 +351,6 @@
 {% endblock %}
 
 {% block extra_js %}
-<<<<<<< HEAD
-=======
-
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 <script>
 const months=[
 'January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -383,7 +361,6 @@ let currentYear = {{ current_year|default:now.year }};
 function updateDisplay(){
   document.querySelector(".current-month").textContent=`${months[currentMonth]}  ${currentYear}`;
 }
-
 function updateMonth(sign){
   currentMonth+=sign;
   
@@ -402,9 +379,6 @@ function updateMonth(sign){
 
 }
 updateDisplay();
-
-
-
 
  document.addEventListener("DOMContentLoaded",()=>{
 
@@ -425,11 +399,7 @@ editBtn.forEach(btn => {
     btn.addEventListener("click", () => {
         if (btn.classList.contains('set-budget-btn')) {
         const category = btn.getAttribute("data-category");
-<<<<<<< HEAD
-        document.getElementById("form-month").value = currentMonth;
-=======
         document.getElementById("form-month").value = currentMonth+1;
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
         document.getElementById("form-year").value = currentYear;
         
         // Pre-select the category in the add form
@@ -460,11 +430,7 @@ editBtn.forEach(btn => {
 });
   if(categoryAdd){
   categoryAdd.addEventListener("click",()=>{
-<<<<<<< HEAD
-    document.getElementById("form-month").value = currentMonth;
-=======
     document.getElementById("form-month").value = currentMonth+1;
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
     document.getElementById("form-year").value = currentYear;
     addCategoryForm.showModal();
   });
@@ -474,8 +440,6 @@ editBtn.forEach(btn => {
     addPartyForm.showModal();
   });
 
-<<<<<<< HEAD
-=======
   //Check for Django messages and show as alerts
   const messages = document.querySelectorAll('.django-message');
   messages.forEach(msg => {
@@ -490,7 +454,6 @@ editBtn.forEach(btn => {
       alert(text);
     }
   });
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
   dialog.forEach(dialog=>{
   dialog.addEventListener("click",(e)=>{
     if( e.target===dialog){

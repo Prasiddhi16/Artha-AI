@@ -1,6 +1,3 @@
-<<<<<<< HEAD
- function ProfileDialogs() {
-=======
 /*CSRF helper*/ 
 function getCookie(name) {
     let cookieValue = null;
@@ -22,7 +19,6 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 function ProfileDialogs() {
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
        const overlay=document.querySelector(".overlay");
        const profile=document.querySelector(".profile-button");
        const settings=document.querySelector(".settings-button");
@@ -102,12 +98,6 @@ function ProfileDialogs() {
         }};
 
 
-<<<<<<< HEAD
-const csrftoken = document.querySelector('meta[name="csrf-token"]').content;
-
-
-=======
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
   
   document.getElementById("save-profile")?.addEventListener("click", async () => {
     const phoneInput = document.getElementById("phone");
@@ -296,8 +286,6 @@ const savePrivacyBtn = document.getElementById('save-privacy');
             }
         });
     }
-<<<<<<< HEAD
-=======
    
     //profile picture
 const input = document.getElementById('profile-image-input');
@@ -434,7 +422,6 @@ const changeEmailBtn = document.getElementById('change-email-btn');
         window.location.reload();
     }
 });
->>>>>>> 5d49889de660bbeec3da84473860add09db5fc2e
 }
 
 // Initialize when page loads
