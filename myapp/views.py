@@ -941,7 +941,7 @@ def review(request):
 
 
 
-@login_required(login_url='sigin')
+@login_required(login_url='signin')
 def analytics(request):
     user=request.user
     today=date.today()
@@ -2151,4 +2151,4 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 user = User.objects.first()
 
-NotificationEvent.objects.create(user=user, message="Test notification", notification_type="info")
+#NotificationEvent.objects.create(user=user, message="Test notification", notification_type="info")
