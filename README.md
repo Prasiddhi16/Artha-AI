@@ -24,7 +24,7 @@ Artha AI is an intelligent personal finance management system developed at **Kat
 -  **Chat-based Assistance**  
   Interactive chatbot for financial queries and guidance.
 
-- 📈 **Visual Reports**  
+-  **Visual Reports**  
   Charts and dashboards to understand spending patterns and trends.
 
 ---
@@ -63,11 +63,11 @@ Artha AI is an intelligent personal finance management system developed at **Kat
 ## Usage
  - Sign up and securely log in.
   
- -Add income and expense records manually or via receipt scanning.
+ - Add income and expense records manually or via receipt scanning.
   
- -Set budgets and financial goals.
+ - Set budgets and financial goals.
   
- -View personalized AI insights and predictive alerts.
+ - View personalized AI insights and predictive alerts.
   
  -Explore dashboards for trends, reports, and recommendations.
   
@@ -101,13 +101,13 @@ Artha AI is an intelligent personal finance management system developed at **Kat
   Enhance accessibility with multilingual support and simplified UI.
   
   ## Contributors
-  Prapti Dhamala
+  Prapti Dhamala  -https://github.com/PraptiDhamala
 
-  Prasiddhi Dumre
+  Prasiddhi Dumre -https://github.com/Prasiddhi16  -https://github.com/Prasiddhi16-63
   
-  Ushma Sapkota
+  Ushma Sapkota -https://github.com/Ushma-Sapkota
   
-  Anusha Khatri
+  Anusha Khatri -https://github.com/itsmeanushaa
 
  ## Supervised by Dr. Sushil Shrestha  
 Kathmandu University, Department of Computer Science and Engineering
