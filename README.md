@@ -52,10 +52,13 @@ Artha AI is an intelligent personal finance management system developed at **Kat
 
   bash
   pip install -r requirements.txt
+  
   Configure the database (MySQL):
   
   bash
   python manage.py migrate
+
+  
   Run the server:
   
   bash
