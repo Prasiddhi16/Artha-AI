@@ -44,7 +44,7 @@ Artha AI is an intelligent personal finance management system developed at **Kat
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/artha-ai.git
+   git clone https://github.com/Prasiddhi16/artha-ai.git
    cd artha-ai
 
    
