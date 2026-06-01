@@ -63,6 +63,7 @@ Artha AI is an intelligent personal finance management system developed at **Kat
   
   bash
   python manage.py runserver
+  ## Read requirements.txt for chatbot and oauth integration.
 ## Usage
  - Sign up and securely log in.
   
